@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct User {
+struct User: Identifiable, Codable {
     let id: UUID
     var name: String
     var photoURL: String?

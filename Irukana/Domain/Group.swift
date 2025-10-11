@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Group {
+struct Group: Identifiable, Codable {
     let id: UUID
     var name: String
     

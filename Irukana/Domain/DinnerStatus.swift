@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct DinnerStatus {
+struct DinnerStatus: Identifiable, Codable {
     let id: String //groups/{groupId}/dinners/{yyyy-MM-dd}
     let groupId: UUID
     let date: String  //"yyyy-MM-dd"

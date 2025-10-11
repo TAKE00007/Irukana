@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct UserGroup {
+struct UserGroup: Codable {
     let groupId: UUID
     let userId: UUID
     

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Schedule {
+struct Schedule: Identifiable, Codable {
     let id: UUID
     let calendarId: UUID
     var title: String

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ScheduleParticipant {
+struct ScheduleParticipant: Codable {
     let shceduleId: UUID
     let userId: UUID
     

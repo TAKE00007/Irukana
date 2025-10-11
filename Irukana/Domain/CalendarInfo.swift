@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CalendarInfo {
+struct CalendarInfo: Identifiable, Codable {
     let id: UUID
     let groupId: UUID
     var name: String
