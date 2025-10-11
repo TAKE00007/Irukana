@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct userGroup {
+struct UserGroup {
     let groupId: UUID
     let userId: UUID
     
