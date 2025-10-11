@@ -8,11 +8,11 @@
 import Foundation
 
 struct ScheduleParticipant: Codable {
-    let shceduleId: UUID
+    let scheduleId: UUID
     let userId: UUID
     
     init(shceduleId: UUID, userId: UUID) {
-        self.shceduleId = shceduleId
+        self.scheduleId = shceduleId
         self.userId = userId
     }
 }
