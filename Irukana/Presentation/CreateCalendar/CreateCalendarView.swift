@@ -8,25 +8,43 @@
 import SwiftUI
 
 struct CreateCalendarView: View {
+    @State private var state = CreateCalendarState()
+    private var reducer: CreateCalendarReducer
+    
+    init(reducer: CreateCalendarReducer = .init()) {
+        self.reducer = reducer
+    }
+    
     var body: some View {
-        VStack {
-            Image("CreateCalendar")
-                .resizable()
-                .scaledToFit()
-            Text("Irukana にようこそ")
-                .font(.largeTitle)
-                .bold()
-                .padding(20)
-            CalendarButton(title: "新しいカレンダーを作成する", variant: .primary) {
-                print("新しいカレンダーを作成するが押されました")
+        NavigationStack(path: $state.path) {
+            VStack {
+                Image("CreateCalendar")
+                    .resizable()
+                    .scaledToFit()
+                Text("Irukana にようこそ")
+                    .font(.largeTitle)
+                    .bold()
+                    .padding(20)
+                
+                CalendarButton(title: "新しいカレンダーを作成する", variant: .primary) {
+                    reducer.reduce(state: &state, action: .tapCreateCalendar)
+                }
+                CalendarButton(title: "招待されたカレンダーに参加する", variant: .outline) {
+                    reducer.reduce(state: &state, action: .tapJoinCalendar)
+                }
             }
-            CalendarButton(title: "招待されたカレンダーに参加する", variant: .outline) {
-                print("招待されたカレンダーに参加するが押されました")
+            .navigationDestination(for: CreateCalendarRoute.self) { route in
+                switch route {
+                case .createNew:
+                    Text("新規カレンダー作成画面")
+                case .join:
+                    Text("共有カレンダー参加画面")
+                }
             }
         }
     }
 }
 
 #Preview {
-    CreateCalendarView()
+    CreateCalendarView(reducer: .init())
 }
