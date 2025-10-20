@@ -17,24 +17,44 @@ struct CalendarView: View {
         return cal
     }()
     
+    private let monthsBefore = 24
+    private let monthsAfter = 24
+    
+    private var baseMonthStart: Date {
+        startOfMonth(for: Date())
+    }
+    
     @State private var currentMonth: Date = Date()
     
     var columns: [GridItem] = Array(repeating: .init(.flexible()), count: 7)
     var body: some View {
-        HStack {
-            Text("\(year)年\(month)月")
-                .padding()
-            Spacer()
+        VStack() {
+            MonthHeader(monthStart: currentMonth, calendar: calendar)
         }
-        LazyVGrid(columns: columns) {
-            Text("月")
-            Text("火")
-            Text("水")
-            Text("木")
-            Text("金")
-            Text("土")
-            Text("日")
+        ScrollView {
+            LazyVStack(pinnedViews: [.sectionHeaders]) {
+                ForEach(offsetRange, id: \.self) { offset in
+                    let monthStart = calendar.date(byAdding: .month, value: offset, to: baseMonthStart)!
+                    
+                    MonthGrid(monthStart: monthStart, calendar: calendar)
+            
+                }
+            }
         }
+    }
+    
+    private var offsetRange: [Int] {
+        Array(-monthsBefore...monthsAfter)
+    }
+}
+
+private struct MonthGrid: View {
+    let monthStart: Date
+    let calendar: Calendar
+    
+    private var columns: [GridItem] { Array(repeating: .init(.flexible()), count: 7) }
+    
+    var body: some View {
         LazyVGrid(columns: columns) {
             ForEach((0..<firstWeekdayIndex).map { "pad-\($0)" }, id: \.self) { _ in
                 Color.clear
@@ -47,6 +67,66 @@ struct CalendarView: View {
             }
         }
     }
+    
+    // 月の日数
+    var numberOfDays: Int {
+        calendar.range(of: .day, in: .month, for: monthStart)!.count
+    }
+    
+    // 月初が何曜日か？月曜から右に何日目かを返す
+    var firstWeekdayIndex: Int {
+        let weekday = calendar.component(.weekday, from: monthStart)
+        return (weekday - calendar.firstWeekday + 7) % 7
+    }
+}
+
+private struct WeekdayHeader: View {
+    private let symbols = ["月", "火", "水", "木", "金", "土", "日"]
+    
+    private var columns: [GridItem] { Array(repeating: .init(.flexible()), count: 7) }
+    
+    var body: some View {
+        LazyVGrid(columns: columns) {
+            ForEach(symbols, id: \.self) { day in
+                Text(day)
+                    .foregroundStyle(color(for: day))
+            }
+        }
+    }
+    
+    private func color(for symbol: String) -> Color {
+        switch symbol {
+        case "土": return Color(.systemBlue)
+        case "日": return Color(.systemRed)
+        default: return Color.primary
+        }
+    }
+}
+
+private struct MonthHeader: View {
+    let monthStart: Date
+    let calendar: Calendar
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            let comps = calendar.dateComponents([.year, .month], from: monthStart)
+            Text("\(comps.year!)年\(comps.month!)月")
+                .font(.title3)
+            
+            WeekdayHeader()
+        }
+    }
+}
+
+private func startOfMonth(for date: Date, using calendar: Calendar = {
+    var cal = Calendar(identifier: .gregorian)
+    cal.locale = Locale(identifier: "ja_JP")
+    cal.timeZone = TimeZone(identifier: "Asia/Tokyo")!
+    cal.firstWeekday = 2
+    return cal
+}()) -> Date {
+    let comps = calendar.dateComponents([.year, .month], from: date)
+    return calendar.date(from: comps)!
 }
 
 #Preview {
@@ -57,21 +137,6 @@ private extension CalendarView {
     var year: Int { calendar.component(.year, from: currentMonth) }
     var month: Int { calendar.component(.month, from: currentMonth) }
     
-    var startOfMonth: Date {
-        let comps = calendar.dateComponents([.year, .month], from: currentMonth)
-        return calendar.date(from: comps)!
-    }
-    
-    // 月の日数
-    var numberOfDays: Int {
-        calendar.range(of: .day, in: .month, for: currentMonth)!.count
-    }
-    
-    // 月初が何曜日か？月曜から右に何日目かを返す
-    var firstWeekdayIndex: Int {
-        let weekday = calendar.component(.weekday, from: startOfMonth)
-        return (weekday - calendar.firstWeekday + 7) % 7
-    }
     
     
 }
