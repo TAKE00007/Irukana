@@ -24,27 +24,57 @@ struct CalendarView: View {
         startOfMonth(for: Date())
     }
     
-    @State private var currentMonth: Date = Date()
+    private var offsetRange: [Int] { Array(-monthsBefore...monthsAfter) }
+    
+    @State private var visibleMonthStart: Date = Date()
     
     var columns: [GridItem] = Array(repeating: .init(.flexible()), count: 7)
     var body: some View {
         VStack() {
-            MonthHeader(monthStart: currentMonth, calendar: calendar)
+            MonthTitle(date: visibleMonthStart, calendar: calendar)
+                .padding(.top, 8)
+            
+            WeekdayHeader()
+                .padding(.bottom, 4)
         }
         ScrollView {
-            LazyVStack(pinnedViews: [.sectionHeaders]) {
+            LazyVStack(spacing: 12) {
                 ForEach(offsetRange, id: \.self) { offset in
                     let monthStart = calendar.date(byAdding: .month, value: offset, to: baseMonthStart)!
                     
+                    
                     MonthGrid(monthStart: monthStart, calendar: calendar)
+                        .overlay {
+                              VStack {
+                                  Spacer()
+                                  MonthVisibleMarker(monthStart: monthStart).frame(height: 0) // 真ん中
+                                  Spacer()
+                              }
+                          }
             
                 }
             }
+            .onPreferenceChange(MonthYPreference.self) { values in
+                guard let nearest = values.min(by: { abs($0.minY) < abs($1.minY) }) else { return }
+                if visibleMonthStart != nearest.monthStart {
+                    visibleMonthStart = nearest.monthStart
+                }
+            }
         }
+        .coordinateSpace(name: "scroll")
     }
-    
-    private var offsetRange: [Int] {
-        Array(-monthsBefore...monthsAfter)
+}
+
+private struct MonthTitle: View {
+    let date: Date
+    let calendar: Calendar
+    var body: some View {
+        let comps = calendar.dateComponents(([.year, .month]), from: date)
+        HStack {
+            Text("\(comps.year!)年\(comps.month!)月")
+            Spacer()
+        }
+        .padding(.horizontal, 12)
     }
 }
 
@@ -63,7 +93,7 @@ private struct MonthGrid: View {
             
             ForEach(1...numberOfDays, id: \.self) { day in
                 Text("\(day)")
-                    .frame(maxWidth: .infinity, minHeight: 32)
+                    .frame(maxWidth: .infinity, minHeight: 100)
             }
         }
     }
@@ -90,6 +120,7 @@ private struct WeekdayHeader: View {
             ForEach(symbols, id: \.self) { day in
                 Text(day)
                     .foregroundStyle(color(for: day))
+                    .frame(maxWidth: .infinity, minHeight: 20)
             }
         }
     }
@@ -99,21 +130,6 @@ private struct WeekdayHeader: View {
         case "土": return Color(.systemBlue)
         case "日": return Color(.systemRed)
         default: return Color.primary
-        }
-    }
-}
-
-private struct MonthHeader: View {
-    let monthStart: Date
-    let calendar: Calendar
-    
-    var body: some View {
-        VStack(alignment: .leading) {
-            let comps = calendar.dateComponents([.year, .month], from: monthStart)
-            Text("\(comps.year!)年\(comps.month!)月")
-                .font(.title3)
-            
-            WeekdayHeader()
         }
     }
 }
@@ -133,9 +149,36 @@ private func startOfMonth(for date: Date, using calendar: Calendar = {
     CalendarView()
 }
 
+private struct MonthY: Equatable {
+    let monthStart: Date
+    let minY: CGFloat
+}
+
+private struct MonthYPreference: PreferenceKey {
+    static var defaultValue: [MonthY] = []
+    static func reduce(value: inout [MonthY], nextValue: () -> [MonthY]) {
+        value.append(contentsOf: nextValue())
+        print(value)
+    }
+}
+
+private struct MonthVisibleMarker: View {
+    let monthStart: Date
+    var body: some View {
+        GeometryReader { proxy in
+            Color.clear
+                .preference(
+                    key: MonthYPreference.self,
+                    value: [MonthY(monthStart: monthStart,
+                                   minY: proxy.frame(in: .named("scroll")).minY)]
+                )
+        }
+    }
+}
+
 private extension CalendarView {
-    var year: Int { calendar.component(.year, from: currentMonth) }
-    var month: Int { calendar.component(.month, from: currentMonth) }
+    var year: Int { calendar.component(.year, from: visibleMonthStart) }
+    var month: Int { calendar.component(.month, from: visibleMonthStart) }
     
     
     
