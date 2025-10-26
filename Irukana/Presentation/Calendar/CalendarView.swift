@@ -21,7 +21,9 @@ struct CalendarView: View {
     private let monthsAfter = 24
     
     private var baseMonthStart: Date {
-        startOfMonth(for: Date())
+        let date = Date()
+        let comps = calendar.dateComponents([.year, .month], from: date)
+        return calendar.date(from: comps)!
     }
     
     private var offsetRange: [Int] { Array(-monthsBefore...monthsAfter) }
@@ -37,32 +39,33 @@ struct CalendarView: View {
             WeekdayHeader()
                 .padding(.bottom, 4)
         }
-        ScrollView {
-            LazyVStack(spacing: 12) {
-                ForEach(offsetRange, id: \.self) { offset in
+        ScrollViewReader { proxy in
+            ScrollView {
+                LazyVStack(spacing: 12) {
+                    ForEach(offsetRange, id: \.self) { offset in
                     
-                    // TODO: 現在の年にならない
-                    // TODO: Formatが2,023になってしまっている
-                    let monthStart = calendar.date(byAdding: .month, value: offset, to: baseMonthStart)!
-                    
-                    // TODO: 1日をComponent化する
-                    MonthGrid(monthStart: monthStart, calendar: calendar)
-                        .overlay {
-                            MonthVisibleMarker(monthStart: monthStart).frame(height: 0)
-                          }
-            
+                        let monthStart = calendar.date(byAdding: .month, value: offset, to: baseMonthStart)!
+                        
+                        // TODO: 1日をComponent化する
+                        MonthGrid(monthStart: monthStart, calendar: calendar)
+                            .id(monthStart)
+                            .overlay {
+                                MonthVisibleMarker(monthStart: monthStart).frame(height: 0)
+                            }
+                    }
+                }
+                .onPreferenceChange(MonthYPreference.self) { values in
+                    guard let nearest = values.min(by: { abs($0.minY) < abs($1.minY) }) else { return }
+                    if visibleMonthStart != nearest.monthStart {
+                        visibleMonthStart = nearest.monthStart
+                    }
                 }
             }
-            .onPreferenceChange(MonthYPreference.self) { values in
-                guard let nearest = values.min(by: { abs($0.minY) < abs($1.minY) }) else { return }
-                if visibleMonthStart != nearest.monthStart {
-                    visibleMonthStart = nearest.monthStart
-                }
+            .coordinateSpace(name: "scroll")
+            .onAppear {
+                proxy.scrollTo(baseMonthStart, anchor: .top)
+                visibleMonthStart = baseMonthStart
             }
-        }
-        .coordinateSpace(name: "scroll")
-        .onAppear {
-            print(Locale.current.identifier)
         }
     }
 }
@@ -76,39 +79,6 @@ private struct MonthTitle: View {
             Spacer()
         }
         .padding(.horizontal, 12)
-    }
-}
-
-private struct MonthGrid: View {
-    let monthStart: Date
-    let calendar: Calendar
-    
-    private var columns: [GridItem] { Array(repeating: .init(.flexible()), count: 7) }
-    
-    var body: some View {
-        LazyVGrid(columns: columns) {
-            ForEach((0..<firstWeekdayIndex).map { "pad-\($0)" }, id: \.self) { _ in
-                Color.clear
-                    .frame(maxWidth: .infinity, minHeight: 32)
-            }
-            
-            ForEach(1...numberOfDays, id: \.self) { day in
-                // 新しくコンポーネントに切り出す
-                Text("\(day)")
-                    .frame(maxWidth: .infinity, minHeight: 100)
-            }
-        }
-    }
-    
-    // 月の日数
-    var numberOfDays: Int {
-        calendar.range(of: .day, in: .month, for: monthStart)!.count
-    }
-    
-    // 月初が何曜日か？月曜から右に何日目かを返す
-    var firstWeekdayIndex: Int {
-        let weekday = calendar.component(.weekday, from: monthStart)
-        return (weekday - calendar.firstWeekday + 7) % 7
     }
 }
 
@@ -136,19 +106,37 @@ private struct WeekdayHeader: View {
     }
 }
 
-private func startOfMonth(for date: Date, using calendar: Calendar = {
-    var cal = Calendar(identifier: .gregorian)
-    cal.locale = Locale(identifier: "ja_JP")
-    cal.timeZone = TimeZone(identifier: "Asia/Tokyo")!
-    cal.firstWeekday = 2
-    return cal
-}()) -> Date {
-    let comps = calendar.dateComponents([.year, .month], from: date)
-    return calendar.date(from: comps)!
-}
-
-#Preview {
-    CalendarView()
+private struct MonthGrid: View {
+    let monthStart: Date
+    let calendar: Calendar
+    
+    private var columns: [GridItem] { Array(repeating: .init(.flexible()), count: 7) }
+    
+    var body: some View {
+        LazyVGrid(columns: columns) {
+            ForEach((0..<firstWeekdayIndex).map { "pad-\($0)" }, id: \.self) { _ in
+                Color.clear
+                    .frame(maxWidth: .infinity, minHeight: 32)
+            }
+            
+            ForEach(1...numberOfDays, id: \.self) { day in
+                // TODO: 新しくコンポーネントに切り出す
+                Text("\(day)")
+                    .frame(maxWidth: .infinity, minHeight: 100)
+            }
+        }
+    }
+    
+    // 月の日数
+    var numberOfDays: Int {
+        calendar.range(of: .day, in: .month, for: monthStart)!.count
+    }
+    
+    // 月初が何曜日か？月曜から右に何日目かを返す
+    var firstWeekdayIndex: Int {
+        let weekday = calendar.component(.weekday, from: monthStart)
+        return (weekday - calendar.firstWeekday + 7) % 7
+    }
 }
 
 private struct MonthY: Equatable {
@@ -178,10 +166,6 @@ private struct MonthVisibleMarker: View {
     }
 }
 
-private extension CalendarView {
-    var year: Int { calendar.component(.year, from: visibleMonthStart) }
-    var month: Int { calendar.component(.month, from: visibleMonthStart) }
-    
-    
-    
+#Preview {
+    CalendarView()
 }
