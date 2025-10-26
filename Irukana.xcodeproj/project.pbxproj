@@ -187,11 +187,12 @@
 				};
 			};
 			buildConfigurationList = 220A5AD32E9A39FA0095E3EF /* Build configuration list for PBXProject "Irukana" */;
-			developmentRegion = en;
+			developmentRegion = ja;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
+				ja,
 			);
 			mainGroup = 220A5ACF2E9A39FA0095E3EF;
 			minimizedProjectReferenceProxies = 1;

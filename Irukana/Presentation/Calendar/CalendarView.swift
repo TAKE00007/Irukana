@@ -31,7 +31,7 @@ struct CalendarView: View {
     var columns: [GridItem] = Array(repeating: .init(.flexible()), count: 7)
     var body: some View {
         VStack() {
-            MonthTitle(date: visibleMonthStart, calendar: calendar)
+            MonthTitle(date: visibleMonthStart)
                 .padding(.top, 8)
             
             WeekdayHeader()
@@ -40,16 +40,15 @@ struct CalendarView: View {
         ScrollView {
             LazyVStack(spacing: 12) {
                 ForEach(offsetRange, id: \.self) { offset in
+                    
+                    // TODO: 現在の年にならない
+                    // TODO: Formatが2,023になってしまっている
                     let monthStart = calendar.date(byAdding: .month, value: offset, to: baseMonthStart)!
                     
-                    
+                    // TODO: 1日をComponent化する
                     MonthGrid(monthStart: monthStart, calendar: calendar)
                         .overlay {
-                              VStack {
-                                  Spacer()
-                                  MonthVisibleMarker(monthStart: monthStart).frame(height: 0) // 真ん中
-                                  Spacer()
-                              }
+                            MonthVisibleMarker(monthStart: monthStart).frame(height: 0)
                           }
             
                 }
@@ -62,16 +61,18 @@ struct CalendarView: View {
             }
         }
         .coordinateSpace(name: "scroll")
+        .onAppear {
+            print(Locale.current.identifier)
+        }
     }
 }
 
 private struct MonthTitle: View {
     let date: Date
-    let calendar: Calendar
     var body: some View {
-        let comps = calendar.dateComponents(([.year, .month]), from: date)
+        let dateString = date.formatted(.dateTime.year().month())
         HStack {
-            Text("\(comps.year!)年\(comps.month!)月")
+            Text("\(dateString)")
             Spacer()
         }
         .padding(.horizontal, 12)
@@ -92,6 +93,7 @@ private struct MonthGrid: View {
             }
             
             ForEach(1...numberOfDays, id: \.self) { day in
+                // 新しくコンポーネントに切り出す
                 Text("\(day)")
                     .frame(maxWidth: .infinity, minHeight: 100)
             }
