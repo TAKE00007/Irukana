@@ -11,9 +11,7 @@ import SwiftUI
 struct IrukanaApp: App {
     var body: some Scene {
         WindowGroup {
-//            ContentView()
-//            CreateCalendarView()
-            CalendarView()
+            AppRootView()
         }
     }
 }
