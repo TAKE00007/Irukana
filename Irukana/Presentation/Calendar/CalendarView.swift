@@ -11,8 +11,6 @@ struct CalendarView: View {
     // 日本向けのカレンダー設定
     private var calendar: Calendar = {
         var cal = Calendar(identifier: .gregorian)
-        cal.locale = Locale(identifier: "ja_JP")
-        cal.timeZone = TimeZone(identifier: "Asia/Tokyo")!
         cal.firstWeekday = 2
         return cal
     }()
@@ -25,12 +23,9 @@ struct CalendarView: View {
         let comps = calendar.dateComponents([.year, .month], from: date)
         return calendar.date(from: comps)!
     }
-    
     private var offsetRange: [Int] { Array(-monthsBefore...monthsAfter) }
-    
     @State private var visibleMonthStart: Date = Date()
-    
-    var columns: [GridItem] = Array(repeating: .init(.flexible()), count: 7)
+
     var body: some View {
         VStack() {
             MonthTitle(date: visibleMonthStart)
@@ -120,9 +115,7 @@ private struct MonthGrid: View {
             }
             
             ForEach(1...numberOfDays, id: \.self) { day in
-                // TODO: 新しくコンポーネントに切り出す
-                Text("\(day)")
-                    .frame(maxWidth: .infinity, minHeight: 100)
+                DayCell(day: day)
             }
         }
     }
@@ -139,6 +132,16 @@ private struct MonthGrid: View {
     }
 }
 
+private struct DayCell: View {
+    let day: Int
+    
+    var body: some View {
+        Text("\(day)")
+            .frame(maxWidth: .infinity, minHeight: 100)
+    }
+}
+
+// MARK: 月の位置を親Viewに通知
 private struct MonthY: Equatable {
     let monthStart: Date
     let minY: CGFloat
@@ -148,7 +151,6 @@ private struct MonthYPreference: PreferenceKey {
     static var defaultValue: [MonthY] = []
     static func reduce(value: inout [MonthY], nextValue: () -> [MonthY]) {
         value.append(contentsOf: nextValue())
-        print(value)
     }
 }
 
