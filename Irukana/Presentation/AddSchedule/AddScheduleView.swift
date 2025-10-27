@@ -14,8 +14,8 @@ enum TopTab: String, Identifiable, Hashable, CaseIterable {
     var id: String { rawValue }
 }
 
-struct AddScheduleView: View {
-    @State var selection: TopTab
+struct TopTabs: View {
+    @Binding var selection: TopTab
     var tabs: [TopTab] = TopTab.allCases
     @Namespace private var ns
     
@@ -24,7 +24,9 @@ struct AddScheduleView: View {
             HStack(spacing: 0) {
                 ForEach(tabs) { tab in
                     Button {
-                        selection = tab
+                        withAnimation(.spring(response: 0.3)) {
+                                selection = tab
+                        }
                     } label: {
                         Text(tab.rawValue)
                             .frame(maxWidth: .infinity)
@@ -51,18 +53,39 @@ struct AddScheduleView: View {
     }
 }
 
-//#Preview {
-//    AddScheduleView(selection: .constant(.schedule))
-//}
-
-struct AddSchedulePreviewWrapper: View {
+struct AddScheduleView: View {
     @State private var selection: TopTab = .schedule
+    
     var body: some View {
-        AddScheduleView(selection: selection)
-            .padding()
+        VStack(spacing: 16) {
+            TopTabs(selection: $selection)
+                .padding(.horizontal, 20)
+            
+            VStack(spacing: 0) {
+                switch selection {
+                case .schedule:
+                    ScheduleView()
+                case .dinner:
+                    DinnerView()
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        }
     }
 }
 
 #Preview {
-    AddSchedulePreviewWrapper()
+    AddScheduleView()
+}
+
+private struct ScheduleView: View {
+    var body: some View {
+        Text("予定追加画面")
+    }
+}
+
+private struct DinnerView: View {
+    var body: some View {
+        Text("ご飯入力画面")
+    }
 }
