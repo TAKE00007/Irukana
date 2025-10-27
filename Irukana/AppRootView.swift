@@ -45,7 +45,10 @@ struct AppRootView: View {
         }
 
         .sheet(isPresented: $isPresented) {
-            AddView()
+            AddView {
+                isPresented = false
+                selected = .schedule
+            }
         }
     }
 }

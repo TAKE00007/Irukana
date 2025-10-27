@@ -55,6 +55,17 @@ struct TopTabs: View {
 }
 
 struct AddView: View {
+    @State private var state = AddState(isDinner: true)
+    private var reducer: AddReducer
+    
+    let onFinish: () -> Void
+    
+    init(reducer: AddReducer = .init(), onFinish: @escaping () -> Void) {
+        self.reducer = reducer
+        self.onFinish = onFinish
+    }
+    
+    
     @State private var selection: TopTab = .dinner
     
     var body: some View {
@@ -67,7 +78,14 @@ struct AddView: View {
                 case .schedule:
                     ScheduleView()
                 case .dinner:
-                    DinnerView()
+                    DinnerView {
+                        reducer.reduce(state: &state, action: .tapDinnerYes)
+                        onFinish()
+                    } onNo: {
+                        reducer.reduce(state: &state, action: .tapDinnerNo)
+                        onFinish()
+                    }
+
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -76,7 +94,9 @@ struct AddView: View {
 }
 
 #Preview {
-    AddView()
+    AddView {
+        print("")
+    }
 }
 
 private struct ScheduleView: View {
@@ -86,6 +106,9 @@ private struct ScheduleView: View {
 }
 
 private struct DinnerView: View {
+    let onYes: () -> Void
+    let onNo: () -> Void
+    
     var body: some View {
         VStack {
             Text("本日のご飯")
@@ -99,9 +122,7 @@ private struct DinnerView: View {
             CalendarButton(
                 title: "いる",
                 variant: .primary,
-                action: {
-                    print("")
-                }
+                action: onYes
             )
             .padding()
             
@@ -109,9 +130,7 @@ private struct DinnerView: View {
             CalendarButton(
                 title: "いらない",
                 variant: .outline,
-                action: {
-                    print("")
-                }
+                action: onNo
             )
             .padding()
 
