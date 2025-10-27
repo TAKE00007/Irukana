@@ -29,16 +29,17 @@ struct TopTabs: View {
                         }
                     } label: {
                         Text(tab.rawValue)
+                            .bold()
                             .frame(maxWidth: .infinity)
                             .frame(height: 56)
                     }
                     .buttonStyle(.plain)
-                    .foregroundStyle(selection == tab ? Color.white : Color.primary)
+                    .foregroundStyle(selection == tab ? Color.white : Color.orange)
                     .background(
                         ZStack {
                             if selection == tab {
                                 Capsule()
-                                    .fill(Color(.blue))
+                                    .fill(Color(.orange))
                                     .matchedGeometryEffect(id: "TAB", in: ns)
                             }
                         }
@@ -54,7 +55,7 @@ struct TopTabs: View {
 }
 
 struct AddScheduleView: View {
-    @State private var selection: TopTab = .schedule
+    @State private var selection: TopTab = .dinner
     
     var body: some View {
         VStack(spacing: 16) {
@@ -86,6 +87,36 @@ private struct ScheduleView: View {
 
 private struct DinnerView: View {
     var body: some View {
-        Text("ご飯入力画面")
+        VStack {
+            Text("本日のご飯")
+                .bold()
+                .padding()
+            
+            Image("Dinner")
+                .resizable()
+                .scaledToFit()
+            
+            CalendarButton(
+                title: "いる",
+                variant: .primary,
+                action: {
+                    print("")
+                }
+            )
+            .padding()
+            
+            
+            CalendarButton(
+                title: "いらない",
+                variant: .outline,
+                action: {
+                    print("")
+                }
+            )
+            .padding()
+
+        }
+        .font(.largeTitle)
     }
 }
+
