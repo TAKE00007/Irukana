@@ -11,6 +11,8 @@ enum AppTab: Hashable { case schedule, notification, setting, add }
 
 struct AppRootView: View {
     @State private var selected: AppTab = .schedule
+    @State private var lastTab: AppTab = .schedule
+    @State private var isPresented = false
     
     var body: some View {
         TabView(selection: $selected) {
@@ -28,11 +30,23 @@ struct AppRootView: View {
                 .tabItem { Label("設定", systemImage: "gear") }
                 .tag(AppTab.setting)
             
-            NavigationStack { Text("追加") }
+            Color.clear
                 .tabItem { Label("追加", systemImage: "plus") }
                 .tag(AppTab.add)
         }
         .tabBarMinimizeBehavior(.onScrollDown)
+        .onChange(of: selected) {
+            if selected == .add {
+                isPresented = true
+                selected = lastTab
+            } else {
+                lastTab = selected
+            }
+        }
+
+        .sheet(isPresented: $isPresented) {
+            AddScheduleView()
+        }
     }
 }
 
