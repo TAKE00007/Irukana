@@ -29,16 +29,17 @@ struct TopTabs: View {
                         }
                     } label: {
                         Text(tab.rawValue)
+                            .bold()
                             .frame(maxWidth: .infinity)
                             .frame(height: 56)
                     }
                     .buttonStyle(.plain)
-                    .foregroundStyle(selection == tab ? Color.white : Color.primary)
+                    .foregroundStyle(selection == tab ? Color.white : Color.orange)
                     .background(
                         ZStack {
                             if selection == tab {
                                 Capsule()
-                                    .fill(Color(.blue))
+                                    .fill(Color(.orange))
                                     .matchedGeometryEffect(id: "TAB", in: ns)
                             }
                         }
@@ -53,8 +54,19 @@ struct TopTabs: View {
     }
 }
 
-struct AddScheduleView: View {
-    @State private var selection: TopTab = .schedule
+struct AddView: View {
+    @State private var state = AddState(isDinner: true)
+    private var reducer: AddReducer
+    
+    let onFinish: () -> Void
+    
+    init(reducer: AddReducer = .init(), onFinish: @escaping () -> Void) {
+        self.reducer = reducer
+        self.onFinish = onFinish
+    }
+    
+    
+    @State private var selection: TopTab = .dinner
     
     var body: some View {
         VStack(spacing: 16) {
@@ -66,7 +78,14 @@ struct AddScheduleView: View {
                 case .schedule:
                     ScheduleView()
                 case .dinner:
-                    DinnerView()
+                    DinnerView {
+                        reducer.reduce(state: &state, action: .tapDinnerYes)
+                        onFinish()
+                    } onNo: {
+                        reducer.reduce(state: &state, action: .tapDinnerNo)
+                        onFinish()
+                    }
+
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -75,7 +94,9 @@ struct AddScheduleView: View {
 }
 
 #Preview {
-    AddScheduleView()
+    AddView {
+        print("")
+    }
 }
 
 private struct ScheduleView: View {
@@ -85,7 +106,36 @@ private struct ScheduleView: View {
 }
 
 private struct DinnerView: View {
+    let onYes: () -> Void
+    let onNo: () -> Void
+    
     var body: some View {
-        Text("ご飯入力画面")
+        VStack {
+            Text("本日のご飯")
+                .bold()
+                .padding()
+            
+            Image("Dinner")
+                .resizable()
+                .scaledToFit()
+            
+            CalendarButton(
+                title: "いる",
+                variant: .primary,
+                action: onYes
+            )
+            .padding()
+            
+            
+            CalendarButton(
+                title: "いらない",
+                variant: .outline,
+                action: onNo
+            )
+            .padding()
+
+        }
+        .font(.largeTitle)
     }
 }
+
