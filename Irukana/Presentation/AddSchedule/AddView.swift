@@ -54,7 +54,7 @@ struct TopTabs: View {
     }
 }
 
-struct AddScheduleView: View {
+struct AddView: View {
     @State private var selection: TopTab = .dinner
     
     var body: some View {
@@ -76,7 +76,7 @@ struct AddScheduleView: View {
 }
 
 #Preview {
-    AddScheduleView()
+    AddView()
 }
 
 private struct ScheduleView: View {
