@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		22FB6B3F2EB0E6FD0063AB77 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 22FB6B3E2EB0E6FD0063AB77 /* FirebaseFirestore */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		220A5AE62E9A39FF0095E3EF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -29,9 +33,30 @@
 		220A5AEF2E9A3A000095E3EF /* IrukanaUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IrukanaUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		22FB6B3B2EB0E0670063AB77 /* Exceptions for "Irukana" folder in "IrukanaTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"GoogleService-Info.plist",
+			);
+			target = 220A5AE42E9A39FF0095E3EF /* IrukanaTests */;
+		};
+		22FB6B3C2EB0E0670063AB77 /* Exceptions for "Irukana" folder in "IrukanaUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"GoogleService-Info.plist",
+			);
+			target = 220A5AEE2E9A3A000095E3EF /* IrukanaUITests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		220A5ADA2E9A39FA0095E3EF /* Irukana */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				22FB6B3B2EB0E0670063AB77 /* Exceptions for "Irukana" folder in "IrukanaTests" target */,
+				22FB6B3C2EB0E0670063AB77 /* Exceptions for "Irukana" folder in "IrukanaUITests" target */,
+			);
 			path = Irukana;
 			sourceTree = "<group>";
 		};
@@ -52,6 +77,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				22FB6B3F2EB0E6FD0063AB77 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +138,7 @@
 			);
 			name = Irukana;
 			packageProductDependencies = (
+				22FB6B3E2EB0E6FD0063AB77 /* FirebaseFirestore */,
 			);
 			productName = Irukana;
 			productReference = 220A5AD82E9A39FA0095E3EF /* Irukana.app */;
@@ -196,6 +223,9 @@
 			);
 			mainGroup = 220A5ACF2E9A39FA0095E3EF;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				22FB6B3D2EB0E6FD0063AB77 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 220A5AD92E9A39FA0095E3EF /* Products */;
 			projectDirPath = "";
@@ -579,6 +609,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		22FB6B3D2EB0E6FD0063AB77 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.4.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		22FB6B3E2EB0E6FD0063AB77 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 22FB6B3D2EB0E6FD0063AB77 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 220A5AD02E9A39FA0095E3EF /* Project object */;
 }
