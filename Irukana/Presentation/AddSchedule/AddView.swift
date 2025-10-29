@@ -60,7 +60,7 @@ struct AddView: View {
     
     let onFinish: () -> Void
     
-    init(reducer: AddReducer = .init(), onFinish: @escaping () -> Void) {
+    init(reducer: AddReducer, onFinish: @escaping () -> Void) {
         self.reducer = reducer
         self.onFinish = onFinish
     }
@@ -79,11 +79,27 @@ struct AddView: View {
                     ScheduleView()
                 case .dinner:
                     DinnerView {
-                        reducer.reduce(state: &state, action: .tapDinnerYes)
-                        onFinish()
+                        if let effect = reducer.reduce(state: &state, action: .tapDinnerYes) {
+                            Task {
+                                do {
+                                    try await reducer.run(effect)
+                                    onFinish()
+                                } catch {
+                                    print(error)
+                                }
+                            }
+                        }
                     } onNo: {
-                        reducer.reduce(state: &state, action: .tapDinnerNo)
-                        onFinish()
+                        if let effect = reducer.reduce(state: &state, action: .tapDinnerNo) {
+                            Task {
+                                do {
+                                    try await reducer.run(effect)
+                                    onFinish()
+                                } catch {
+                                    print(error)
+                                }
+                            }
+                        }
                     }
 
                 }
@@ -93,11 +109,11 @@ struct AddView: View {
     }
 }
 
-#Preview {
-    AddView {
-        print("")
-    }
-}
+//#Preview {
+//    AddView {
+//        print("")
+//    }
+//}
 
 private struct ScheduleView: View {
     var body: some View {

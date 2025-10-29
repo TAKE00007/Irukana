@@ -11,3 +11,7 @@ enum AddAction {
     case tapDinnerYes
     case tapDinnerNo
 }
+
+enum AddEffect {
+    case upsert(isYes: Bool)
+}
