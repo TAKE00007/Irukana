@@ -6,13 +6,44 @@
 //
 
 import SwiftUI
+internal import Combine
 
 enum AppTab: Hashable { case schedule, notification, setting, add }
+
+final class Session: ObservableObject {
+    @Published var currentGroupId: UUID
+    @Published var currentUserId: UUID
+    
+    init(currentGroupId: UUID, currentUserId: UUID) {
+        self.currentGroupId = currentGroupId
+        self.currentUserId = currentUserId
+    }
+}
+
+struct AppDependencies {
+    let dinnerRepository: DinnerStatusRepository
+    let dinnerService: UpsertDinnerStatutsService
+    
+    static func live() -> AppDependencies {
+        let dinnerRepository = DinnerStatusRepositoryImp()
+        return .init(
+            dinnerRepository: dinnerRepository,
+            dinnerService: UpsertDinnerStatutsService(repository: dinnerRepository)
+        )
+    }
+}
 
 struct AppRootView: View {
     @State private var selected: AppTab = .schedule
     @State private var lastTab: AppTab = .schedule
     @State private var isPresented = false
+    
+    @State private var dependencies = AppDependencies.live()
+    // テストようにUUIDをここで生成する
+    @StateObject private var session = Session(
+        currentGroupId: UUID(),
+        currentUserId: UUID()
+    )
     
     var body: some View {
         TabView(selection: $selected) {
@@ -45,7 +76,13 @@ struct AppRootView: View {
         }
 
         .sheet(isPresented: $isPresented) {
-            AddView {
+            let reducer = AddReducer(
+                service: dependencies.dinnerService,
+                groupId: session.currentGroupId,
+                userId: session.currentUserId,
+                now: { Date() }
+            )
+            AddView(reducer: reducer) {
                 isPresented = false
                 selected = .schedule
             }
