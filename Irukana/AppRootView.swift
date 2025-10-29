@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-internal import Combine
+import Combine
 
 enum AppTab: Hashable { case schedule, notification, setting, add }
 
