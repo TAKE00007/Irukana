@@ -21,17 +21,15 @@ private struct DynamicKey: CodingKey {
 struct DinnerStatus: Identifiable, Codable {
     @DocumentID var id: String? //groups/{groupId}/dinners/{yyyy-MM-dd}
     let groupId: UUID
-    let date: String  //"yyyy-MM-dd"
+    let day: Date
     var answers: [UUID : DinnerAnswer]
     
-    enum CodingKeys: String, CodingKey {
-        case id, groupId, date, answers
-    }
+    enum CodingKeys: String, CodingKey { case id, groupId, day, answers }
     
-    init(id: String? = nil, groupId: UUID, date: String, answers: [UUID: DinnerAnswer]) {
+    init(id: String? = nil, groupId: UUID, day: Date, answers: [UUID: DinnerAnswer]) {
         self.id = id
         self.groupId = groupId
-        self.date = date
+        self.day = day
         self.answers = answers
     }
     
@@ -39,7 +37,7 @@ struct DinnerStatus: Identifiable, Codable {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         self.id = try c.decodeIfPresent(String.self, forKey: .id)  // 存在しない時はnilを返す
         self.groupId = try c.decode(UUID.self, forKey: .groupId)
-        self.date = try c.decode(String.self, forKey: .date)
+        self.day = try c.decode(Date.self, forKey: .day)
         
         let nested = try c.nestedContainer(keyedBy: DynamicKey.self, forKey: .answers)  // keyedByの値はCodingKeyプロトコルに準拠する必要がある
         var map: [UUID: DinnerAnswer] = [:]
@@ -55,7 +53,7 @@ struct DinnerStatus: Identifiable, Codable {
         var c = encoder.container(keyedBy: CodingKeys.self)
         try c.encodeIfPresent(id, forKey: .id)
         try c.encode(groupId, forKey: .groupId)
-        try c.encode(date, forKey: .date)
+        try c.encode(day, forKey: .day)
         
         var nested = c.nestedContainer(keyedBy: DynamicKey.self, forKey: .answers)
         for (k, v) in answers {
