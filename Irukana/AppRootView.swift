@@ -53,9 +53,14 @@ struct AppRootView: View {
             .tabItem { Label("予定", systemImage: "calendar")}
             .tag(AppTab.schedule)
             
-            NavigationStack { Text("新着") }
-                .tabItem { Label("新着", systemImage: "bell") }
-                .tag(AppTab.notification)
+            NavigationStack {
+                NotificationView(reducer: NotificationReducer(
+                    service: dependencies.dinnerService,
+                    groupId: session.currentGroupId)
+                )
+            }
+            .tabItem { Label("新着", systemImage: "bell") }
+            .tag(AppTab.notification)
             
             NavigationStack { Text("設定") }
                 .tabItem { Label("設定", systemImage: "gear") }
