@@ -32,7 +32,7 @@ struct NotificationReducer {
     func run(_ effect: NotificationEffect) async throws -> DinnerStatus? {
         switch effect {
         case .load:
-            return try await service.repository.fetch(groupId: groupId, date: now())  // TODO: serviceから取るように修正
+            return try await service.loadDinnerStatus(groupId: groupId, date: now())
         }
     }
     
