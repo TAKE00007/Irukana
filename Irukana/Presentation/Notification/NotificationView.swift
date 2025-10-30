@@ -25,9 +25,9 @@ struct NotificationView: View {
             VStack(spacing: 0) {
                 switch selection {
                 case .schedule:
-                    NotificationScheduleView(state: state)
+                    NotificationScheduleView()
                 case .dinner:
-                    NotificationDinnerView()
+                    NotificationDinnerView(state: state)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -53,6 +53,13 @@ struct NotificationView: View {
 //}
 
 private struct NotificationScheduleView: View {
+    
+    var body: some View {
+        Text("予定")
+    }
+}
+
+private struct NotificationDinnerView: View {
     let state: NotificationState?
     
     var body: some View {
@@ -67,18 +74,31 @@ private struct NotificationScheduleView: View {
                     let answer = dinnerStatus.answers[uuid] ?? .unknown
                     HStack {
                         Text(uuid.uuidString.prefix(4))
+                            .padding()
                         Spacer()
-                        Text(answer.rawValue)
+                        Text(label(for: answer))
+                            .bold()
+                            .padding()
                     }
+                    .background(statusColor(for: answer))
                 }
             }
         }
-        Text("予定")
     }
-}
-
-private struct NotificationDinnerView: View {
-    var body: some View {
-        Text("ごはん")
+    
+    private func label(for answer: DinnerAnswer) -> String {
+        switch answer {
+        case .need: return "いる"
+        case .noneed: return "いらない"
+        case .unknown: return "未回答"
+        }
+    }
+    
+    private func statusColor(for answer: DinnerAnswer) -> Color {
+        switch answer {
+        case .need: return .green.opacity(0.2)
+        case .noneed: return .red.opacity(0.2)
+        case .unknown: return .gray.opacity(0.2)
+        }
     }
 }
