@@ -6,3 +6,11 @@
 //
 
 import Foundation
+
+enum NotificationAction {
+    case onAppear
+}
+
+enum NotificationEffect {
+    case load
+}
