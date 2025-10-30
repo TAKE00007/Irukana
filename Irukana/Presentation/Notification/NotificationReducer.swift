@@ -8,12 +8,12 @@
 import Foundation
 
 struct NotificationReducer {
-    let service: UpsertDinnerStatutsService
+    let service: DinnerStatusService
     let groupId: UUID
     var now: () -> Date = { Date() }
     
     init(
-        service: UpsertDinnerStatutsService,
+        service: DinnerStatusService,
         groupId: UUID,
         now: @escaping () -> Date = { Date() }
     ) {
@@ -32,7 +32,7 @@ struct NotificationReducer {
     func run(_ effect: NotificationEffect) async throws -> DinnerStatus? {
         switch effect {
         case .load:
-            return try await service.repository.fetch(groupId: groupId, date: now())  // TODO: serviceから取るように修正
+            return try await service.loadDinnerStatus(groupId: groupId, date: now())
         }
     }
     
