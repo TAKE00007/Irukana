@@ -19,7 +19,7 @@ private struct DynamicKey: CodingKey {
 
 
 struct DinnerStatus: Identifiable, Codable {
-    @DocumentID var id: String? //groups/{groupId}/dinners/{yyyy-MM-dd}
+    @DocumentID var id: String? // {groupId}_{yyyy-MM-dd}
     let groupId: UUID
     let day: Date
     var answers: [UUID : DinnerAnswer]
