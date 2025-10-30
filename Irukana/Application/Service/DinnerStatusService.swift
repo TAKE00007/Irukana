@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct UpsertDinnerStatutsService {
+struct DinnerStatusService {
     let repository: DinnerStatusRepository
     
     func upsertDinnerStatus(groupId: UUID, date: Date, userId: UUID, isYes: Bool) async throws {

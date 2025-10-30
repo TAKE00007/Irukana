@@ -22,13 +22,13 @@ final class Session: ObservableObject {
 
 struct AppDependencies {
     let dinnerRepository: DinnerStatusRepository
-    let dinnerService: UpsertDinnerStatutsService
+    let dinnerService: DinnerStatusService
     
     static func live() -> AppDependencies {
         let dinnerRepository = DinnerStatusRepositoryImp()
         return .init(
             dinnerRepository: dinnerRepository,
-            dinnerService: UpsertDinnerStatutsService(repository: dinnerRepository)
+            dinnerService: DinnerStatusService(repository: dinnerRepository)
         )
     }
 }

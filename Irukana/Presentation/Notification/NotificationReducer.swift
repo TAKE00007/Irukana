@@ -8,12 +8,12 @@
 import Foundation
 
 struct NotificationReducer {
-    let service: UpsertDinnerStatutsService
+    let service: DinnerStatusService
     let groupId: UUID
     var now: () -> Date = { Date() }
     
     init(
-        service: UpsertDinnerStatutsService,
+        service: DinnerStatusService,
         groupId: UUID,
         now: @escaping () -> Date = { Date() }
     ) {
