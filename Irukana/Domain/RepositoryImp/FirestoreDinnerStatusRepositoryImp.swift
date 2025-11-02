@@ -8,7 +8,7 @@
 import Foundation
 import FirebaseFirestore
 
-final class DinnerStatusRepositoryImp: DinnerStatusRepository {
+final class FirestoreDinnerStatusRepositoryImp: DinnerStatusRepository {
     private let db = Firestore.firestore()
     private var col: CollectionReference { db.collection("dinnerStatuses") }
     
