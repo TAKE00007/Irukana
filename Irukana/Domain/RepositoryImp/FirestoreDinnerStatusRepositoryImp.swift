@@ -17,12 +17,14 @@ final class FirestoreDinnerStatusRepositoryImp: DinnerStatusRepository {
         let id = makeIdentifier(groupId: groupId, date: date)
         let ref = col.document(id)
         
-        let status = DinnerStatus(
+        let dinnerStatus = DinnerStatus(
             id: id,
             groupId: groupId,
             day: FormatterStore.startOfDay(date),
             answers: [userId: answer]
         )
+        
+        let status = dinnerStatus.toDoc(id: id)
         
         try ref.setData(from: status, merge: true)
     }
@@ -32,8 +34,9 @@ final class FirestoreDinnerStatusRepositoryImp: DinnerStatusRepository {
         let snap = try await col.document(id).getDocument()
         guard snap.exists else { return nil }
 
-        let status = try snap.data(as: DinnerStatus.self)
-        return status
+        let status = try snap.data(as: DinnerStatusDoc.self)
+        
+        return status.toDomain()
     }
     
     func fetchMonth(groupId: UUID, anyDayInMonth: Date) async throws -> [DinnerStatus] {
@@ -46,7 +49,7 @@ final class FirestoreDinnerStatusRepositoryImp: DinnerStatusRepository {
             .order(by: "day", descending: false)
             .getDocuments()
         
-        return try reponse.documents.compactMap { try $0.data(as: DinnerStatus.self) }
+        return try reponse.documents.compactMap { try $0.data(as: DinnerStatusDoc.self).toDomain() }
     }
     
     func makeIdentifier(groupId: UUID, date: Date) -> String {
