@@ -30,7 +30,7 @@ final class FirestoreDinnerStatusRepositoryImp: DinnerStatusRepository {
     }
     
     func fetch(groupId: UUID, date: Date) async throws -> DinnerStatus? {
-        let id = makeIdentifier(groupId: groupId, date: date)
+        let id = makeIdentifier(groupId: groupId, date: FormatterStore.startOfDay(date))
         let snap = try await col.document(id).getDocument()
         guard snap.exists else { return nil }
 
