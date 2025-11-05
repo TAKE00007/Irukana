@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import FirebaseFirestore
 
 enum DinnerAnswer: String, Codable { case unknown, need, noneed }
 
@@ -19,7 +18,8 @@ private struct DynamicKey: CodingKey {
 
 
 struct DinnerStatus: Identifiable, Codable {
-    @DocumentID var id: String? // {groupId}_{yyyy-MM-dd}
+    // @DocumentID外すとRepositoryImpでDinnerStatusでラップできなくなる（書き込みの時)
+    var id: String? // {groupId}_{yyyy-MM-dd}
     let groupId: UUID
     let day: Date
     var answers: [UUID : DinnerAnswer]

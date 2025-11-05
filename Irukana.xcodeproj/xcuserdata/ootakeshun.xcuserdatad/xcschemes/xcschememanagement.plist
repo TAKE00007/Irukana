@@ -6,8 +6,33 @@
 	<dict>
 		<key>Irukana.xcscheme_^#shared#^_</key>
 		<dict>
+			<key>isShown</key>
+			<true/>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
+		<key>Promises (Playground).xcscheme</key>
+		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>220A5AD72E9A39FA0095E3EF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>220A5AE42E9A39FF0095E3EF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>220A5AEE2E9A3A000095E3EF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>

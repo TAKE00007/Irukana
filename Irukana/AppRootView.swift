@@ -7,8 +7,10 @@
 
 import SwiftUI
 import Combine
+import SwiftData
 
 enum AppTab: Hashable { case schedule, notification, setting, add }
+enum DataStoreKind { case firestore, swiftData }
 
 final class Session: ObservableObject {
     @Published var currentGroupId: UUID
@@ -24,21 +26,31 @@ struct AppDependencies {
     let dinnerRepository: DinnerStatusRepository
     let dinnerService: DinnerStatusService
     
-    static func live() -> AppDependencies {
-        let dinnerRepository = DinnerStatusRepositoryImp()
+    static func make(kind: DataStoreKind) -> AppDependencies {
+        let container = try! ModelContainer(for: DinnerStatusSD.self)
+        let repository: DinnerStatusRepository
+        switch kind {
+        case .firestore: repository = FirestoreDinnerStatusRepositoryImp()
+        case .swiftData: repository = SwiftDataDinnerStatusRepositoryImp(context: ModelContext(container))
+        }
         return .init(
-            dinnerRepository: dinnerRepository,
-            dinnerService: DinnerStatusService(repository: dinnerRepository)
+            dinnerRepository: repository,
+            dinnerService: .init(repository: repository)
         )
     }
 }
 
 struct AppRootView: View {
+    #if DEBUG
+    @State private var dependencies = AppDependencies.make(kind: .swiftData)
+    #else
+    @State private var dependencies = AppDependencies.make(kind: .firestore)
+    #endif
+    
     @State private var selected: AppTab = .schedule
     @State private var lastTab: AppTab = .schedule
     @State private var isPresented = false
     
-    @State private var dependencies = AppDependencies.live()
     // テストようにUUIDをここで生成する
     @StateObject private var session = Session(
         currentGroupId: UUID(),

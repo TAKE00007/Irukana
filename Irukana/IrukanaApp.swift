@@ -8,6 +8,16 @@
 import SwiftUI
 import FirebaseCore
 
+#if DEBUG
+@main
+struct IrukanaApp: App {
+    var body: some Scene {
+        WindowGroup {
+            AppRootView()
+        }
+    }
+}
+#else
 class AppDelegate: NSObject, UIApplicationDelegate {
   func application(_ application: UIApplication,
                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
@@ -26,3 +36,4 @@ struct IrukanaApp: App {
         }
     }
 }
+#endif
