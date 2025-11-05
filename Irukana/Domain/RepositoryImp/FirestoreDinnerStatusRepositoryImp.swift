@@ -14,7 +14,7 @@ final class FirestoreDinnerStatusRepositoryImp: DinnerStatusRepository {
     
     
     func upsertAnswer(groupId: UUID, date: Date, userId: UUID, answer: DinnerAnswer) async throws {
-        let id = makeIdentifier(groupId: groupId, date: date)
+        let id = makeIdentifier(groupId: groupId, date: FormatterStore.startOfDay(date))
         let ref = col.document(id)
         
         let dinnerStatus = DinnerStatus(
