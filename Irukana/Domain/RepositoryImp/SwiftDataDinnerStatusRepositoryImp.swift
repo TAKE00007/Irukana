@@ -15,7 +15,13 @@ final class SwiftDataDinnerStatusRepositoryImp: DinnerStatusRepository {
     func upsertAnswer(groupId: UUID, date: Date, userId: UUID, answer: DinnerAnswer) async throws {
         let id = makeIdentifier(groupId: groupId, date: date)
         
-        let dinnerStatusSD = try fetchAsSD(by: id) ?? DinnerStatus(id: id, groupId: groupId, day: FormatterStore.startOfDay(date), answers: [userId: answer]).toSwiftData()
+        let dinnerStatusSD: DinnerStatusSD
+        if let response = try fetchAsSD(by: id) {
+            dinnerStatusSD = response
+        } else {
+            dinnerStatusSD = DinnerStatus(id: id, groupId: groupId, day: FormatterStore.startOfDay(date), answers: [userId: answer]).toSwiftData(id: id)
+            context.insert(dinnerStatusSD)
+        }
         
         var answers = AnswerCodec.decode(dinnerStatusSD.answerData)
         answers[userId] = answer
