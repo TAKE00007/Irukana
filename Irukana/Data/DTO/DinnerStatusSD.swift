@@ -58,16 +58,12 @@ extension DinnerStatusSD {
 }
 
 extension DinnerStatus {
-    func toSwiftData() -> DinnerStatusSD {
+    func toSwiftData(id: String? = nil) -> DinnerStatusSD {
         let encoded = AnswerCodec.encode(answers)
-        let compositeId = "\(groupId.uuidString)_\(day.formatted(FormatterStore.yyyyMMddDashStyle))"
+        let compositeId = id ?? "\(groupId.uuidString)_\(FormatterStore.startOfDay(day).formatted(FormatterStore.yyyyMMddDashStyle))"
+        let dinnerStatusSD = DinnerStatusSD(compositeId: compositeId, groupId: groupId.uuidString, date: day, answerData: encoded)
 
-        return DinnerStatusSD(
-            compositeId: compositeId,
-            groupId: groupId.uuidString,
-            date: day,
-            answerData: encoded
-        )
+        return dinnerStatusSD
     }
 }
 
