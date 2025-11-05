@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Combine
+import SwiftData
 
 enum AppTab: Hashable { case schedule, notification, setting, add }
 enum DataStoreKind { case firestore, swiftData }
@@ -26,10 +27,11 @@ struct AppDependencies {
     let dinnerService: DinnerStatusService
     
     static func make(kind: DataStoreKind) -> AppDependencies {
+        let container = try! ModelContainer(for: DinnerStatusSD.self)
         let repository: DinnerStatusRepository
         switch kind {
         case .firestore: repository = FirestoreDinnerStatusRepositoryImp()
-        case .swiftData: repository = fatalError() as! any DinnerStatusRepository /*SwiftDataDinnerStatusRepositoryImp()*/
+        case .swiftData: repository = SwiftDataDinnerStatusRepositoryImp(context: ModelContext(container))
         }
         return .init(
             dinnerRepository: repository,
@@ -39,7 +41,7 @@ struct AppDependencies {
 }
 
 struct AppRootView: View {
-    #if DEMO
+    #if DEBUG
     @State private var dependencies = AppDependencies.make(kind: .swiftData)
     #else
     @State private var dependencies = AppDependencies.make(kind: .firestore)
