@@ -8,6 +8,13 @@
 import SwiftUI
 
 struct CalendarView: View {
+    private var reducer: CalendarReducer
+    @State private var state: CalendarState?
+    
+    init(reducer: CalendarReducer) {
+        self.reducer = reducer
+    }
+    
     // 日本向けのカレンダー設定
     private var calendar: Calendar = {
         var cal = Calendar(identifier: .gregorian)
@@ -168,6 +175,6 @@ private struct MonthVisibleMarker: View {
     }
 }
 
-#Preview {
-    CalendarView()
-}
+//#Preview {
+//    CalendarView()
+//}
