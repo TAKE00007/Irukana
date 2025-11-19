@@ -12,11 +12,7 @@ struct NotificationReducer {
     let groupId: UUID
     var now: () -> Date = { Date() }
     
-    init(
-        service: DinnerStatusService,
-        groupId: UUID,
-        now: @escaping () -> Date = { Date() }
-    ) {
+    init(service: DinnerStatusService, groupId: UUID, now: @escaping () -> Date = { Date() }) {
         self.service = service
         self.groupId = groupId
         self.now = now

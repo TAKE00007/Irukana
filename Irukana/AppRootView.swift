@@ -60,7 +60,10 @@ struct AppRootView: View {
     var body: some View {
         TabView(selection: $selected) {
             NavigationStack {
-                CalendarView()
+                CalendarView(reducer: CalendarReducer(
+                    service: dependencies.dinnerService,
+                    groupId: session.currentGroupId, now: { Date() }
+                ))
             }
             .tabItem { Label("予定", systemImage: "calendar")}
             .tag(AppTab.schedule)

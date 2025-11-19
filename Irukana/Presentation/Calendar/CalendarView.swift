@@ -8,6 +8,13 @@
 import SwiftUI
 
 struct CalendarView: View {
+    private var reducer: CalendarReducer
+    @State private var state = CalendarState()
+    
+    init(reducer: CalendarReducer) {
+        self.reducer = reducer
+    }
+    
     // 日本向けのカレンダー設定
     private var calendar: Calendar = {
         var cal = Calendar(identifier: .gregorian)
@@ -41,8 +48,7 @@ struct CalendarView: View {
                     
                         let monthStart = calendar.date(byAdding: .month, value: offset, to: baseMonthStart)!
                         
-                        // TODO: 1日をComponent化する
-                        MonthGrid(monthStart: monthStart, calendar: calendar)
+                        MonthGrid(monthStart: monthStart, calendar: calendar, dinnerStatus: state.dinnerStatus)
                             .id(monthStart)
                             .overlay {
                                 MonthVisibleMarker(monthStart: monthStart).frame(height: 0)
@@ -57,6 +63,23 @@ struct CalendarView: View {
                 }
             }
             .coordinateSpace(name: "scroll")
+            .task {
+                if let effect = reducer.reduce(state: &state, action: .onAppear) {
+                    do {
+                        if let dinnerStatus = try await reducer.run(effect) {
+                            _ = reducer.reduce(
+                                state: &state,
+                                action: .dinnerStatusResponse(.success(dinnerStatus))
+                            )
+                        }
+                    } catch {
+                        _ = reducer.reduce(
+                            state: &state,
+                            action: .dinnerStatusResponse(.failure(error))
+                        )
+                    }
+                }
+            }
             .onAppear {
                 proxy.scrollTo(baseMonthStart, anchor: .top)
                 visibleMonthStart = baseMonthStart
@@ -104,6 +127,7 @@ private struct WeekdayHeader: View {
 private struct MonthGrid: View {
     let monthStart: Date
     let calendar: Calendar
+    let dinnerStatus: DinnerStatus?
     
     private var columns: [GridItem] { Array(repeating: .init(.flexible()), count: 7) }
     
@@ -115,7 +139,10 @@ private struct MonthGrid: View {
             }
             
             ForEach(1...numberOfDays, id: \.self) { day in
-                DayCell(day: day)
+                DayCell(
+                    day: day,
+                    answers: dinnerStatus?.answers ?? [:]
+                )
             }
         }
     }
@@ -134,10 +161,29 @@ private struct MonthGrid: View {
 
 private struct DayCell: View {
     let day: Int
+    let answers: [UUID: DinnerAnswer]
     
     var body: some View {
-        Text("\(day)")
-            .frame(maxWidth: .infinity, minHeight: 100)
+        VStack {
+            Text("\(day)")
+                .frame(maxWidth: .infinity, minHeight: 100)
+            if day == 1 {
+                ForEach(answers.keys.sorted(by: { $0.uuidString < $1.uuidString }), id: \.self) { uuid in
+                    let answer = answers[uuid] ?? .unknown
+                    Text(label(for: answer))
+                        .bold()
+                        .padding()
+                }
+            }
+        }
+    }
+}
+
+private func label(for answer: DinnerAnswer) -> String {
+    switch answer {
+    case .need: return "いる"
+    case .noneed: return "いらない"
+    case .unknown: return "未回答"
     }
 }
 
@@ -168,6 +214,6 @@ private struct MonthVisibleMarker: View {
     }
 }
 
-#Preview {
-    CalendarView()
-}
+//#Preview {
+//    CalendarView()
+//}
