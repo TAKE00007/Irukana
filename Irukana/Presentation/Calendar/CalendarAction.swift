@@ -9,6 +9,7 @@ import Foundation
 
 enum CalendarAction {
     case onAppear
+    case dinnerStatusResponse(Result<DinnerStatus, Error>)
 }
 
 enum CalendarEffect {

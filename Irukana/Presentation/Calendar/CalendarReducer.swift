@@ -18,17 +18,28 @@ struct CalendarReducer {
         self.now = now
     }
     
-    func reduce(state: inout CalendarState?, action: CalendarAction) -> CalendarEffect? {
+    func reduce(state: inout CalendarState, action: CalendarAction) -> CalendarEffect? {
         switch action {
         case .onAppear:
+            state.isLoading = true
             return .load
+        case let .dinnerStatusResponse(.success(dinnerStatus)):
+            state.isLoading = false
+            state.dinnerStatus = dinnerStatus
+            state.errorMessage = nil
+            return nil
+        case let .dinnerStatusResponse(.failure(error)):
+            state.isLoading = false
+            state.errorMessage = error.localizedDescription
+            return nil
         }
     }
     
     func run(_ effect: CalendarEffect) async throws -> DinnerStatus? {
         switch effect {
         case .load:
-            return try await service.loadDinnerStatus(groupId: groupId, date: now())
+            let response = try await service.loadDinnerStatus(groupId: groupId, date: now())
+            return response
         }
     }
 }

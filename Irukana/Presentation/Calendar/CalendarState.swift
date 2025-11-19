@@ -8,5 +8,7 @@
 import Foundation
 
 struct CalendarState {
-    var dinnerStatuses: [DinnerStatus]
+    var dinnerStatus: DinnerStatus? = nil
+    var isLoading: Bool = false
+    var errorMessage: String? = nil
 }
