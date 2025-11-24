@@ -22,30 +22,8 @@ final class Session: ObservableObject {
     }
 }
 
-struct AppDependencies {
-    let dinnerRepository: DinnerStatusRepository
-    let dinnerService: DinnerStatusService
-    
-    static func make(kind: DataStoreKind) -> AppDependencies {
-        let container = try! ModelContainer(for: DinnerStatusSD.self)
-        let repository: DinnerStatusRepository
-        switch kind {
-        case .firestore: repository = FirestoreDinnerStatusRepositoryImp()
-        case .swiftData: repository = SwiftDataDinnerStatusRepositoryImp(context: ModelContext(container))
-        }
-        return .init(
-            dinnerRepository: repository,
-            dinnerService: .init(repository: repository)
-        )
-    }
-}
-
 struct AppRootView: View {
-    #if DEBUG
-    @State private var dependencies = AppDependencies.make(kind: .swiftData)
-    #else
-    @State private var dependencies = AppDependencies.make(kind: .firestore)
-    #endif
+    @Environment(\.injected) private var container
     
     @State private var selected: AppTab = .schedule
     @State private var lastTab: AppTab = .schedule
@@ -61,7 +39,7 @@ struct AppRootView: View {
         TabView(selection: $selected) {
             NavigationStack {
                 CalendarView(reducer: CalendarReducer(
-                    service: dependencies.dinnerService,
+                    service: container.dinnerService,
                     groupId: session.currentGroupId, now: { Date() }
                 ))
             }
@@ -70,7 +48,7 @@ struct AppRootView: View {
             
             NavigationStack {
                 NotificationView(reducer: NotificationReducer(
-                    service: dependencies.dinnerService,
+                    service: container.dinnerService,
                     groupId: session.currentGroupId)
                 )
             }
@@ -97,7 +75,7 @@ struct AppRootView: View {
 
         .sheet(isPresented: $isPresented) {
             let reducer = AddReducer(
-                service: dependencies.dinnerService,
+                service: container.dinnerService,
                 groupId: session.currentGroupId,
                 userId: session.currentUserId,
                 now: { Date() }
