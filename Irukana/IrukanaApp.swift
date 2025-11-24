@@ -7,33 +7,42 @@
 
 import SwiftUI
 import FirebaseCore
-
-#if DEBUG
-@main
-struct IrukanaApp: App {
-    var body: some Scene {
-        WindowGroup {
-            AppRootView()
-        }
-    }
-}
-#else
-class AppDelegate: NSObject, UIApplicationDelegate {
-  func application(_ application: UIApplication,
-                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-    FirebaseApp.configure()
-
-    return true
-  }
-}
+import SwiftData
 
 @main
 struct IrukanaApp: App {
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    
+    let container: DIContainer
+    
+    init() {
+        #if DEBUG
+        let container = try! ModelContainer(for: DinnerStatusSD.self)
+        let context = ModelContext(container)
+        
+        let authRepository = FirestoreAuthRepositoryImp()
+        let dinnerRepository = SwiftDataDinnerStatusRepositoryImp(context: context)
+        
+        self.container = DIContainer(
+            authService: AuthService(repository: authRepository),
+            dinnerService: DinnerStatusService(repository: dinnerRepository)
+        )
+        
+        #else
+        FirebaseApp.configure()
+        
+        let authRepository = FirestoreAuthRepositoryImp()
+        let dinnerRepository = FirestoreDinnerStatusRepositoryImp()
+        
+        self.container = DIContainer(
+            authService: AuthService(repository: authRepository),
+            dinnerService: DinnerStatusService(repository: dinnerRepository)
+        )
+        #endif
+    }
     var body: some Scene {
         WindowGroup {
             AppRootView()
+                .environment(\.injected, container)
         }
     }
 }
-#endif
