@@ -26,7 +26,7 @@ struct LoginReducer {
             state.isLoading = false
             state.user = user
             return nil
-        case let.signUpResponse(.failure(error)):
+        case let .signUpResponse(.failure(error)):
             state.isLoading = false
             state.errorMessage = error.localizedDescription
             return nil
