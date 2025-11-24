@@ -45,7 +45,7 @@ final class FirestoreAuthRepositoryImp: AuthRepository {
         // nameが重複してないか
         let snap = try await col.whereField("name", isEqualTo: name).getDocuments()
         guard snap.documents.isEmpty else {
-            throw AuthError.invalidUserData
+            throw AuthError.nameAlreadyExist
         }
                 
         let user = User(id: id, name: name, passwordHash: hash, birthday: birthday)

@@ -11,6 +11,7 @@ enum AuthError: Error {
     case userNotFound
     case invalidPassword
     case invalidUserData
+    case nameAlreadyExist
 }
 
 extension AuthError {
@@ -22,6 +23,8 @@ extension AuthError {
             return "パスワードが一致しません"
         case .invalidUserData:
             return "ユーザーデータが不正です"
+        case .nameAlreadyExist:
+            return "同じ名前のユーザーが存在しています"
         }
     }
 }
