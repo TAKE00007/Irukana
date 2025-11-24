@@ -20,20 +20,17 @@ final class FirestoreAuthRepositoryImp: AuthRepository {
         let snap = try await col.whereField("name", isEqualTo: name).getDocuments()
         
         guard let doc = snap.documents.first else {
-            // TODO: エラーは後で書く
-            throw NSError()
+            throw AuthError.userNotFound
         }
         
         let userDoc = try doc.data(as: UserDoc.self)
         
         guard userDoc.passwordHash == hash else {
-            // TODO: エラーは後でかく
-            throw NSError()
+            throw AuthError.invalidPassword
         }
         
         guard let user = userDoc.toDomain() else {
-            // TODO: エラーは後でかく
-            throw NSError()
+            throw AuthError.invalidUserData
         }
         
         return user
@@ -47,16 +44,12 @@ final class FirestoreAuthRepositoryImp: AuthRepository {
         
         // nameが重複してないか
         let snap = try await col.whereField("name", isEqualTo: name).getDocuments()
-        
         guard snap.documents.isEmpty else {
-            // TODO: エラーは後でかく
-            throw NSError()
+            throw AuthError.invalidUserData
         }
                 
         let user = User(id: id, name: name, passwordHash: hash, birthday: birthday)
-        
         let userDoc = user.toDoc(id: id)
-        
         try ref.setData(from: userDoc)
         
         return user
