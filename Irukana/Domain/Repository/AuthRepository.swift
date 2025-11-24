@@ -6,3 +6,8 @@
 //
 
 import Foundation
+
+protocol AuthRepository {
+    func login(name: String, password: String) async throws -> User
+    func signUp(name: String, password: String, birthday: Date?) async throws -> User
+}
