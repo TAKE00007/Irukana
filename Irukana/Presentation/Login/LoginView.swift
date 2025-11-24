@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct LoginView: View {
+    @Environment(\.injected) private var container
     private let reducer: LoginReducer
     @State private var state = LoginState()
     @State private var isPresented = false
@@ -30,7 +31,7 @@ struct LoginView: View {
                 )
             }
             .sheet(isPresented: $isPresented) {
-                SignUpView(state: $state) {
+                SignUpView(reducer: reducer, state: $state) {
                     isPresented = false
                 }
             }
@@ -39,6 +40,7 @@ struct LoginView: View {
 }
 
 struct SignUpView: View {
+    let reducer: LoginReducer
     @Binding var state: LoginState
     let onClose: () -> Void
 
@@ -92,7 +94,13 @@ struct SignUpView: View {
                 Spacer()
                 
                 CalendarButton(title: "保存", variant: .primary) {
-                    onClose()
+                    Task {
+                        if let effect = reducer.reduce(state: &state, action: .tapSignUp) {
+                            let responseAction = await reducer.run(effect)
+                            _ = reducer.reduce(state: &state, action: responseAction)
+                        }
+                        onClose()
+                    }
                 }
             }
             .padding(.horizontal, 16)

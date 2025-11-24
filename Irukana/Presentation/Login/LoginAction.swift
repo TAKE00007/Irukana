@@ -6,3 +6,15 @@
 //
 
 import Foundation
+
+enum LoginAction {
+    case tapSignUp
+    case tapLogin
+    case signUpResponse(Result<User, Error>)
+    case loginResponse(Result<User, Error>)
+}
+
+enum LoginEffect {
+    case signUp(name: String, password: String, birthday: Date)
+    case login(name: String, password: String)
+}
