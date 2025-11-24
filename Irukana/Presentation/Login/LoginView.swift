@@ -8,7 +8,14 @@
 import SwiftUI
 
 struct LoginView: View {
+    private let reducer: LoginReducer
+    @State private var state = LoginState()
     @State private var isPresented = false
+    
+    init(reducer: LoginReducer) {
+        self.reducer = reducer
+    }
+    
     var body: some View {
         NavigationStack {
             VStack {
@@ -23,7 +30,7 @@ struct LoginView: View {
                 )
             }
             .sheet(isPresented: $isPresented) {
-                SignUpView() {
+                SignUpView(state: $state) {
                     isPresented = false
                 }
             }
@@ -32,11 +39,9 @@ struct LoginView: View {
 }
 
 struct SignUpView: View {
+    @Binding var state: LoginState
     let onClose: () -> Void
-    
-    @State private var name = ""
-    @State private var birthday = Date()
-    @State private var password = ""
+
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 10) {
@@ -52,7 +57,7 @@ struct SignUpView: View {
                     .padding(.bottom, 30)
                 
                 Text("名前")
-                TextField("必須", text: $name)
+                TextField("必須", text: $state.name)
                     .padding(10)
                     .background(Color(.textField))
                     .frame(maxWidth: .infinity, minHeight:  20)
@@ -67,13 +72,13 @@ struct SignUpView: View {
                 Text("生年月日")
                 DatePicker(
                     "日付を選択(任意)",
-                    selection: $birthday,
+                    selection: $state.birthday,
                     displayedComponents: .date
                 )
                 .padding(.bottom, 5)
                 
                 Text("パスワード")
-                SecureField("必須", text: $password)
+                SecureField("必須", text: $state.password)
                     .padding(10)
                     .background(Color(.textField))
                     .frame(maxWidth: .infinity, minHeight:  20)
@@ -95,8 +100,4 @@ struct SignUpView: View {
             .padding()
         }
     }
-}
-
-#Preview {
-    LoginView()
 }
