@@ -15,6 +15,9 @@ struct LoginState {
     var user: User? = nil
     var isLoading: Bool = false
     var errorMessage: String? = nil
+    
+    var isSignUp: Bool = false
+    var isLogin: Bool = false
 }
 
 

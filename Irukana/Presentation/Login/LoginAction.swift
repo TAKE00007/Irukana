@@ -8,6 +8,11 @@
 import Foundation
 
 enum LoginAction {
+    case tapSignUpButton
+    case tapLoginButton
+    case dismissSignUp
+    case dismissLoginButton
+    
     case tapSignUp
     case tapLogin
     case signUpResponse(Result<User, Error>)

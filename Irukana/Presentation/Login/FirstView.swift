@@ -9,14 +9,12 @@ import SwiftUI
 
 struct FirstView: View {
     @Environment(\.injected) private var container
-    private let reducer: LoginReducer
+//    private let reducer: LoginReducer
     @State private var state = LoginState()
-    @State private var isSignUp = false
-    @State private var isLogin = false
-    
-    init(reducer: LoginReducer) {
-        self.reducer = reducer
-    }
+    private var reducer: LoginReducer { LoginReducer(service: container.authService) }
+//    init(reducer: LoginReducer) {
+//        self.reducer = reducer
+//    }
     
     var body: some View {
         NavigationStack {
@@ -25,21 +23,21 @@ struct FirstView: View {
                     .resizable()
                     .scaledToFit()
                 CalendarButton(title: "はじめる", variant: .outline) {
-                    isSignUp = true
+                    _ = reducer.reduce(state: &state, action: .tapSignUpButton)
                 }
                     .padding(.bottom, 10)
                 CalendarButton(title: "ログイン", variant: .primary) {
-                    isLogin = true
+                    _ = reducer.reduce(state: &state, action: .tapLoginButton)
                 }
             }
-            .sheet(isPresented: $isSignUp) {
+            .sheet(isPresented: $state.isSignUp) {
                 SignUpView(reducer: reducer, state: $state) {
-                    isSignUp = false
+                    _ = reducer.reduce(state: &state, action: .dismissSignUp)
                 }
             }
-            .sheet(isPresented: $isLogin) {
+            .sheet(isPresented: $state.isLogin) {
                 LoginView(reducer: reducer, state: $state) {
-                    isLogin = false
+                    _ = reducer.reduce(state: &state, action: .dismissLoginButton)
                 }
             }
         }
@@ -88,6 +86,8 @@ struct LoginView: View {
                 }
                 
             }
+            .padding()
+            .navigationTitle("ログイン")
         }
     }
 }

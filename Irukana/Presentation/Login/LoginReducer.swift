@@ -38,6 +38,18 @@ struct LoginReducer {
             state.isLoading = false
             state.errorMessage = error.localizedDescription
             return nil
+        case .tapSignUpButton:
+            state.isSignUp = true
+            return nil
+        case .tapLoginButton:
+            state.isLogin = true
+            return nil
+        case .dismissSignUp:
+            state.isSignUp = false
+            return nil
+        case .dismissLoginButton:
+            state.isLogin = false
+            return nil
         }
     }
     
