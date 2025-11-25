@@ -7,11 +7,11 @@
 
 import SwiftUI
 
-struct FirstView: View {
+struct AuthRootView: View {
     @Environment(\.injected) private var container
 //    private let reducer: LoginReducer
-    @State private var state = LoginState()
-    private var reducer: LoginReducer { LoginReducer(service: container.authService) }
+    @State private var state = AuthRootState()
+    private var reducer: AuthRootReducer { AuthRootReducer(service: container.authService) }
 //    init(reducer: LoginReducer) {
 //        self.reducer = reducer
 //    }
@@ -45,8 +45,8 @@ struct FirstView: View {
 }
 
 struct LoginView: View {
-    let reducer: LoginReducer
-    @Binding var state: LoginState
+    let reducer: AuthRootReducer
+    @Binding var state: AuthRootState
     let onClose: () -> Void
     var body: some View {
         NavigationStack {
@@ -93,8 +93,8 @@ struct LoginView: View {
 }
 
 struct SignUpView: View {
-    let reducer: LoginReducer
-    @Binding var state: LoginState
+    let reducer: AuthRootReducer
+    @Binding var state: AuthRootState
     let onClose: () -> Void
 
     var body: some View {

@@ -7,14 +7,14 @@
 
 import Foundation
 
-struct LoginReducer {
+struct AuthRootReducer {
     let service: AuthService
     
     init(service: AuthService) {
         self.service = service
     }
     
-    func reduce(state: inout LoginState, action: LoginAction) -> LoginEffect? {
+    func reduce(state: inout AuthRootState, action: AuthRootAction) -> AuthRootEffect? {
         switch action {
         case .tapSignUp:
             state.isLoading = true
@@ -53,7 +53,7 @@ struct LoginReducer {
         }
     }
     
-    func run(_ effect: LoginEffect) async -> LoginAction {
+    func run(_ effect: AuthRootEffect) async -> AuthRootAction {
         switch effect {
         case let .signUp(name, password, birthday):
             do {

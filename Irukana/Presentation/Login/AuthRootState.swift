@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct LoginState {
+struct AuthRootState {
     var name: String = ""
     var birthday: Date = Date()
     var password: String = ""
@@ -19,5 +19,6 @@ struct LoginState {
     var isSignUp: Bool = false
     var isLogin: Bool = false
 }
+
 
 
