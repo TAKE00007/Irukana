@@ -7,11 +7,12 @@
 
 import SwiftUI
 
-struct LoginView: View {
+struct FirstView: View {
     @Environment(\.injected) private var container
     private let reducer: LoginReducer
     @State private var state = LoginState()
-    @State private var isPresented = false
+    @State private var isSignUp = false
+    @State private var isLogin = false
     
     init(reducer: LoginReducer) {
         self.reducer = reducer
@@ -24,16 +25,68 @@ struct LoginView: View {
                     .resizable()
                     .scaledToFit()
                 CalendarButton(title: "はじめる", variant: .outline) {
-                    isPresented = true
+                    isSignUp = true
                 }
                     .padding(.bottom, 10)
-                CalendarButton(title: "ログイン", variant: .primary, action: {print("")}
-                )
-            }
-            .sheet(isPresented: $isPresented) {
-                SignUpView(reducer: reducer, state: $state) {
-                    isPresented = false
+                CalendarButton(title: "ログイン", variant: .primary) {
+                    isLogin = true
                 }
+            }
+            .sheet(isPresented: $isSignUp) {
+                SignUpView(reducer: reducer, state: $state) {
+                    isSignUp = false
+                }
+            }
+            .sheet(isPresented: $isLogin) {
+                LoginView(reducer: reducer, state: $state) {
+                    isLogin = false
+                }
+            }
+        }
+    }
+}
+
+struct LoginView: View {
+    let reducer: LoginReducer
+    @Binding var state: LoginState
+    let onClose: () -> Void
+    var body: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 10) {
+                Text("名前")
+                TextField("必須", text: $state.name)
+                    .padding(10)
+                    .background(Color(.textField))
+                    .frame(maxWidth: .infinity, minHeight:  20)
+                    .cornerRadius(10)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color(.textField), lineWidth: 1.0)
+                    )
+                    .padding(.bottom, 5)
+                
+                Text("パスワード")
+                SecureField("必須", text: $state.password)
+                    .padding(10)
+                    .background(Color(.textField))
+                    .frame(maxWidth: .infinity, minHeight:  20)
+                    .cornerRadius(10)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color(.textField), lineWidth: 1.0)
+                    )
+                    .padding(.bottom, 5)
+                
+                CalendarButton(title: "ログイン", variant: .primary) {
+                    Task {
+                        if let effect = reducer.reduce(state: &state, action: .tapLogin) {
+                            let responseAction = await reducer.run(effect)
+                            _ = reducer.reduce(state: &state, action: responseAction)
+                        }
+                        onClose()
+                    }
+                }
+                
             }
         }
     }
