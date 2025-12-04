@@ -20,5 +20,8 @@ struct AuthRootState {
     var isLogin: Bool = false
 }
 
+enum AuthRootRoute: Hashable {
+    case root
+}
 
 
