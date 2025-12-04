@@ -18,6 +18,8 @@ struct AuthRootState {
     
     var isSignUp: Bool = false
     var isLogin: Bool = false
+    
+    var loginSucceeded: Bool = false
 }
 
 enum AuthRootRoute: Hashable {
