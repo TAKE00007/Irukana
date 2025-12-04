@@ -7,14 +7,19 @@
 
 import Foundation
 
-enum LoginAction {
+enum AuthRootAction {
+    case tapSignUpButton
+    case tapLoginButton
+    case dismissSignUp
+    case dismissLoginButton
+    
     case tapSignUp
     case tapLogin
     case signUpResponse(Result<User, Error>)
     case loginResponse(Result<User, Error>)
 }
 
-enum LoginEffect {
+enum AuthRootEffect {
     case signUp(name: String, password: String, birthday: Date)
     case login(name: String, password: String)
 }

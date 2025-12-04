@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct LoginState {
+struct AuthRootState {
     var name: String = ""
     var birthday: Date = Date()
     var password: String = ""
@@ -15,6 +15,13 @@ struct LoginState {
     var user: User? = nil
     var isLoading: Bool = false
     var errorMessage: String? = nil
+    
+    var isSignUp: Bool = false
+    var isLogin: Bool = false
+}
+
+enum AuthRootRoute: Hashable {
+    case root
 }
 
 
