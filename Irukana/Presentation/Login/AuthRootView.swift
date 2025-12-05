@@ -10,10 +10,13 @@ import SwiftUI
 
 struct AuthRootView: View {
     @Environment(\.injected) private var container
-    private let reducer: AuthRootReducer
+    private var reducer: AuthRootReducer { AuthRootReducer(service: container.authService) }
     @State private var state = AuthRootState()
-    init(reducer: AuthRootReducer) {
-        self.reducer = reducer
+
+    let onLoginSuccess: (User) -> Void
+    
+    init(onLoginSuccess: @escaping (User) -> Void) {
+        self.onLoginSuccess = onLoginSuccess
     }
     
     var body: some View {
@@ -35,7 +38,15 @@ struct AuthRootView: View {
             }
         }
         
-        .sheet(isPresented: $state.isLogin) {
+        .sheet(
+            isPresented: $state.isLogin,
+            onDismiss: {
+                if state.loginSucceeded, let user = state.user {
+                    onLoginSuccess(user)
+                    state.loginSucceeded = false
+                }
+            }
+        ) {
             LoginView(reducer: reducer, state: $state) {
                 _ = reducer.reduce(state: &state, action: .dismissLoginButton)
             }

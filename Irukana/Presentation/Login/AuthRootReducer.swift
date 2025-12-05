@@ -21,6 +21,7 @@ struct AuthRootReducer {
             return .signUp(name: state.name, password: state.password, birthday: state.birthday)
         case .tapLogin:
             state.isLoading = true
+            state.loginSucceeded = false
             return .login(name: state.name, password: state.password)
         case let .signUpResponse(.success(user)):
             state.isLoading = false
@@ -33,10 +34,12 @@ struct AuthRootReducer {
         case let .loginResponse(.success(user)):
             state.isLoading = false
             state.user = user
+            state.loginSucceeded = true
             return nil
         case let .loginResponse(.failure(error)):
             state.isLoading = false
             state.errorMessage = error.localizedDescription
+            state.loginSucceeded = false
             return nil
         case .tapSignUpButton:
             state.isSignUp = true

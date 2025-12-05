@@ -41,7 +41,7 @@ struct IrukanaApp: App {
     }
     var body: some Scene {
         WindowGroup {
-            AppRootView()
+            RootView()
                 .environment(\.injected, container)
         }
     }
