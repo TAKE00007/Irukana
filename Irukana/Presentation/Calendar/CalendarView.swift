@@ -164,18 +164,20 @@ private struct DayCell: View {
     let answers: [UUID: DinnerAnswer]
     
     var body: some View {
-        VStack {
+        VStack(spacing: 5) {
             Text("\(day)")
-                .frame(maxWidth: .infinity, minHeight: 100)
             if day == 1 {
                 ForEach(answers.keys.sorted(by: { $0.uuidString < $1.uuidString }), id: \.self) { uuid in
                     let answer = answers[uuid] ?? .unknown
                     Text(label(for: answer))
+                        .font(.caption2)
                         .bold()
-                        .padding()
                 }
             }
+            
+            Spacer(minLength: 0)
         }
+        .frame(maxWidth: .infinity, minHeight: 100)
     }
 }
 
