@@ -148,14 +148,19 @@ private struct DayCell: View {
                 ForEach(answers.keys.sorted(by: { $0.uuidString < $1.uuidString }), id: \.self) { uuid in
                     let answer = answers[uuid] ?? .unknown
                     Text(label(for: answer))
-                        .font(.caption2)
-                        .bold()
+                        .font(.caption)
+                        .lineLimit(1)
                 }
             }
             
             Spacer(minLength: 0)
         }
-        .frame(maxWidth: .infinity, minHeight: 100)
+        .bold()
+        .frame(
+            maxWidth: .infinity,
+            minHeight: 120,
+            maxHeight: 120,
+        )
     }
 }
 
