@@ -70,9 +70,8 @@ struct CalendarView: View {
 private struct MonthTitle: View {
     let date: Date
     var body: some View {
-        let dateString = date.formatted(.dateTime.year().month())
         HStack {
-            Text("\(dateString)")
+            Text(date.formatted(.dateTime.year().month()))
             Spacer()
         }
         .padding(.horizontal, 12)
