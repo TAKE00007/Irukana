@@ -8,20 +8,28 @@
 import Foundation
 
 struct CalendarState {
-    var dinnerStatus: DinnerStatus? = nil
-    var isLoading: Bool = false
-    var errorMessage: String? = nil
-    var visibleMonthStart: Date? = nil
     var calendar: Calendar = {
         var cal = Calendar(identifier: .gregorian)
         return cal
     }()
+    
+    // カレンダーのロードする範囲
+    let monthsBefore = 24
+    let monthsAfter = 24
+    var offsetRange: [Int] { Array(-monthsBefore...monthsAfter) }
+    
+    // カレンダーを表示するときにbaseになる
     var baseMonthStart: Date {
         let date = Date()
         let comps = calendar.dateComponents([.year, .month], from: date)
         return calendar.date(from: comps)!
     }
-    let monthsBefore = 24
-    let monthsAfter = 24
-    var offsetRange: [Int] { Array(-monthsBefore...monthsAfter) }
+    
+    // カレンダーを表示し始める月
+    var visibleMonthStart: Date? = nil
+    
+    
+    var dinnerStatus: DinnerStatus? = nil
+    var isLoading: Bool = false
+    var errorMessage: String? = nil
 }
