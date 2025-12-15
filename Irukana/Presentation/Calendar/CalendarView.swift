@@ -15,27 +15,9 @@ struct CalendarView: View {
         self.reducer = reducer
     }
     
-    // 日本向けのカレンダー設定
-    private var calendar: Calendar = {
-        var cal = Calendar(identifier: .gregorian)
-        cal.firstWeekday = 2
-        return cal
-    }()
-    
-    private let monthsBefore = 24
-    private let monthsAfter = 24
-    
-    private var baseMonthStart: Date {
-        let date = Date()
-        let comps = calendar.dateComponents([.year, .month], from: date)
-        return calendar.date(from: comps)!
-    }
-    private var offsetRange: [Int] { Array(-monthsBefore...monthsAfter) }
-    @State private var visibleMonthStart: Date = Date()
-
     var body: some View {
         VStack() {
-            MonthTitle(date: visibleMonthStart)
+            MonthTitle(date: state.visibleMonthStart ?? Date())
                 .padding(.top, 8)
             
             WeekdayHeader()
@@ -44,11 +26,11 @@ struct CalendarView: View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(spacing: 12) {
-                    ForEach(offsetRange, id: \.self) { offset in
+                    ForEach(state.offsetRange, id: \.self) { offset in
                     
-                        let monthStart = calendar.date(byAdding: .month, value: offset, to: baseMonthStart)!
+                        let monthStart = state.calendar.date(byAdding: .month, value: offset, to: state.baseMonthStart)!
                         
-                        MonthGrid(monthStart: monthStart, calendar: calendar, dinnerStatus: state.dinnerStatus)
+                        MonthGrid(monthStart: monthStart, calendar: state.calendar, dinnerStatus: state.dinnerStatus)
                             .id(monthStart)
                             .overlay {
                                 MonthVisibleMarker(monthStart: monthStart).frame(height: 0)
@@ -57,13 +39,14 @@ struct CalendarView: View {
                 }
                 .onPreferenceChange(MonthYPreference.self) { values in
                     guard let nearest = values.min(by: { abs($0.minY) < abs($1.minY) }) else { return }
-                    if visibleMonthStart != nearest.monthStart {
-                        visibleMonthStart = nearest.monthStart
+                    if state.visibleMonthStart != nearest.monthStart {
+                        state.visibleMonthStart = nearest.monthStart
                     }
                 }
             }
             .coordinateSpace(name: "scroll")
             .task {
+                proxy.scrollTo(state.baseMonthStart, anchor: .top)
                 if let effect = reducer.reduce(state: &state, action: .onAppear) {
                     do {
                         if let dinnerStatus = try await reducer.run(effect) {
@@ -79,10 +62,6 @@ struct CalendarView: View {
                         )
                     }
                 }
-            }
-            .onAppear {
-                proxy.scrollTo(baseMonthStart, anchor: .top)
-                visibleMonthStart = baseMonthStart
             }
         }
     }
