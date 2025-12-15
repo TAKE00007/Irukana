@@ -22,6 +22,7 @@ struct CalendarReducer {
         switch action {
         case .onAppear:
             state.isLoading = true
+            state.visibleMonthStart = state.baseMonthStart
             return .load
         case let .dinnerStatusResponse(.success(dinnerStatus)):
             state.isLoading = false
