@@ -30,7 +30,7 @@ struct CalendarView: View {
                     
                         let monthStart = state.calendar.date(byAdding: .month, value: offset, to: state.baseMonthStart)!
                         
-                        MonthGrid(monthStart: monthStart, calendar: state.calendar, dinnerStatus: state.dinnerStatus)
+                        MonthGrid(monthStart: monthStart, calendar: state.calendar, dinnerStatusByDay: state.dinnerStatusByDay)
                             .id(monthStart)
                             .overlay {
                                 MonthVisibleMarker(monthStart: monthStart).frame(height: 0)
@@ -49,10 +49,10 @@ struct CalendarView: View {
                 proxy.scrollTo(state.baseMonthStart, anchor: .top)
                 if let effect = reducer.reduce(state: &state, action: .onAppear) {
                     do {
-                        if let dinnerStatus = try await reducer.run(effect) {
+                        if let dinnerStatusList = try await reducer.run(effect) {
                             _ = reducer.reduce(
                                 state: &state,
-                                action: .dinnerStatusResponse(.success(dinnerStatus))
+                                action: .dinnerStatusResponse(.success(dinnerStatusList))
                             )
                         }
                     } catch {
@@ -105,7 +105,7 @@ private struct WeekdayHeader: View {
 private struct MonthGrid: View {
     let monthStart: Date
     let calendar: Calendar
-    let dinnerStatus: DinnerStatus?
+    let dinnerStatusByDay: [Date : DinnerStatus]
     
     private var columns: [GridItem] { Array(repeating: .init(.flexible()), count: 7) }
     
@@ -115,11 +115,14 @@ private struct MonthGrid: View {
                 Color.clear
                     .frame(maxWidth: .infinity, minHeight: 32)
             }
-            
             ForEach(1...numberOfDays, id: \.self) { day in
+                let date = calendar.date(bySetting: .day, value: day, of: monthStart)!
+                let key = calendar.startOfDay(for: date)
+                let status = dinnerStatusByDay[key]
+
                 DayCell(
                     day: day,
-                    answers: dinnerStatus?.answers ?? [:]
+                    answers: status?.answers ?? [:]
                 )
             }
         }
@@ -144,13 +147,11 @@ private struct DayCell: View {
     var body: some View {
         VStack(spacing: 5) {
             Text("\(day)")
-            if day == 1 {
-                ForEach(answers.keys.sorted(by: { $0.uuidString < $1.uuidString }), id: \.self) { uuid in
-                    let answer = answers[uuid] ?? .unknown
-                    Text(label(for: answer))
-                        .font(.caption)
-                        .lineLimit(1)
-                }
+            ForEach(answers.keys.sorted(by: { $0.uuidString < $1.uuidString }), id: \.self) { uuid in
+                let answer = answers[uuid] ?? .unknown
+                Text(label(for: answer))
+                    .font(.caption)
+                    .lineLimit(1)
             }
             
             Spacer(minLength: 0)
