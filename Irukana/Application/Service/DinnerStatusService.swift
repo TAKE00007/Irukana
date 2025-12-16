@@ -18,4 +18,8 @@ struct DinnerStatusService {
     func loadDinnerStatus(groupId: UUID, date: Date) async throws -> DinnerStatus? {
         return try await repository.fetch(groupId: groupId, date: date)
     }
+    
+    func loadDinnerStatusMonth(groupId: UUID, date: Date) async throws -> [DinnerStatus]? {
+        return try await repository.fetchMonth(groupId: groupId, anyDayInMonth: date)
+    }
 }
