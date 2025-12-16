@@ -23,10 +23,12 @@ struct CalendarReducer {
         case .onAppear:
             state.isLoading = true
             state.visibleMonthStart = state.baseMonthStart
-            return .load
-        case let .dinnerStatusResponse(.success(dinnerStatus)):
+            let monthStart = state.visibleMonthStart ?? Date()
+            return .load(visibleMonthStart: monthStart)
+        case let .dinnerStatusResponse(.success(dinnerStatusList)):
             state.isLoading = false
-            state.dinnerStatus = dinnerStatus
+            state.dinnerStatusList = dinnerStatusList
+            state.dinnerStatusByDay = Dictionary(uniqueKeysWithValues: dinnerStatusList.map { ($0.day, $0) })
             state.errorMessage = nil
             return nil
         case let .dinnerStatusResponse(.failure(error)):
@@ -36,11 +38,13 @@ struct CalendarReducer {
         }
     }
     
-    func run(_ effect: CalendarEffect) async throws -> DinnerStatus? {
+    func run(_ effect: CalendarEffect) async throws -> [DinnerStatus]? {
         switch effect {
-        case .load:
-            let response = try await service.loadDinnerStatus(groupId: groupId, date: now())
-            return response
+        case .load(let visibleMonthStart):
+            // baseMonthStatrに基づいて1ヶ月分ロードする
+            // 別でonChangeでカレンダーの月が変わった時に1ヶ月分ロードするようにする
+            let dinnerStatusList = try await service.loadDinnerStatusMonth(groupId: groupId, date:visibleMonthStart)
+            return dinnerStatusList
         }
     }
 }

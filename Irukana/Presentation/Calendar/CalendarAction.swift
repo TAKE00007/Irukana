@@ -9,9 +9,9 @@ import Foundation
 
 enum CalendarAction {
     case onAppear
-    case dinnerStatusResponse(Result<DinnerStatus, Error>)
+    case dinnerStatusResponse(Result<[DinnerStatus], Error>)
 }
 
 enum CalendarEffect {
-    case load
+    case load(visibleMonthStart: Date)
 }
