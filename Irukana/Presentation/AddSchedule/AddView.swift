@@ -120,6 +120,10 @@ private struct ScheduleView: View {
     @State private var isFullDay = false
     @State private var startDay = Date()
     @State private var endtDay = Date()
+    @State private var isShowColor = false
+    @State private var isShowParticipant = false
+    @State private var isShowAlarm = false
+    
     var body: some View {
         VStack(spacing: 10) {
             TextField(text: $title, prompt: Text("タイトル").font(.title2).foregroundStyle(.secondary)) {
@@ -154,7 +158,7 @@ private struct ScheduleView: View {
             
             Divider()
             
-            Button(action: { print("") }) {
+            Button(action: { isShowColor.toggle() }) {
                 HStack {
                     Image(systemName: "tag")
                         .foregroundStyle(Color.orange)
@@ -165,10 +169,32 @@ private struct ScheduleView: View {
                         .foregroundStyle(Color.gray)
                 }
             }
+            .sheet(isPresented: $isShowColor) {
+                VStack {
+                    HStack {
+                        Spacer()
+                        Text("「家族」のラベルリスト")
+                        Spacer()
+                    }
+                    ForEach(ScheduleColor.allCases) { color in
+                        HStack(spacing: 8) {
+                            Rectangle()
+                                .fill(color.color)
+                                .frame(width: 5)
+                                .frame(maxHeight: .infinity)
+                            Text(color.name)
+                            Spacer()
+                        }
+                        .padding(.leading, 12)
+                    }
+                }
+                .padding(.vertical, 12)
+                .presentationDetents([.medium])
+            }
             
             Divider()
             
-            Button(action: { print("") }) {
+            Button(action: { isShowParticipant.toggle() }) {
                 HStack {
                     Image(systemName: "person")
                         .foregroundStyle(Color.orange)
@@ -179,10 +205,47 @@ private struct ScheduleView: View {
                         .foregroundStyle(Color.gray)
                 }
             }
+            .sheet(isPresented: $isShowParticipant) {
+                VStack {
+                    Text("参加者:Take")
+                        .padding(.top, 12)
+                        .padding(.bottom, 28)
+
+                    HStack {
+                        Text("T")
+                            .padding(5)
+                            .background(
+                                Circle()
+                                    .fill(Color(.systemBackground)) //色は仮
+                            )
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.secondary, lineWidth: 1)
+                            )
+                        VStack(alignment: .leading) {
+                            Text("Take")
+                                .font(.title3)
+                                .bold()
+                            Text("2002年7月28日")
+                                .font(.caption)
+                        }
+                        
+                        Spacer()
+                        
+                        Image(systemName: "checkmark.circle.fill")
+                        
+                    }
+                    .padding()
+                    .background(Color.green.opacity(0.2))
+                    
+                    Spacer()
+                }
+                .presentationDetents([.medium])
+            }
             
             Divider()
             
-            Button(action: { print("") }) {
+            Button(action: { isShowAlarm.toggle() }) {
                 HStack {
                     Image(systemName: "alarm")
                         .foregroundStyle(Color.orange)
@@ -192,6 +255,35 @@ private struct ScheduleView: View {
                     Image(systemName: "chevron.forward")
                         .foregroundStyle(Color.gray)
                 }
+            }
+            .sheet(isPresented: $isShowAlarm) {
+                VStack {
+                    HStack {
+                        Spacer()
+                        Text("開始時に通知が届きます。")
+                        Spacer()
+                    }
+                    .padding(.top, 12)
+                    .padding(.bottom, 20)
+                    
+                    HStack {
+                        Text("予定のリマインド通知")
+                        Spacer()
+                    }
+                    
+                    ForEach(ScheduleReminder.allCases) { reminder in
+                        HStack {
+                            Text(reminder.name)
+                            Spacer()
+                            Image(systemName: "checkmark.circle.fill")
+                        }
+                        .padding(.bottom, 12)
+                    }
+                    
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
+                .presentationDetents([.medium])
             }
             
             Divider()
@@ -241,3 +333,72 @@ private struct DinnerView: View {
     }
 }
 
+public enum ScheduleColor: String, CaseIterable,Identifiable {
+    case green
+    case blue
+    case brown
+    case red
+    case orange
+    
+    public var id: String { rawValue }
+    
+    public var name: String {
+        switch self {
+        case .green:
+            return "グリーン"
+        case .blue:
+            return "ブルー"
+        case .brown:
+            return "ブラウン"
+        case .red:
+            return "レッド"
+        case .orange:
+            return "オレンジ"
+        }
+    }
+    
+    public var color: Color {
+        switch self {
+        case .green:
+            return Color.green
+        case .blue:
+            return Color.blue
+        case .brown:
+            return Color.brown
+        case .red:
+            return Color.red
+        case .orange:
+            return Color.orange
+        }
+    }
+}
+
+public enum ScheduleReminder: String, CaseIterable, Identifiable {
+    case start
+    case beforeTenMinute
+    case beforeHour
+    
+    public var id: String { rawValue }
+    
+    public var name: String {
+        switch self {
+        case .start:
+            return "開始時"
+        case .beforeTenMinute:
+            return "10分前"
+        case .beforeHour:
+            return "1時間前"
+        }
+    }
+    
+    public var description: String {
+        switch self {
+        case .start:
+            return "開始時に通知が届きます。"
+        case .beforeTenMinute:
+            return "10分前に通知が届きます。"
+        case .beforeHour:
+            return "1時間前に通知が届きます。"
+        }
+    }
+}
