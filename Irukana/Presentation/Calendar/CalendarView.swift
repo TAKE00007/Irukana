@@ -149,9 +149,23 @@ private struct DayCell: View {
             Text("\(day)")
             ForEach(answers.keys.sorted(by: { $0.uuidString < $1.uuidString }), id: \.self) { uuid in
                 let answer = answers[uuid] ?? .unknown
-                Text(label(for: answer))
-                    .font(.caption)
-                    .lineLimit(1)
+                HStack {
+                    Text(uuid.uuidString.prefix(1))
+                        .padding(2)
+                        .background(
+                            Circle()
+                                .fill(Color(.systemBackground)) //色は仮
+                        )
+                        .overlay(
+                            Circle()
+                                .stroke(Color.secondary, lineWidth: 1)
+                        )
+                    Text(label(for: answer))
+                }
+                .font(.caption)
+                .lineLimit(1)
+                .frame(maxWidth: .infinity)
+                .background(statusColor(for: answer))
             }
             
             Spacer(minLength: 0)
@@ -170,6 +184,14 @@ private func label(for answer: DinnerAnswer) -> String {
     case .need: return "いる"
     case .noneed: return "いらない"
     case .unknown: return "未回答"
+    }
+}
+
+private func statusColor(for answer: DinnerAnswer) -> Color {
+    switch answer {
+    case .need: return .green.opacity(0.2)
+    case .noneed: return .red.opacity(0.2)
+    case .unknown: return .gray.opacity(0.2)
     }
 }
 
