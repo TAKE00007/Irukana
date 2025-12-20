@@ -116,8 +116,94 @@ struct AddView: View {
 //}
 
 private struct ScheduleView: View {
+    @State private var title = ""
+    @State private var isFullDay = false
+    @State private var startDay = Date()
+    @State private var endtDay = Date()
     var body: some View {
-        Text("予定追加画面")
+        VStack(spacing: 10) {
+            TextField(text: $title, prompt: Text("タイトル").font(.title2).foregroundStyle(.secondary)) {
+                EmptyView()
+            }
+            .textFieldStyle(.plain)
+            .padding(.vertical, 8)
+            
+            Divider()
+            
+            HStack {
+                Toggle(isOn: $isFullDay) {
+                    Text("終日")
+                }
+            }
+            
+            HStack {
+                DatePicker(
+                    "開始",
+                    selection: $startDay,
+                    displayedComponents: [.date, .hourAndMinute]
+                )
+            }
+            
+            HStack {
+                DatePicker(
+                    "終了",
+                    selection: $endtDay,
+                    displayedComponents: [.date, .hourAndMinute]
+                )
+            }
+            
+            Divider()
+            
+            Button(action: { print("") }) {
+                HStack {
+                    Image(systemName: "tag")
+                        .foregroundStyle(Color.orange)
+                    Text("エメラルド・グリーン")
+                        .foregroundStyle(Color.black)
+                    Spacer()
+                    Image(systemName: "chevron.forward")
+                        .foregroundStyle(Color.gray)
+                }
+            }
+            
+            Divider()
+            
+            Button(action: { print("") }) {
+                HStack {
+                    Image(systemName: "person")
+                        .foregroundStyle(Color.orange)
+                    Text("参加者")
+                        .foregroundStyle(Color.black)
+                    Spacer()
+                    Image(systemName: "chevron.forward")
+                        .foregroundStyle(Color.gray)
+                }
+            }
+            
+            Divider()
+            
+            Button(action: { print("") }) {
+                HStack {
+                    Image(systemName: "alarm")
+                        .foregroundStyle(Color.orange)
+                    Text("10分前")
+                        .foregroundStyle(Color.black)
+                    Spacer()
+                    Image(systemName: "chevron.forward")
+                        .foregroundStyle(Color.gray)
+                }
+            }
+            
+            Divider()
+            
+            CalendarButton(
+                title: "保存",
+                variant: .primary,
+                action: { print("") }
+            )
+            .padding()
+        }
+        .padding(.horizontal, 16)
     }
 }
 
