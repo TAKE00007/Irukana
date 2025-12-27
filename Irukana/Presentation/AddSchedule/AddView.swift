@@ -123,6 +123,8 @@ private struct ScheduleView: View {
     @State private var isShowColor = false
     @State private var isShowParticipant = false
     @State private var isShowAlarm = false
+    @State private var selectedColor: ScheduleColor = .green
+    @State private var selectedReminder: ScheduleReminder = .start
     
     var body: some View {
         VStack(spacing: 10) {
@@ -161,8 +163,8 @@ private struct ScheduleView: View {
             Button(action: { isShowColor.toggle() }) {
                 HStack {
                     Image(systemName: "tag")
-                        .foregroundStyle(Color.orange)
-                    Text("エメラルド・グリーン")
+                        .foregroundStyle(selectedColor.color)
+                    Text(selectedColor.name)
                         .foregroundStyle(Color.black)
                     Spacer()
                     Image(systemName: "chevron.forward")
@@ -177,6 +179,7 @@ private struct ScheduleView: View {
                         Spacer()
                     }
                     ForEach(ScheduleColor.allCases) { color in
+                        let isSelected = (selectedColor == color)
                         HStack(spacing: 8) {
                             Rectangle()
                                 .fill(color.color)
@@ -184,8 +187,22 @@ private struct ScheduleView: View {
                                 .frame(maxHeight: .infinity)
                             Text(color.name)
                             Spacer()
+                            
+                            Button {
+                                selectedColor = color
+                                isShowColor = false
+                            } label: {
+                                if isSelected {
+                                    Image(systemName: "dot.circle")
+                                } else {
+                                    Image(systemName: "circle")
+                                }
+                            }
+                            .foregroundStyle(Color.black)
+
                         }
-                        .padding(.leading, 12)
+                        .padding(.horizontal, 12)
+                        .background(isSelected ? Color.gray.opacity(0.2) : Color.clear)
                     }
                 }
                 .padding(.vertical, 12)
@@ -232,7 +249,7 @@ private struct ScheduleView: View {
                         
                         Spacer()
                         
-                        Image(systemName: "checkmark.circle.fill")
+                        Image(systemName: "checkmark.square")
                         
                     }
                     .padding()
@@ -260,7 +277,7 @@ private struct ScheduleView: View {
                 VStack {
                     HStack {
                         Spacer()
-                        Text("開始時に通知が届きます。")
+                        Text(selectedReminder.description)
                         Spacer()
                     }
                     .padding(.top, 12)
@@ -270,19 +287,31 @@ private struct ScheduleView: View {
                         Text("予定のリマインド通知")
                         Spacer()
                     }
+                    .padding(.horizontal, 16)
                     
-                    ForEach(ScheduleReminder.allCases) { reminder in
+                    ForEach(ScheduleReminder.allCases, id: \.self) { reminder in
+                        let isSelected = (selectedReminder == reminder)
                         HStack {
                             Text(reminder.name)
                             Spacer()
-                            Image(systemName: "checkmark.circle.fill")
+                            Button {
+                                selectedReminder = reminder
+                                isShowAlarm = false
+                            } label: {
+                                if isSelected {
+                                    Image(systemName: "checkmark.square")
+                                } else {
+                                    Image(systemName: "square")
+                                }
+                            }
                         }
-                        .padding(.bottom, 12)
+                        .padding(.vertical, 12)
+                        .padding(.horizontal, 16)
+                        .background(isSelected ? Color.green.opacity(0.2) : Color.clear)
                     }
                     
                     Spacer()
                 }
-                .padding(.horizontal, 16)
                 .presentationDetents([.medium])
             }
             
