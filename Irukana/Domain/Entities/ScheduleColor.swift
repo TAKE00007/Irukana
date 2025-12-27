@@ -1,5 +1,3 @@
-import SwiftUI
-
 enum ScheduleColor: String, CaseIterable,Identifiable, Codable {
     case green
     case blue
