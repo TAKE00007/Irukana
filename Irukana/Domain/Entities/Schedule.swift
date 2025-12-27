@@ -14,9 +14,9 @@ struct Schedule: Identifiable, Codable {
     var startAt: Date
     var endAt: Date
     var notifyAt: Date?
-    var color: String // TODO: あとでColor型を定義する
+    var color: ScheduleColor
     
-    init(id: UUID, calendarId: UUID, title: String, startAt: Date, endAt: Date, notifyAt: Date?, color: String) {
+    init(id: UUID, calendarId: UUID, title: String, startAt: Date, endAt: Date, notifyAt: Date?, color: ScheduleColor) {
         self.id = id
         self.calendarId = calendarId
         self.title = title

@@ -361,3 +361,22 @@ private struct DinnerView: View {
         .font(.largeTitle)
     }
 }
+
+extension ScheduleColor {
+    public var color: Color {
+        switch self {
+        case .green:
+            return Color.green
+        case .blue:
+            return Color.blue
+        case .brown:
+            return Color.brown
+        case .red:
+            return Color.red
+        case .orange:
+            return Color.orange
+        }
+    }
+}
+
+

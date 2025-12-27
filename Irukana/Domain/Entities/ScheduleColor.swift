@@ -1,6 +1,6 @@
 import SwiftUI
 
-enum ScheduleColor: String, CaseIterable,Identifiable {
+enum ScheduleColor: String, CaseIterable,Identifiable, Codable {
     case green
     case blue
     case brown
@@ -21,21 +21,6 @@ enum ScheduleColor: String, CaseIterable,Identifiable {
             return "レッド"
         case .orange:
             return "オレンジ"
-        }
-    }
-    
-    public var color: Color {
-        switch self {
-        case .green:
-            return Color.green
-        case .blue:
-            return Color.blue
-        case .brown:
-            return Color.brown
-        case .red:
-            return Color.red
-        case .orange:
-            return Color.orange
         }
     }
 }
