@@ -116,8 +116,215 @@ struct AddView: View {
 //}
 
 private struct ScheduleView: View {
+    @State private var title = ""
+    @State private var isFullDay = false
+    @State private var startDay = Date()
+    @State private var endtDay = Date()
+    @State private var isShowColor = false
+    @State private var isShowParticipant = false
+    @State private var isShowAlarm = false
+    @State private var selectedColor: ScheduleColor = .green
+    @State private var selectedReminder: ScheduleReminder = .start
+    
     var body: some View {
-        Text("予定追加画面")
+        VStack(spacing: 10) {
+            TextField(text: $title, prompt: Text("タイトル").font(.title2).foregroundStyle(.secondary)) {
+                EmptyView()
+            }
+            .textFieldStyle(.plain)
+            .padding(.vertical, 8)
+            
+            Divider()
+            
+            HStack {
+                Toggle(isOn: $isFullDay) {
+                    Text("終日")
+                }
+            }
+            
+            HStack {
+                DatePicker(
+                    "開始",
+                    selection: $startDay,
+                    displayedComponents: [.date, .hourAndMinute]
+                )
+            }
+            
+            HStack {
+                DatePicker(
+                    "終了",
+                    selection: $endtDay,
+                    displayedComponents: [.date, .hourAndMinute]
+                )
+            }
+            
+            Divider()
+            
+            Button(action: { isShowColor.toggle() }) {
+                HStack {
+                    Image(systemName: "tag")
+                        .foregroundStyle(selectedColor.color)
+                    Text(selectedColor.name)
+                        .foregroundStyle(Color.black)
+                    Spacer()
+                    Image(systemName: "chevron.forward")
+                        .foregroundStyle(Color.gray)
+                }
+            }
+            .sheet(isPresented: $isShowColor) {
+                VStack {
+                    HStack {
+                        Spacer()
+                        Text("「家族」のラベルリスト")
+                        Spacer()
+                    }
+                    ForEach(ScheduleColor.allCases) { color in
+                        let isSelected = (selectedColor == color)
+                        HStack(spacing: 8) {
+                            Rectangle()
+                                .fill(color.color)
+                                .frame(width: 5)
+                                .frame(maxHeight: .infinity)
+                            Text(color.name)
+                            Spacer()
+                            
+                            Button {
+                                selectedColor = color
+                                isShowColor = false
+                            } label: {
+                                if isSelected {
+                                    Image(systemName: "dot.circle")
+                                } else {
+                                    Image(systemName: "circle")
+                                }
+                            }
+                            .foregroundStyle(Color.black)
+
+                        }
+                        .padding(.horizontal, 12)
+                        .background(isSelected ? Color.gray.opacity(0.2) : Color.clear)
+                    }
+                }
+                .padding(.vertical, 12)
+                .presentationDetents([.medium])
+            }
+            
+            Divider()
+            
+            Button(action: { isShowParticipant.toggle() }) {
+                HStack {
+                    Image(systemName: "person")
+                        .foregroundStyle(Color.orange)
+                    Text("参加者")
+                        .foregroundStyle(Color.black)
+                    Spacer()
+                    Image(systemName: "chevron.forward")
+                        .foregroundStyle(Color.gray)
+                }
+            }
+            .sheet(isPresented: $isShowParticipant) {
+                VStack {
+                    Text("参加者:Take")
+                        .padding(.top, 12)
+                        .padding(.bottom, 28)
+
+                    HStack {
+                        Text("T")
+                            .padding(5)
+                            .background(
+                                Circle()
+                                    .fill(Color(.systemBackground)) //色は仮
+                            )
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.secondary, lineWidth: 1)
+                            )
+                        VStack(alignment: .leading) {
+                            Text("Take")
+                                .font(.title3)
+                                .bold()
+                            Text("2002年7月28日")
+                                .font(.caption)
+                        }
+                        
+                        Spacer()
+                        
+                        Image(systemName: "checkmark.square")
+                        
+                    }
+                    .padding()
+                    .background(Color.green.opacity(0.2))
+                    
+                    Spacer()
+                }
+                .presentationDetents([.medium])
+            }
+            
+            Divider()
+            
+            Button(action: { isShowAlarm.toggle() }) {
+                HStack {
+                    Image(systemName: "alarm")
+                        .foregroundStyle(Color.orange)
+                    Text("10分前")
+                        .foregroundStyle(Color.black)
+                    Spacer()
+                    Image(systemName: "chevron.forward")
+                        .foregroundStyle(Color.gray)
+                }
+            }
+            .sheet(isPresented: $isShowAlarm) {
+                VStack {
+                    HStack {
+                        Spacer()
+                        Text(selectedReminder.description)
+                        Spacer()
+                    }
+                    .padding(.top, 12)
+                    .padding(.bottom, 20)
+                    
+                    HStack {
+                        Text("予定のリマインド通知")
+                        Spacer()
+                    }
+                    .padding(.horizontal, 16)
+                    
+                    ForEach(ScheduleReminder.allCases, id: \.self) { reminder in
+                        let isSelected = (selectedReminder == reminder)
+                        HStack {
+                            Text(reminder.name)
+                            Spacer()
+                            Button {
+                                selectedReminder = reminder
+                                isShowAlarm = false
+                            } label: {
+                                if isSelected {
+                                    Image(systemName: "checkmark.square")
+                                } else {
+                                    Image(systemName: "square")
+                                }
+                            }
+                        }
+                        .padding(.vertical, 12)
+                        .padding(.horizontal, 16)
+                        .background(isSelected ? Color.green.opacity(0.2) : Color.clear)
+                    }
+                    
+                    Spacer()
+                }
+                .presentationDetents([.medium])
+            }
+            
+            Divider()
+            
+            CalendarButton(
+                title: "保存",
+                variant: .primary,
+                action: { print("") }
+            )
+            .padding()
+        }
+        .padding(.horizontal, 16)
     }
 }
 
@@ -155,3 +362,72 @@ private struct DinnerView: View {
     }
 }
 
+public enum ScheduleColor: String, CaseIterable,Identifiable {
+    case green
+    case blue
+    case brown
+    case red
+    case orange
+    
+    public var id: String { rawValue }
+    
+    public var name: String {
+        switch self {
+        case .green:
+            return "グリーン"
+        case .blue:
+            return "ブルー"
+        case .brown:
+            return "ブラウン"
+        case .red:
+            return "レッド"
+        case .orange:
+            return "オレンジ"
+        }
+    }
+    
+    public var color: Color {
+        switch self {
+        case .green:
+            return Color.green
+        case .blue:
+            return Color.blue
+        case .brown:
+            return Color.brown
+        case .red:
+            return Color.red
+        case .orange:
+            return Color.orange
+        }
+    }
+}
+
+public enum ScheduleReminder: String, CaseIterable, Identifiable {
+    case start
+    case beforeTenMinute
+    case beforeHour
+    
+    public var id: String { rawValue }
+    
+    public var name: String {
+        switch self {
+        case .start:
+            return "開始時"
+        case .beforeTenMinute:
+            return "10分前"
+        case .beforeHour:
+            return "1時間前"
+        }
+    }
+    
+    public var description: String {
+        switch self {
+        case .start:
+            return "開始時に通知が届きます。"
+        case .beforeTenMinute:
+            return "10分前に通知が届きます。"
+        case .beforeHour:
+            return "1時間前に通知が届きます。"
+        }
+    }
+}
