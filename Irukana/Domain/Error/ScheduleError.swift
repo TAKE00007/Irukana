@@ -1,8 +1,14 @@
-//
-//  ScheduleError.swift
-//  Irukana
-//
-//  Created by 大竹駿 on 2025/12/27.
-//
-
 import Foundation
+
+enum ScheduleError: Error {
+    case scheduleNotFound
+}
+
+extension ScheduleError {
+    var errorDescription: String? {
+        switch self {
+        case .scheduleNotFound:
+            return "予定が見つかりません"
+        }
+    }
+}
