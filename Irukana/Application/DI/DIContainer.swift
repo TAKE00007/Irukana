@@ -10,4 +10,5 @@ import Foundation
 struct DIContainer {
     let authService: AuthService
     let dinnerService: DinnerStatusService
+    let scheduleService: ScheduleService
 }
