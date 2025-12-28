@@ -79,11 +79,9 @@ struct AddView: View {
                     ScheduleView(state: $state) {
                         if let effect = reducer.reduce(state: &state, action: .tapSave) {
                             Task {
-                                do {
-                                    try await reducer.run(effect)
-                                } catch {
-                                    print(error)
-                                }
+                                let response = await reducer.run(effect)
+                                _ = reducer.reduce(state: &state, action: response)
+                                onFinish()
                             }
                         }
                     }
@@ -91,23 +89,17 @@ struct AddView: View {
                     DinnerView {
                         if let effect = reducer.reduce(state: &state, action: .tapDinnerYes) {
                             Task {
-                                do {
-                                    try await reducer.run(effect)
-                                    onFinish()
-                                } catch {
-                                    print(error)
-                                }
+                                let response = await reducer.run(effect)
+                                _ = reducer.reduce(state: &state, action: response)
+                                onFinish()
                             }
                         }
                     } onNo: {
                         if let effect = reducer.reduce(state: &state, action: .tapDinnerNo) {
                             Task {
-                                do {
-                                    try await reducer.run(effect)
-                                    onFinish()
-                                } catch {
-                                    print(error)
-                                }
+                                let response = await reducer.run(effect)
+                                _ = reducer.reduce(state: &state, action: response)
+                                onFinish()
                             }
                         }
                     }

@@ -74,22 +74,42 @@ struct AddReducer {
             case .success(let success):
                 return nil
             case .failure(let error):
+                state.alert = AlertState(title: "予定の登録に失敗", message: "\(error)")
+                return nil
+            }
+        case let .dinnerStatusResponse(result):
+            switch result {
+            case .success(let success):
+                return nil
+            case .failure(let error):
+                state.alert = AlertState(title: "ご飯の追加に失敗", message: "\(error)")
                 return nil
             }
         }
     }
     
-    func run(_ effect: AddEffect) async throws {
+    func run(_ effect: AddEffect) async -> AddAction {
         switch effect {
         case let .upsert(isYes):
-            try await service.upsertDinnerStatus(
-                groupId: groupId,
-                date: now(),
-                userId: userId,
-                isYes: isYes
-            )
+            do {
+                try await service.upsertDinnerStatus(
+                    groupId: groupId,
+                    date: now(),
+                    userId: userId,
+                    isYes: isYes
+                )
+                return .dinnerStatusResponse(.success(true)) // TODO: trueを入れている意味はないので直す
+            } catch {
+                return .dinnerStatusResponse(.failure(.failDinnerStatus))
+            }
         case .saveSchedule(calendarId: let calendarId, title: let title, startAt: let startAt, endAt: let endAt, notifyAt: let notifyAt, color: let color, isAllDay: let isAllDay):
-            _ = try await scheduleService.addSchedule(calendarId: calendarId, title: title, startAt: startAt, endAt: endAt, notifyAt: notifyAt, color: color, isAllDay: isAllDay)
+            do {
+                let schedule = try await scheduleService.addSchedule(calendarId: calendarId, title: title, startAt: startAt, endAt: endAt, notifyAt: notifyAt, color: color, isAllDay: isAllDay)
+                
+                return .saveResponse(.success(schedule))
+            } catch {
+                return .saveResponse(.failure(.failAddSchedule))
+            }
         }
     }
 }
