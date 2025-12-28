@@ -8,6 +8,8 @@
 import Foundation
 
 enum AddAction {
+    case onAppear
+    
     case tapDinnerYes
     case tapDinnerNo
     
@@ -21,6 +23,7 @@ enum AddAction {
     
     case tapSave
     
+    case dinnerStatusResponse(Result<Bool, DinnerStatusError>)
     case saveResponse(Result<Schedule, ScheduleError>)
 }
 

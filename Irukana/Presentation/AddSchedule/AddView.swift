@@ -76,38 +76,31 @@ struct AddView: View {
             VStack(spacing: 0) {
                 switch selection {
                 case .schedule:
-                    ScheduleView(state: $state) {
+                    ScheduleView(state: state, send: send) {
                         if let effect = reducer.reduce(state: &state, action: .tapSave) {
                             Task {
-                                do {
-                                    try await reducer.run(effect)
-                                } catch {
-                                    print(error)
-                                }
+                                let response = await reducer.run(effect)
+                                _ = reducer.reduce(state: &state, action: response)
+                                onFinish()
                             }
                         }
                     }
+                    .onAppear { send(.onAppear) }
                 case .dinner:
                     DinnerView {
                         if let effect = reducer.reduce(state: &state, action: .tapDinnerYes) {
                             Task {
-                                do {
-                                    try await reducer.run(effect)
-                                    onFinish()
-                                } catch {
-                                    print(error)
-                                }
+                                let response = await reducer.run(effect)
+                                _ = reducer.reduce(state: &state, action: response)
+                                onFinish()
                             }
                         }
                     } onNo: {
                         if let effect = reducer.reduce(state: &state, action: .tapDinnerNo) {
                             Task {
-                                do {
-                                    try await reducer.run(effect)
-                                    onFinish()
-                                } catch {
-                                    print(error)
-                                }
+                                let response = await reducer.run(effect)
+                                _ = reducer.reduce(state: &state, action: response)
+                                onFinish()
                             }
                         }
                     }
@@ -116,6 +109,10 @@ struct AddView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
+    }
+    
+    private func send(_ action: AddAction) {
+        _ = reducer.reduce(state: &state, action: action)
     }
 }
 
@@ -126,15 +123,16 @@ struct AddView: View {
 //}
 
 private struct ScheduleView: View {
-    @Binding var state: AddState
+    let state: AddState
     @State private var isShowColor = false
     @State private var isShowParticipant = false
     @State private var isShowAlarm = false
+    let send: (AddAction) -> Void
     let action: () -> Void
 
     var body: some View {
         VStack(spacing: 10) {
-            TextField(text: $state.scheduleForm.title,
+            TextField(text: Binding(get: { state.scheduleForm.title }, set: { send(.setTitle($0)) }),
                       prompt: Text("タイトル").font(.title2).foregroundStyle(.secondary)) {
                 EmptyView()
             }
@@ -144,7 +142,10 @@ private struct ScheduleView: View {
             Divider()
             
             HStack {
-                Toggle(isOn: $state.scheduleForm.isAllDay) {
+                Toggle(isOn: Binding(
+                    get: { state.scheduleForm.isAllDay },
+                    set: { send(.setAllDay($0)) }
+                )) {
                     Text("終日")
                 }
             }
@@ -152,7 +153,10 @@ private struct ScheduleView: View {
             HStack {
                 DatePicker(
                     "開始",
-                    selection: $state.scheduleForm.startAt,
+                    selection: Binding(
+                        get: { state.scheduleForm.startAt },
+                        set: { send(.setStartAt($0)) }
+                    ),
                     displayedComponents: [.date, .hourAndMinute]
                 )
             }
@@ -160,7 +164,10 @@ private struct ScheduleView: View {
             HStack {
                 DatePicker(
                     "終了",
-                    selection: $state.scheduleForm.endAt,
+                    selection: Binding(
+                        get: { state.scheduleForm.endAt },
+                        set: { send(.setEndAt($0)) }
+                    ),
                     displayedComponents: [.date, .hourAndMinute]
                 )
             }
@@ -196,7 +203,7 @@ private struct ScheduleView: View {
                             Spacer()
                             
                             Button {
-                                state.scheduleForm.color = color
+                                send(.setColor(color))
                                 isShowColor = false
                             } label: {
                                 if isSelected {
@@ -302,7 +309,7 @@ private struct ScheduleView: View {
                             Text(reminder.name)
                             Spacer()
                             Button {
-                                state.scheduleForm.notifyAt = reminder
+                                send(.setNotifyAt(reminder))
                                 isShowAlarm = false
                             } label: {
                                 if isSelected {
