@@ -21,10 +21,12 @@ struct IrukanaApp: App {
         
         let authRepository = FirestoreAuthRepositoryImp()
         let dinnerRepository = SwiftDataDinnerStatusRepositoryImp(context: context)
+        let scheduleRepository = FireStoreScheduleRepositoryImp()
         
         self.container = DIContainer(
             authService: AuthService(repository: authRepository),
-            dinnerService: DinnerStatusService(repository: dinnerRepository)
+            dinnerService: DinnerStatusService(repository: dinnerRepository),
+            scheduleService: ScheduleService(repository: scheduleRepository)
         )
         
         #else
@@ -32,10 +34,12 @@ struct IrukanaApp: App {
         
         let authRepository = FirestoreAuthRepositoryImp()
         let dinnerRepository = FirestoreDinnerStatusRepositoryImp()
+        let scheduleRepository = FireStoreScheduleRepositoryImp()
         
         self.container = DIContainer(
             authService: AuthService(repository: authRepository),
-            dinnerService: DinnerStatusService(repository: dinnerRepository)
+            dinnerService: DinnerStatusService(repository: dinnerRepository),
+            scheduleService: ScheduleService(repository: scheduleRepository)
         )
         #endif
     }

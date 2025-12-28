@@ -76,7 +76,17 @@ struct AddView: View {
             VStack(spacing: 0) {
                 switch selection {
                 case .schedule:
-                    ScheduleView()
+                    ScheduleView(state: $state) {
+                        if let effect = reducer.reduce(state: &state, action: .tapSave) {
+                            Task {
+                                do {
+                                    try await reducer.run(effect)
+                                } catch {
+                                    print(error)
+                                }
+                            }
+                        }
+                    }
                 case .dinner:
                     DinnerView {
                         if let effect = reducer.reduce(state: &state, action: .tapDinnerYes) {
@@ -116,19 +126,16 @@ struct AddView: View {
 //}
 
 private struct ScheduleView: View {
-    @State private var title = ""
-    @State private var isFullDay = false
-    @State private var startDay = Date()
-    @State private var endtDay = Date()
+    @Binding var state: AddState
     @State private var isShowColor = false
     @State private var isShowParticipant = false
     @State private var isShowAlarm = false
-    @State private var selectedColor: ScheduleColor = .green
-    @State private var selectedReminder: ScheduleReminder = .start
-    
+    let action: () -> Void
+
     var body: some View {
         VStack(spacing: 10) {
-            TextField(text: $title, prompt: Text("タイトル").font(.title2).foregroundStyle(.secondary)) {
+            TextField(text: $state.scheduleForm.title,
+                      prompt: Text("タイトル").font(.title2).foregroundStyle(.secondary)) {
                 EmptyView()
             }
             .textFieldStyle(.plain)
@@ -137,7 +144,7 @@ private struct ScheduleView: View {
             Divider()
             
             HStack {
-                Toggle(isOn: $isFullDay) {
+                Toggle(isOn: $state.scheduleForm.isAllDay) {
                     Text("終日")
                 }
             }
@@ -145,7 +152,7 @@ private struct ScheduleView: View {
             HStack {
                 DatePicker(
                     "開始",
-                    selection: $startDay,
+                    selection: $state.scheduleForm.startAt,
                     displayedComponents: [.date, .hourAndMinute]
                 )
             }
@@ -153,7 +160,7 @@ private struct ScheduleView: View {
             HStack {
                 DatePicker(
                     "終了",
-                    selection: $endtDay,
+                    selection: $state.scheduleForm.endAt,
                     displayedComponents: [.date, .hourAndMinute]
                 )
             }
@@ -163,8 +170,8 @@ private struct ScheduleView: View {
             Button(action: { isShowColor.toggle() }) {
                 HStack {
                     Image(systemName: "tag")
-                        .foregroundStyle(selectedColor.color)
-                    Text(selectedColor.name)
+                        .foregroundStyle(state.scheduleForm.color.color)
+                    Text(state.scheduleForm.color.name)
                         .foregroundStyle(Color.black)
                     Spacer()
                     Image(systemName: "chevron.forward")
@@ -179,7 +186,7 @@ private struct ScheduleView: View {
                         Spacer()
                     }
                     ForEach(ScheduleColor.allCases) { color in
-                        let isSelected = (selectedColor == color)
+                        let isSelected = (state.scheduleForm.color == color)
                         HStack(spacing: 8) {
                             Rectangle()
                                 .fill(color.color)
@@ -189,7 +196,7 @@ private struct ScheduleView: View {
                             Spacer()
                             
                             Button {
-                                selectedColor = color
+                                state.scheduleForm.color = color
                                 isShowColor = false
                             } label: {
                                 if isSelected {
@@ -266,7 +273,7 @@ private struct ScheduleView: View {
                 HStack {
                     Image(systemName: "alarm")
                         .foregroundStyle(Color.orange)
-                    Text("10分前")
+                    Text(state.scheduleForm.notifyAt?.name ?? "")
                         .foregroundStyle(Color.black)
                     Spacer()
                     Image(systemName: "chevron.forward")
@@ -277,7 +284,7 @@ private struct ScheduleView: View {
                 VStack {
                     HStack {
                         Spacer()
-                        Text(selectedReminder.description)
+                        Text(state.scheduleForm.notifyAt?.description ?? "" )
                         Spacer()
                     }
                     .padding(.top, 12)
@@ -290,12 +297,12 @@ private struct ScheduleView: View {
                     .padding(.horizontal, 16)
                     
                     ForEach(ScheduleReminder.allCases, id: \.self) { reminder in
-                        let isSelected = (selectedReminder == reminder)
+                        let isSelected = (state.scheduleForm.notifyAt == reminder)
                         HStack {
                             Text(reminder.name)
                             Spacer()
                             Button {
-                                selectedReminder = reminder
+                                state.scheduleForm.notifyAt = reminder
                                 isShowAlarm = false
                             } label: {
                                 if isSelected {
@@ -320,7 +327,7 @@ private struct ScheduleView: View {
             CalendarButton(
                 title: "保存",
                 variant: .primary,
-                action: { print("") }
+                action: action
             )
             .padding()
         }
@@ -362,30 +369,7 @@ private struct DinnerView: View {
     }
 }
 
-public enum ScheduleColor: String, CaseIterable,Identifiable {
-    case green
-    case blue
-    case brown
-    case red
-    case orange
-    
-    public var id: String { rawValue }
-    
-    public var name: String {
-        switch self {
-        case .green:
-            return "グリーン"
-        case .blue:
-            return "ブルー"
-        case .brown:
-            return "ブラウン"
-        case .red:
-            return "レッド"
-        case .orange:
-            return "オレンジ"
-        }
-    }
-    
+extension ScheduleColor {
     public var color: Color {
         switch self {
         case .green:
@@ -402,32 +386,4 @@ public enum ScheduleColor: String, CaseIterable,Identifiable {
     }
 }
 
-public enum ScheduleReminder: String, CaseIterable, Identifiable {
-    case start
-    case beforeTenMinute
-    case beforeHour
-    
-    public var id: String { rawValue }
-    
-    public var name: String {
-        switch self {
-        case .start:
-            return "開始時"
-        case .beforeTenMinute:
-            return "10分前"
-        case .beforeHour:
-            return "1時間前"
-        }
-    }
-    
-    public var description: String {
-        switch self {
-        case .start:
-            return "開始時に通知が届きます。"
-        case .beforeTenMinute:
-            return "10分前に通知が届きます。"
-        case .beforeHour:
-            return "1時間前に通知が届きます。"
-        }
-    }
-}
+

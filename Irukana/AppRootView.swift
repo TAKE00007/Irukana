@@ -15,10 +15,12 @@ enum DataStoreKind { case firestore, swiftData }
 final class Session: ObservableObject {
     @Published var currentGroupId: UUID
     @Published var currentUserId: UUID
+    @Published var calendarId: UUID
     
-    init(currentGroupId: UUID, currentUserId: UUID) {
+    init(currentGroupId: UUID, currentUserId: UUID, calendarId: UUID) {
         self.currentGroupId = currentGroupId
         self.currentUserId = currentUserId
+        self.calendarId = calendarId
     }
 }
 
@@ -32,7 +34,8 @@ struct AppRootView: View {
     // テストようにUUIDをここで生成する
     @StateObject private var session = Session(
         currentGroupId: UUID(),
-        currentUserId: UUID()
+        currentUserId: UUID(),
+        calendarId: UUID()
     )
     
     var body: some View {
@@ -76,8 +79,10 @@ struct AppRootView: View {
         .sheet(isPresented: $isPresented) {
             let reducer = AddReducer(
                 service: container.dinnerService,
+                scheduleService: container.scheduleService,
                 groupId: session.currentGroupId,
                 userId: session.currentUserId,
+                calendarId: session.calendarId,
                 now: { Date() }
             )
             AddView(reducer: reducer) {

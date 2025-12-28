@@ -10,7 +10,8 @@ import SwiftUI
 private struct InjectedKey: EnvironmentKey {
     static let defaultValue: DIContainer = .init(
         authService: AuthService(repository: DummyAuthRepository()),
-        dinnerService: DinnerStatusService(repository: DummyDinnerStatusRepository())
+        dinnerService: DinnerStatusService(repository: DummyDinnerStatusRepository()),
+        scheduleService: ScheduleService(repository: DummyScheduleRepository())
     )
 }
 
@@ -42,6 +43,30 @@ struct DummyDinnerStatusRepository: DinnerStatusRepository {
     
     func fetchMonth(groupId: UUID, anyDayInMonth: Date) async throws -> [DinnerStatus] {
         return []
+    }
+    
+    
+}
+
+struct DummyScheduleRepository: ScheduleRepository {
+    func addSchedule(calendarId: UUID, title: String, startAt: Date, endAt: Date, notifyAt: Date?, color: ScheduleColor, isAllDay: Bool) async throws -> Schedule {
+        return Schedule(id: UUID(), calendarId: UUID(), title: "", startAt: Date(), endAt: Date(), notifyAt: nil, color: .green, isAllDay: false)
+    }
+    
+    func updateSchedule(id: UUID, calendarId: UUID, title: String, startAt: Date, endAt: Date, notifyAt: Date?, color: ScheduleColor, isAllDay: Bool) async throws -> Schedule {
+        return Schedule(id: UUID(), calendarId: UUID(), title: "", startAt: Date(), endAt: Date(), notifyAt: nil, color: .green, isAllDay: false)
+    }
+    
+    func fetch(id: UUID) async throws -> Schedule? {
+        return nil
+    }
+    
+    func fetchMonth(calendarId: UUID, anyDayInMonth: Date) async throws -> [Schedule] {
+        return []
+    }
+    
+    func deleteSchedule(id: UUID) async throws {
+        
     }
     
     
