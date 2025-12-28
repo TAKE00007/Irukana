@@ -8,6 +8,8 @@
 import Foundation
 
 enum AddAction {
+    case onAppear
+    
     case tapDinnerYes
     case tapDinnerNo
     

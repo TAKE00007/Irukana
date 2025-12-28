@@ -33,6 +33,12 @@ struct AddReducer {
     
     func reduce(state: inout AddState, action: AddAction) -> AddEffect? {
         switch action {
+        case .onAppear:
+            guard state.didInitScheduleForm == false else { return nil }
+            state.didInitScheduleForm = true
+            state.scheduleForm.startAt = Date()
+            state.scheduleForm.endAt = state.calendar.date(byAdding: .hour, value: 1, to: state.scheduleForm.startAt) ?? state.scheduleForm.startAt.addingTimeInterval(3600)
+            return nil
         case .tapDinnerYes:
             state.isDinner = true
             return .upsert(isYes: true)
@@ -49,9 +55,13 @@ struct AddReducer {
             return nil
         case let .setStartAt(startAt):
             state.scheduleForm.startAt = startAt
+            if !state.isEdited {
+                state.scheduleForm.endAt = state.calendar.date(byAdding: .hour, value: 1, to: state.scheduleForm.startAt) ?? startAt.addingTimeInterval(3600)
+            }
             return nil
         case let .setEndAt(endAt):
             state.scheduleForm.endAt = endAt
+            state.isEdited = true
             return nil
         case let .setNotifyAt(notifyAt):
             state.scheduleForm.notifyAt = notifyAt

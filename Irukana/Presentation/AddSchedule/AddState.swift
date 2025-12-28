@@ -8,8 +8,15 @@
 import Foundation
 
 struct AddState: Equatable {
+    var calendar: Calendar = {
+        var cal = Calendar(identifier: .gregorian)
+        return cal
+    }()
+    
     var isDinner: Bool
     var scheduleForm = ScheduleForm()
+    var isEdited = false // カレンダーの終了時刻自動で1時間後にする ユーザーが終了時刻を調整した場合、falseになる
+    var didInitScheduleForm = false
     
     var alert: AlertState? = nil
 }
