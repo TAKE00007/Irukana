@@ -1,3 +1,5 @@
+import Foundation
+
 enum ScheduleReminder: String, CaseIterable, Identifiable {
     case start
     case beforeTenMinute
@@ -24,6 +26,17 @@ enum ScheduleReminder: String, CaseIterable, Identifiable {
             return "10分前に通知が届きます。"
         case .beforeHour:
             return "1時間前に通知が届きます。"
+        }
+    }
+    
+    public func reminderDate(startAt: Date, calendar: Calendar = .current) -> Date? {
+        switch self {
+        case .start:
+            return startAt
+        case .beforeTenMinute:
+            return calendar.date(byAdding: .minute, value: -10, to: startAt)
+        case .beforeHour:
+            return calendar.date(byAdding: .hour, value: -1, to: startAt)
         }
     }
 }
