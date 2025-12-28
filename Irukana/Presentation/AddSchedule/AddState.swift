@@ -9,5 +9,23 @@ import Foundation
 
 struct AddState: Equatable {
     var isDinner: Bool
+    var scheduleForm = ScheduleForm()
+    
+    var alert: AlertState? = nil
 }
 
+
+struct ScheduleForm: Equatable {
+    var title = ""
+    var isAllDay = false
+    var startAt = Date()
+    var endAt = Date()
+    var notifyAt: ScheduleReminder? = .start
+    var color: ScheduleColor = .green
+}
+
+struct AlertState: Equatable, Identifiable {
+    let id = UUID()
+    var title: String
+    var message: String?
+}
