@@ -61,6 +61,11 @@ struct DummyScheduleRepository: ScheduleRepository {
         return nil
     }
     
+    func fetchRecentlyCreated(calendarId: UUID, createdAt: Date) async throws -> [Schedule]? {
+        return nil
+    }
+    
+    
     func fetchMonth(calendarId: UUID, anyDayInMonth: Date) async throws -> [Schedule] {
         return []
     }

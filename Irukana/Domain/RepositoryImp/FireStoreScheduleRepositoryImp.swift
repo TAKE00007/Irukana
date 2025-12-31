@@ -57,6 +57,19 @@ final class FireStoreScheduleRepositoryImp: ScheduleRepository {
         return schedule.toDomain()
     }
     
+    func fetchRecentlyCreated(calendarId: UUID, createdAt: Date) async throws -> [Schedule]? {
+        let (start, end) = FormatterStore.last24HoursRange(for: createdAt)
+        
+        let response = try await col
+            .whereField("calendarId", isEqualTo: calendarId.uuidString)
+            .whereField("createdAt", isGreaterThanOrEqualTo: start)
+            .whereField("createdAt", isLessThan: end)
+            .order(by: "createdAt", descending: false)
+            .getDocuments()
+        
+        return try response.documents.compactMap { try $0.data(as: ScheduleDoc.self).toDomain() }
+    }
+    
     func fetchMonth(calendarId: UUID, anyDayInMonth: Date) async throws -> [Schedule] {
         let (start, end) = FormatterStore.monthRange(for: anyDayInMonth)
         
