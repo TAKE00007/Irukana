@@ -50,11 +50,11 @@ struct DummyDinnerStatusRepository: DinnerStatusRepository {
 
 struct DummyScheduleRepository: ScheduleRepository {
     func addSchedule(calendarId: UUID, title: String, startAt: Date, endAt: Date, notifyAt: Date?, color: ScheduleColor, isAllDay: Bool) async throws -> Schedule {
-        return Schedule(id: UUID(), calendarId: UUID(), title: "", startAt: Date(), endAt: Date(), notifyAt: nil, color: .green, isAllDay: false)
+        return Schedule(id: UUID(), calendarId: UUID(), title: "", startAt: Date(), endAt: Date(), notifyAt: nil, color: .green, isAllDay: false, createdAt: Date())
     }
     
     func updateSchedule(id: UUID, calendarId: UUID, title: String, startAt: Date, endAt: Date, notifyAt: Date?, color: ScheduleColor, isAllDay: Bool) async throws -> Schedule {
-        return Schedule(id: UUID(), calendarId: UUID(), title: "", startAt: Date(), endAt: Date(), notifyAt: nil, color: .green, isAllDay: false)
+        return Schedule(id: UUID(), calendarId: UUID(), title: "", startAt: Date(), endAt: Date(), notifyAt: nil, color: .green, isAllDay: false, createdAt: Date() )
     }
     
     func fetch(id: UUID) async throws -> Schedule? {

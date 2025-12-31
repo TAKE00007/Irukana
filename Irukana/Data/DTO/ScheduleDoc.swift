@@ -9,6 +9,7 @@ struct ScheduleDoc: Codable {
     let notifyAt: Timestamp?
     let color: String
     let isAllDay: Bool
+    let createdAt: Timestamp
 }
 
 extension ScheduleDoc {
@@ -27,7 +28,8 @@ extension ScheduleDoc {
             endAt: endAt.dateValue(),
             notifyAt: notifyAt?.dateValue(),
             color: scheduleColor,
-            isAllDay: isAllDay
+            isAllDay: isAllDay,
+            createdAt: createdAt.dateValue()
         )
     }
 }
@@ -47,7 +49,8 @@ extension Schedule {
             endAt: Timestamp(date: endAt),
             notifyAt: notifyAtTimeStamp,
             color: color.rawValue,
-            isAllDay: isAllDay
+            isAllDay: isAllDay,
+            createdAt: Timestamp(date: createdAt)
         )
     }
 }

@@ -10,7 +10,7 @@ final class FireStoreScheduleRepositoryImp: ScheduleRepository {
         
         let ref = col.document(id.uuidString)
         
-        let schedule = Schedule(id: id, calendarId: calendarId, title: title, startAt: startAt, endAt: endAt, notifyAt: notifyAt, color: color, isAllDay: isAllDay)
+        let schedule = Schedule(id: id, calendarId: calendarId, title: title, startAt: startAt, endAt: endAt, notifyAt: notifyAt, color: color, isAllDay: isAllDay, createdAt: Date())
         
         let docSchedule = schedule.toDoc()
         
@@ -30,7 +30,8 @@ final class FireStoreScheduleRepositoryImp: ScheduleRepository {
             endAt: endAt,
             notifyAt: notifyAt,
             color: color,
-            isAllDay: isAllDay
+            isAllDay: isAllDay,
+            createdAt: Date()
         )
         
         let docSchedule = schedule.toDoc()
