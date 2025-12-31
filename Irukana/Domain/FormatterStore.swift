@@ -24,4 +24,10 @@ public struct FormatterStore {
         let end = cal.date(byAdding: DateComponents(month: 1), to: start)!
         return (start, end)
     }
+    
+    static func last24HoursRange(for date: Date) -> (start: Date, end: Date) {
+        let cal = Calendar(identifier: .gregorian)
+        let start = cal.date(byAdding: .hour, value: -24, to: date)!
+        return (start, date)
+    }
 }

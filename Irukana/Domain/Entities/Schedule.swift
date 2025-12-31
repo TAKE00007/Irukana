@@ -16,8 +16,9 @@ struct Schedule: Identifiable, Codable {
     var notifyAt: Date?
     var color: ScheduleColor
     var isAllDay: Bool
+    var createdAt: Date
     
-    init(id: UUID, calendarId: UUID, title: String, startAt: Date, endAt: Date, notifyAt: Date?, color: ScheduleColor, isAllDay: Bool) {
+    init(id: UUID, calendarId: UUID, title: String, startAt: Date, endAt: Date, notifyAt: Date?, color: ScheduleColor, isAllDay: Bool, createdAt: Date) {
         self.id = id
         self.calendarId = calendarId
         self.title = title
@@ -26,5 +27,6 @@ struct Schedule: Identifiable, Codable {
         self.notifyAt = notifyAt
         self.color = color
         self.isAllDay = isAllDay
+        self.createdAt = createdAt
     }
 }

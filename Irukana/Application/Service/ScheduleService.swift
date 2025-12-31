@@ -11,4 +11,10 @@ struct ScheduleService {
         
         return schedule
     }
+    
+    func loadScheduleCreatedInLast24Hours(calendarId: UUID, now: Date) async throws -> [Schedule]? {
+        let schedules = try await repository.fetchRecentlyCreated(calendarId: calendarId, createdAt: now)
+        
+        return schedules
+    }
 }

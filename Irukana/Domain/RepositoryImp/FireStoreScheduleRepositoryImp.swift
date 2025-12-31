@@ -10,7 +10,7 @@ final class FireStoreScheduleRepositoryImp: ScheduleRepository {
         
         let ref = col.document(id.uuidString)
         
-        let schedule = Schedule(id: id, calendarId: calendarId, title: title, startAt: startAt, endAt: endAt, notifyAt: notifyAt, color: color, isAllDay: isAllDay)
+        let schedule = Schedule(id: id, calendarId: calendarId, title: title, startAt: startAt, endAt: endAt, notifyAt: notifyAt, color: color, isAllDay: isAllDay, createdAt: Date())
         
         let docSchedule = schedule.toDoc()
         
@@ -30,7 +30,8 @@ final class FireStoreScheduleRepositoryImp: ScheduleRepository {
             endAt: endAt,
             notifyAt: notifyAt,
             color: color,
-            isAllDay: isAllDay
+            isAllDay: isAllDay,
+            createdAt: Date()
         )
         
         let docSchedule = schedule.toDoc()
@@ -54,6 +55,19 @@ final class FireStoreScheduleRepositoryImp: ScheduleRepository {
         let schedule = try snap.data(as: ScheduleDoc.self)
         
         return schedule.toDomain()
+    }
+    
+    func fetchRecentlyCreated(calendarId: UUID, createdAt: Date) async throws -> [Schedule]? {
+        let (start, end) = FormatterStore.last24HoursRange(for: createdAt)
+        
+        let response = try await col
+            .whereField("calendarId", isEqualTo: calendarId.uuidString)
+            .whereField("createdAt", isGreaterThanOrEqualTo: start)
+            .whereField("createdAt", isLessThan: end)
+            .order(by: "createdAt", descending: false)
+            .getDocuments()
+        
+        return try response.documents.compactMap { try $0.data(as: ScheduleDoc.self).toDomain() }
     }
     
     func fetchMonth(calendarId: UUID, anyDayInMonth: Date) async throws -> [Schedule] {
