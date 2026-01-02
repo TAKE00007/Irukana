@@ -51,7 +51,9 @@ struct AppRootView: View {
             
             NavigationStack {
                 NotificationView(reducer: NotificationReducer(
-                    service: container.dinnerService,
+                    dinnerStatusService: container.dinnerService,
+                    scheduleService: container.scheduleService,
+                    calendarId: session.calendarId,
                     groupId: session.currentGroupId)
                 )
             }
