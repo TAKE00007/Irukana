@@ -18,7 +18,7 @@ struct NotificationView: View {
             VStack(spacing: 0) {
                 switch selection {
                 case .schedule:
-                    NotificationScheduleView()
+                    NotificationScheduleView(state: state)
                 case .dinner:
                     NotificationDinnerView(state: state)
                 }
@@ -39,9 +39,27 @@ struct NotificationView: View {
 //}
 
 private struct NotificationScheduleView: View {
-    
+    let state: NotificationState
     var body: some View {
-        Text("予定")
+        if state.isLoading {
+            ProgressView("読み込み中")
+        } else if let message = state.scheduleErrorMessage {
+            Text("取得に失敗: \(message)")
+                .foregroundStyle(.red)
+        } else {
+            VStack(alignment: .leading, spacing: 8) {
+                ForEach(state.schedules, id: \.id) { schedule in
+                    HStack {
+                        Text(schedule.id.uuidString.prefix(4))
+                            .padding()
+                        Spacer()
+                        Text(schedule.title)
+                            .bold()
+                            .padding()
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -51,7 +69,7 @@ private struct NotificationDinnerView: View {
     var body: some View {
         if state.isLoading {
             ProgressView("読み込み中")
-        } else if let message = state.errorMessage {
+        } else if let message = state.dinnerStatusErrorMessage {
             Text("取得に失敗: \(message)")
                 .foregroundStyle(.red)
         } else if let dinnerStatus = state.dinnerStatus {

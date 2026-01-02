@@ -1,19 +1,22 @@
-//
-//  NotificationReducer.swift
-//  Irukana
-//
-//  Created by 大竹駿 on 2025/10/30.
-//
-
 import Foundation
 
 struct NotificationReducer {
-    let service: DinnerStatusService
+    let dinnerStatusService: DinnerStatusService
+    let scheduleService: ScheduleService
+    let calendarId: UUID
     let groupId: UUID
     var now: () -> Date = { Date() }
     
-    init(service: DinnerStatusService, groupId: UUID, now: @escaping () -> Date = { Date() }) {
-        self.service = service
+    init(
+        dinnerStatusService: DinnerStatusService,
+        scheduleService: ScheduleService,
+        calendarId: UUID,
+        groupId: UUID,
+        now: @escaping () -> Date = { Date() }
+    ) {
+        self.dinnerStatusService = dinnerStatusService
+        self.scheduleService = scheduleService
+        self.calendarId = calendarId
         self.groupId = groupId
         self.now = now
     }
@@ -22,37 +25,59 @@ struct NotificationReducer {
         switch action {
         case .onAppear:
             state.isLoading = true
-            state.errorMessage = nil
-            return .loadDinnerStatus
-        case let .dinnerStatusResponse(result):
+            state.dinnerStatusErrorMessage = nil
+            state.scheduleErrorMessage = nil
+            return .loadInitial
+        case let .initialResponse(dinner: dinnerResult, schedule: scheduleResult):
             state.isLoading = false
-            switch result {
+            
+            switch dinnerResult {
             case .success(let dinnerStatus):
                 state.dinnerStatus = dinnerStatus
-                state.errorMessage = nil
-                return nil
             case .failure(let error):
-                state.errorMessage = error.errorDescription
-                return nil
+                state.dinnerStatusErrorMessage = error.errorDescription
             }
+            
+            switch scheduleResult {
+            case .success(let schedules):
+                state.schedules = schedules
+            case .failure(let error):
+                state.scheduleErrorMessage = error.errorDescription
+            }
+            
+            return nil
         }
     }
     
     func run(_ effect: NotificationEffect) async -> NotificationAction {
         switch effect {
-        case .loadDinnerStatus:
-            do {
-                guard
-                    let dinnerStatus = try await service.loadDinnerStatus(groupId: groupId, date: now())
-                else
-                    { return .dinnerStatusResponse(.failure(DinnerStatusError.faileLoadDinnerStatus)) }
-                
-                return .dinnerStatusResponse(.success(dinnerStatus))
-            } catch {
-                return .dinnerStatusResponse(.failure(DinnerStatusError.faileLoadDinnerStatus))
-            }
+        case .loadInitial:
+            async let dinner: Result<DinnerStatus, DinnerStatusError> = {
+                do {
+                    guard
+                        let dinnerStatus = try await dinnerStatusService.loadDinnerStatus(groupId: groupId, date: now())
+                    else
+                        { return .failure(DinnerStatusError.faileLoadDinnerStatus) }
+                    
+                    return .success(dinnerStatus)
+                } catch {
+                    return .failure(DinnerStatusError.faileLoadDinnerStatus)
+                }
+            }()
+            
+            async let schedules: Result<[Schedule], ScheduleError> = {
+                do {
+                    guard
+                        let schedules = try await scheduleService.loadScheduleCreatedInLast24Hours(calendarId: calendarId, now: now())
+                    else { return .failure(ScheduleError.failLoadSchedule) }
+                    
+                    return .success(schedules)
+                } catch {
+                    return .failure(ScheduleError.failLoadSchedule)
+                }
+            }()
+            
+            return .initialResponse(dinner: await dinner, schedule: await schedules)
         }
     }
-    
-    
 }
