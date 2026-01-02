@@ -1,15 +1,8 @@
-//
-//  NotificationView.swift
-//  Irukana
-//
-//  Created by 大竹駿 on 2025/10/30.
-//
-
 import SwiftUI
 
 struct NotificationView: View {
     private var reducer: NotificationReducer
-    @State private var state: NotificationState?
+    @State private var state: NotificationState = .init()
     
     init(reducer: NotificationReducer) {
         self.reducer = reducer
@@ -34,15 +27,8 @@ struct NotificationView: View {
         }
         .task {
             if let effect = reducer.reduce(state: &state, action: .onAppear) {
-                do {
-                    if let dinnerStatus = try await reducer.run(effect) {
-                        state = .loaded(dinnerStatus)
-                    } else {
-                        state = .failed("データがありません")
-                    }
-                } catch {
-                    state = .failed (error.localizedDescription)
-                }
+                let response = await reducer.run(effect)
+                _ = reducer.reduce(state: &state, action: response)
             }
         }
     }
@@ -60,15 +46,15 @@ private struct NotificationScheduleView: View {
 }
 
 private struct NotificationDinnerView: View {
-    let state: NotificationState?
+    let state: NotificationState
     
     var body: some View {
-        switch state {
-        case .none:
+        if state.isLoading {
             ProgressView("読み込み中")
-        case .failed(let message):
-            Text("取得に失敗: \(message)").foregroundStyle(.red)
-        case .loaded(let dinnerStatus):
+        } else if let message = state.errorMessage {
+            Text("取得に失敗: \(message)")
+                .foregroundStyle(.red)
+        } else if let dinnerStatus = state.dinnerStatus {
             VStack(alignment: .leading, spacing: 8) {
                 ForEach(dinnerStatus.answers.keys.sorted(by: { $0.uuidString < $1.uuidString }), id: \.self) { uuid in
                     let answer = dinnerStatus.answers[uuid] ?? .unknown
@@ -83,6 +69,8 @@ private struct NotificationDinnerView: View {
                     .background(statusColor(for: answer))
                 }
             }
+        } else {
+            Text("まだ誰も入力してません")
         }
     }
     
