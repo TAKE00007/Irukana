@@ -17,7 +17,7 @@ private struct DynamicKey: CodingKey {
 }
 
 
-struct DinnerStatus: Identifiable, Codable {
+struct DinnerStatus: Identifiable, Codable, Equatable {
     // @DocumentID外すとRepositoryImpでDinnerStatusでラップできなくなる（書き込みの時)
     var id: String? // {groupId}_{yyyy-MM-dd}
     let groupId: UUID

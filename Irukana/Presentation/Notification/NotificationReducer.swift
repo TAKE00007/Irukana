@@ -18,17 +18,39 @@ struct NotificationReducer {
         self.now = now
     }
     
-    func reduce(state: inout NotificationState?, action: NotificationAction) -> NotificationEffect? {
+    func reduce(state: inout NotificationState, action: NotificationAction) -> NotificationEffect? {
         switch action {
         case .onAppear:
-            return .load
+            state.isLoading = true
+            state.errorMessage = nil
+            return .loadDinnerStatus
+        case let .dinnerStatusResponse(result):
+            state.isLoading = false
+            switch result {
+            case .success(let dinnerStatus):
+                state.dinnerStatus = dinnerStatus
+                state.errorMessage = nil
+                return nil
+            case .failure(let error):
+                state.errorMessage = error.errorDescription
+                return nil
+            }
         }
     }
     
-    func run(_ effect: NotificationEffect) async throws -> DinnerStatus? {
+    func run(_ effect: NotificationEffect) async -> NotificationAction {
         switch effect {
-        case .load:
-            return try await service.loadDinnerStatus(groupId: groupId, date: now())
+        case .loadDinnerStatus:
+            do {
+                guard
+                    let dinnerStatus = try await service.loadDinnerStatus(groupId: groupId, date: now())
+                else
+                    { return .dinnerStatusResponse(.failure(DinnerStatusError.faileLoadDinnerStatus)) }
+                
+                return .dinnerStatusResponse(.success(dinnerStatus))
+            } catch {
+                return .dinnerStatusResponse(.failure(DinnerStatusError.faileLoadDinnerStatus))
+            }
         }
     }
     

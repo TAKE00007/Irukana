@@ -9,8 +9,10 @@ import Foundation
 
 enum NotificationAction {
     case onAppear
+    
+    case dinnerStatusResponse(Result<DinnerStatus, DinnerStatusError>)
 }
 
 enum NotificationEffect {
-    case load
+    case loadDinnerStatus
 }
