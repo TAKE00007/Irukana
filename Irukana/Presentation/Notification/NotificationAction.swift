@@ -1,18 +1,14 @@
-//
-//  NotificationAction.swift
-//  Irukana
-//
-//  Created by 大竹駿 on 2025/10/30.
-//
-
 import Foundation
 
 enum NotificationAction {
     case onAppear
     
-    case dinnerStatusResponse(Result<DinnerStatus, DinnerStatusError>)
+    case initialResponse(
+        dinner: Result<DinnerStatus, DinnerStatusError>,
+        schedule: Result<[Schedule], ScheduleError>
+    )
 }
 
 enum NotificationEffect {
-    case loadDinnerStatus
+    case loadInitial
 }
