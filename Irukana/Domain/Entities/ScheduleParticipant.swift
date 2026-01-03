@@ -11,8 +11,8 @@ struct ScheduleParticipant: Codable {
     let scheduleId: UUID
     let userId: UUID
     
-    init(shceduleId: UUID, userId: UUID) {
-        self.scheduleId = shceduleId
+    init(scheduleId: UUID, userId: UUID) {
+        self.scheduleId = scheduleId
         self.userId = userId
     }
 }

@@ -1,10 +1,3 @@
-//
-//  IrukanaApp.swift
-//  Irukana
-//
-//  Created by 大竹駿 on 2025/10/11.
-//
-
 import SwiftUI
 import FirebaseCore
 import SwiftData
@@ -22,11 +15,17 @@ struct IrukanaApp: App {
         let authRepository = FirestoreAuthRepositoryImp()
         let dinnerRepository = SwiftDataDinnerStatusRepositoryImp(context: context)
         let scheduleRepository = FireStoreScheduleRepositoryImp()
+        let userRepository = FirestoreUserRepositoryImp()
+        let schedulePariticpantRepository = FireStoreScheduleParticipantRepositoryImp()
         
         self.container = DIContainer(
             authService: AuthService(repository: authRepository),
             dinnerService: DinnerStatusService(repository: dinnerRepository),
-            scheduleService: ScheduleService(repository: scheduleRepository)
+            scheduleService: ScheduleService(
+                scheduleRepository: scheduleRepository,
+                userRepository: userRepository,
+                scheduleParticipantRepository: schedulePariticpantRepository
+            )
         )
         
         #else
@@ -35,11 +34,17 @@ struct IrukanaApp: App {
         let authRepository = FirestoreAuthRepositoryImp()
         let dinnerRepository = FirestoreDinnerStatusRepositoryImp()
         let scheduleRepository = FireStoreScheduleRepositoryImp()
+        let userRepository = FirestoreUserRepositoryImp()
+        let schedulePariticpantRepository = FireStoreScheduleParticipantRepositoryImp()
         
         self.container = DIContainer(
             authService: AuthService(repository: authRepository),
             dinnerService: DinnerStatusService(repository: dinnerRepository),
-            scheduleService: ScheduleService(repository: scheduleRepository)
+            scheduleService: ScheduleService(
+                scheduleRepository: scheduleRepository,
+                userRepository: userRepository,
+                scheduleParticipantRepository: schedulePariticpantRepository
+            )
         )
         #endif
     }
