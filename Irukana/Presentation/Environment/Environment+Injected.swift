@@ -86,9 +86,9 @@ struct DummyUserRepository: UserRepository {
 }
 
 struct DummyScheduleParticipantRepository: ScheduleParticipantRepository {
-    func addScheduleParticipant(scheduleId: UUID, userId: UUID) async throws {
+    func addScheduleParticipant(scheduleId: UUID, userIds: [UUID]) async throws {
     }
-    
+
     func fetchBySchedule(scheduleId: UUID) async throws -> [UUID] {
         return []
     }

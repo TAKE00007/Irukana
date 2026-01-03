@@ -34,7 +34,7 @@ struct AppRootView: View {
     // テストようにUUIDをここで生成する
     @StateObject private var session = Session(
         currentGroupId: UUID(),
-        currentUserId: UUID(),
+        currentUserId: UUID(uuidString: "8DFFC7EA-A842-48CF-963B-96714E3E9935")!,
         calendarId: UUID()
     )
     
