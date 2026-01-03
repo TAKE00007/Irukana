@@ -5,14 +5,21 @@ final class FireStoreScheduleParticipantRepositoryImp: ScheduleParticipantReposi
     private let db = Firestore.firestore()
     private var col: CollectionReference { db.collection("scheduleParticipants") }
     
-    func addScheduleParticipant(scheduleId: UUID, userId: UUID) async throws {
-        let scheduleParticipant = ScheduleParticipant(scheduleId: scheduleId, userId: userId)
-        let scheduleParticipantDoc = scheduleParticipant.toDoc()
+    func addScheduleParticipant(scheduleId: UUID, userIds: [UUID]) async throws {
+        let uniqueUserIds = Array(Set(userIds))
+        guard !userIds.isEmpty else { return }
         
-        let docId = "\(scheduleId.uuidString)_\(userId.uuidString)"
-        let ref = col.document(docId)
+        let batch = db.batch()
         
-        try ref.setData(from: scheduleParticipantDoc)
+        for userId in uniqueUserIds {
+            let scheduleParticipant = ScheduleParticipant(scheduleId: scheduleId, userId: userId)
+            let scheduleParticipantDoc = scheduleParticipant.toDoc()
+            let docId = "\(scheduleId.uuidString)_\(userId.uuidString)"
+            let ref = col.document(docId)
+            try batch.setData(from: scheduleParticipantDoc, forDocument: ref)
+        }
+        
+        try await batch.commit()
     }
     
     func fetchBySchedule(scheduleId: UUID) async throws -> [UUID] {
