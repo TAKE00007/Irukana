@@ -1,8 +1,5 @@
-//
-//  UserRepository.swift
-//  Irukana
-//
-//  Created by 大竹駿 on 2026/01/02.
-//
-
 import Foundation
+
+protocol UserRepository {
+    func fetchUser(id: UUID) async throws -> User?
+}

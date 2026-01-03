@@ -1,8 +1,7 @@
-//
-//  ScheduleParticipantRepository.swift
-//  Irukana
-//
-//  Created by 大竹駿 on 2026/01/02.
-//
-
 import Foundation
+
+protocol ScheduleParticipantRepository {
+    func addScheduleParticipant(scheduleId: UUID, userId: UUID) async throws
+    func fetchBySchedule(scheduleId: UUID) async throws -> [UUID]
+    func fetchByUser(userId: UUID) async throws -> [UUID]
+}

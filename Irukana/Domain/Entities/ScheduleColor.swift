@@ -1,4 +1,4 @@
-enum ScheduleColor: String, CaseIterable,Identifiable, Codable {
+enum ScheduleColor: String, CaseIterable,Identifiable, Codable, Equatable {
     case green
     case blue
     case brown

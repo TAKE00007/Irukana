@@ -1,8 +1,14 @@
-//
-//  UserError.swift
-//  Irukana
-//
-//  Created by 大竹駿 on 2026/01/02.
-//
-
 import Foundation
+
+enum UserError: Error {
+    case userNotFound
+}
+
+extension UserError {
+    var errorDesctiption: String? {
+        switch self {
+        case .userNotFound:
+            return "ユーザーが存在しません"
+        }
+    }
+}
