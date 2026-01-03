@@ -1,10 +1,3 @@
-//
-//  AddAction.swift
-//  Irukana
-//
-//  Created by 大竹駿 on 2025/10/27.
-//
-
 import Foundation
 
 enum AddAction {
@@ -29,5 +22,5 @@ enum AddAction {
 
 enum AddEffect {
     case upsert(isYes: Bool)
-    case saveSchedule(calendarId: UUID, title: String, startAt: Date, endAt: Date, notifyAt: ScheduleReminder?, color: ScheduleColor, isAllDay: Bool)
+    case saveSchedule(calendarId: UUID, title: String, startAt: Date, endAt: Date, notifyAt: ScheduleReminder?, color: ScheduleColor, isAllDay: Bool, userIds: [UUID])
 }
