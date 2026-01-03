@@ -1,10 +1,3 @@
-//
-//  AddReducer.swift
-//  Irukana
-//
-//  Created by 大竹駿 on 2025/10/27.
-//
-
 import Foundation
 
 struct AddReducer {
@@ -77,7 +70,8 @@ struct AddReducer {
                 endAt: state.scheduleForm.endAt,
                 notifyAt: state.scheduleForm.notifyAt,
                 color: state.scheduleForm.color,
-                isAllDay: state.scheduleForm.isAllDay
+                isAllDay: state.scheduleForm.isAllDay,
+                userIds: [userId] // TODO: 参加者のuserIdを入れるようにする
             )
         case let .saveResponse(result):
             switch result {
@@ -112,9 +106,9 @@ struct AddReducer {
             } catch {
                 return .dinnerStatusResponse(.failure(.failDinnerStatus))
             }
-        case .saveSchedule(calendarId: let calendarId, title: let title, startAt: let startAt, endAt: let endAt, notifyAt: let notifyAt, color: let color, isAllDay: let isAllDay):
+        case .saveSchedule(calendarId: let calendarId, title: let title, startAt: let startAt, endAt: let endAt, notifyAt: let notifyAt, color: let color, isAllDay: let isAllDay, userIds: let userIds):
             do {
-                let schedule = try await scheduleService.addSchedule(calendarId: calendarId, title: title, startAt: startAt, endAt: endAt, notifyAt: notifyAt, color: color, isAllDay: isAllDay)
+                let schedule = try await scheduleService.addSchedule(calendarId: calendarId, title: title, startAt: startAt, endAt: endAt, notifyAt: notifyAt, color: color, isAllDay: isAllDay, userIds: userIds)
                 
                 return .saveResponse(.success(schedule))
             } catch {
