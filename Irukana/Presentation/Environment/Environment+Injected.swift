@@ -11,7 +11,11 @@ private struct InjectedKey: EnvironmentKey {
     static let defaultValue: DIContainer = .init(
         authService: AuthService(repository: DummyAuthRepository()),
         dinnerService: DinnerStatusService(repository: DummyDinnerStatusRepository()),
-        scheduleService: ScheduleService(repository: DummyScheduleRepository())
+        scheduleService: ScheduleService(
+            scheduleRepository: DummyScheduleRepository(),
+            userRepository: DummyUserRepository(),
+            scheduleParticipantRepository: DummyScheduleParticipantRepository()
+        )
     )
 }
 
@@ -72,6 +76,25 @@ struct DummyScheduleRepository: ScheduleRepository {
     
     func deleteSchedule(id: UUID) async throws {
         
+    }
+}
+
+struct DummyUserRepository: UserRepository {
+    func fetchUser(id: UUID) async throws -> User? {
+        return nil
+    }
+}
+
+struct DummyScheduleParticipantRepository: ScheduleParticipantRepository {
+    func addScheduleParticipant(scheduleId: UUID, userId: UUID) async throws {
+    }
+    
+    func fetchBySchedule(scheduleId: UUID) async throws -> [UUID] {
+        return []
+    }
+    
+    func fetchByUser(userId: UUID) async throws -> [UUID] {
+        return []
     }
     
     

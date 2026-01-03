@@ -1,9 +1,9 @@
 import Foundation
 
-struct NotificationState: Equatable {
+struct NotificationState {
     var dinnerStatus: DinnerStatus?
-    var schedules: [Schedule]
-    
+    var schedules: [(Schedule, [User])]
+
     var isLoading: Bool
     
     var dinnerStatusErrorMessage: String?
@@ -11,7 +11,7 @@ struct NotificationState: Equatable {
     
     init(
         dinnerStatus: DinnerStatus? = nil,
-        schedules: [Schedule] = [],
+        schedules: [(Schedule, [User])] = [],
         isLoading: Bool = false,
         dinnerStatusErrorMessage: String? = nil,
         scheduleErrorMessage: String? = nil

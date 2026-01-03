@@ -65,11 +65,9 @@ struct NotificationReducer {
                 }
             }()
             
-            async let schedules: Result<[Schedule], ScheduleError> = {
+            async let schedules: Result<[(Schedule, [User])], ScheduleError> = {
                 do {
-                    guard
-                        let schedules = try await scheduleService.loadScheduleCreatedInLast24Hours(calendarId: calendarId, now: now())
-                    else { return .failure(ScheduleError.failLoadSchedule) }
+                    let schedules = try await scheduleService.loadScheduleCreatedInLast24Hours(calendarId: calendarId, now: now())
                     
                     return .success(schedules)
                 } catch {

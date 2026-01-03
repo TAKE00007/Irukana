@@ -48,9 +48,9 @@ private struct NotificationScheduleView: View {
                 .foregroundStyle(.red)
         } else {
             VStack(alignment: .leading, spacing: 8) {
-                ForEach(state.schedules, id: \.id) { schedule in
+                ForEach(state.schedules, id: \.0.id) { (schedule, users) in
                     HStack {
-                        Text(schedule.id.uuidString.prefix(4))
+                        Text(users.first?.name ?? "")
                             .padding()
                         Spacer()
                         Text(schedule.title)
