@@ -1,10 +1,3 @@
-//
-//  AppRootView.swift
-//  Irukana
-//
-//  Created by 大竹駿 on 2025/10/26.
-//
-
 import SwiftUI
 import Combine
 import SwiftData
@@ -14,18 +7,17 @@ enum DataStoreKind { case firestore, swiftData }
 
 final class Session: ObservableObject {
     @Published var currentGroupId: UUID
-    @Published var currentUserId: UUID
     @Published var calendarId: UUID
     
-    init(currentGroupId: UUID, currentUserId: UUID, calendarId: UUID) {
+    init(currentGroupId: UUID, calendarId: UUID) {
         self.currentGroupId = currentGroupId
-        self.currentUserId = currentUserId
         self.calendarId = calendarId
     }
 }
 
 struct AppRootView: View {
     @Environment(\.injected) private var container
+    let user: User
     
     @State private var selected: AppTab = .schedule
     @State private var lastTab: AppTab = .schedule
@@ -34,7 +26,6 @@ struct AppRootView: View {
     // テストようにUUIDをここで生成する
     @StateObject private var session = Session(
         currentGroupId: UUID(),
-        currentUserId: UUID(uuidString: "8DFFC7EA-A842-48CF-963B-96714E3E9935")!,
         calendarId: UUID()
     )
     
@@ -83,7 +74,7 @@ struct AppRootView: View {
                 service: container.dinnerService,
                 scheduleService: container.scheduleService,
                 groupId: session.currentGroupId,
-                userId: session.currentUserId,
+                userId: user.id,
                 calendarId: session.calendarId,
                 now: { Date() }
             )
@@ -96,5 +87,5 @@ struct AppRootView: View {
 }
 
 #Preview {
-    AppRootView()
+    AppRootView(user: User(id: UUID(), name: "Take", passwordHash: "test"))
 }
