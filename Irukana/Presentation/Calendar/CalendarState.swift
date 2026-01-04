@@ -24,7 +24,7 @@ struct CalendarState {
     var dinnerStatusList: [DinnerStatus]? = []
     var scheduleList: [Schedule]? = []
     var dinnerStatusByDay: [Date: DinnerStatus] = [:]
-    var scheduleByDay: [Date: Schedule] = [:]
+    var scheduleByDay: [Date: [Schedule]] = [:]
     var isLoading: Bool = false
     var errorMessage: String? = nil
     var scheduleErrorMessage: String? = nil

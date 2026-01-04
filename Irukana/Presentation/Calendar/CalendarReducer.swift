@@ -38,10 +38,8 @@ struct CalendarReducer {
             switch scheduleResult {
             case .success(let scheduleList):
                 state.scheduleList = scheduleList
-                var byDay: [Date: Schedule] = [:]
-                for schedule in scheduleList {
-                    let dayKey = Calendar.current.startOfDay(for: schedule.startAt)
-                    byDay[dayKey] = schedule
+                let byDay = Dictionary(grouping: scheduleList) { schedule in
+                    Calendar.current.startOfDay(for: schedule.startAt)
                 }
                 state.scheduleByDay = byDay
                 state.scheduleErrorMessage = nil
