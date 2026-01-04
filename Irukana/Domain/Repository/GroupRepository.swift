@@ -1,8 +1,5 @@
-//
-//  GroupRepository.swift
-//  Irukana
-//
-//  Created by 大竹駿 on 2026/01/04.
-//
-
 import Foundation
+
+protocol GroupRepository {
+    func addGroup(userId: UUID, groupId: UUID) async throws
+}
