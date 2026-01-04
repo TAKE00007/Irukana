@@ -1,10 +1,3 @@
-//
-//  CalendarState.swift
-//  Irukana
-//
-//  Created by 大竹駿 on 2025/11/05.
-//
-
 import Foundation
 
 struct CalendarState {
@@ -29,7 +22,10 @@ struct CalendarState {
     var visibleMonthStart: Date? = nil
     
     var dinnerStatusList: [DinnerStatus]? = []
+    var scheduleList: [Schedule]? = []
     var dinnerStatusByDay: [Date: DinnerStatus] = [:]
+    var scheduleByDay: [Date: Schedule] = [:]
     var isLoading: Bool = false
     var errorMessage: String? = nil
+    var scheduleErrorMessage: String? = nil
 }

@@ -50,4 +50,8 @@ struct ScheduleService {
         
         return response
     }
+    
+    func loadScheduleMonth(calendarId: UUID, now: Date) async throws -> [Schedule]? {
+        return try await scheduleRepository.fetchMonth(calendarId: calendarId, anyDayInMonth: now)
+    }
 }
