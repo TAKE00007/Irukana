@@ -88,7 +88,7 @@ private struct MonthGrid: View {
     let monthStart: Date
     let calendar: Calendar
     let dinnerStatusByDay: [Date : DinnerStatus]
-    let scheduleByDay: [Date : Schedule]
+    let scheduleByDay: [Date : [Schedule]]
     
     private var columns: [GridItem] { Array(repeating: .init(.flexible()), count: 7) }
     
@@ -107,7 +107,7 @@ private struct MonthGrid: View {
                 DayCell(
                     day: day,
                     answers: status?.answers ?? [:],
-                    schedule: scheduleStatus?.title ?? ""
+                    schedules: scheduleStatus ?? []
                 )
             }
         }
@@ -128,7 +128,7 @@ private struct MonthGrid: View {
 private struct DayCell: View {
     let day: Int
     let answers: [UUID: DinnerAnswer]
-    let schedule: String
+    let schedules: [Schedule]
     
     var body: some View {
         VStack(spacing: 5) {
@@ -153,8 +153,18 @@ private struct DayCell: View {
                 .frame(maxWidth: .infinity)
                 .background(statusColor(for: answer))
             }
-            Text(schedule)
-                .font(.caption)
+            if !schedules.isEmpty {
+                ForEach(schedules, id: \.id) { schedule in
+                    HStack {
+                        Text(schedule.title)
+                        Spacer()
+                    }
+                    .font(.caption)
+                    .lineLimit(1)
+                    .frame(maxWidth: .infinity)
+                    .background(schedule.color.color.opacity(0.2))
+                }
+            }
             
             Spacer(minLength: 0)
         }
