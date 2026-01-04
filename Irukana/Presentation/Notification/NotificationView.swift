@@ -72,19 +72,18 @@ private struct NotificationDinnerView: View {
         } else if let message = state.dinnerStatusErrorMessage {
             Text("取得に失敗: \(message)")
                 .foregroundStyle(.red)
-        } else if let dinnerStatus = state.dinnerStatus {
+        } else if !state.answers.isEmpty {
             VStack(alignment: .leading, spacing: 8) {
-                ForEach(dinnerStatus.answers.keys.sorted(by: { $0.uuidString < $1.uuidString }), id: \.self) { uuid in
-                    let answer = dinnerStatus.answers[uuid] ?? .unknown
+                ForEach(state.answers, id: \.0) { item in
                     HStack {
-                        Text(uuid.uuidString.prefix(4))
+                        Text(item.name)
                             .padding()
                         Spacer()
-                        Text(label(for: answer))
+                        Text(label(for: item.answer))
                             .bold()
                             .padding()
                     }
-                    .background(statusColor(for: answer))
+                    .background(statusColor(for: item.answer))
                 }
             }
         } else {

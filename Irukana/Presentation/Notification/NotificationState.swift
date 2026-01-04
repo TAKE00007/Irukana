@@ -2,6 +2,7 @@ import Foundation
 
 struct NotificationState {
     var dinnerStatus: DinnerStatus?
+    var answers: [(name: String, answer: DinnerAnswer)]  = []
     var schedules: [(Schedule, [User])]
 
     var isLoading: Bool
@@ -11,6 +12,7 @@ struct NotificationState {
     
     init(
         dinnerStatus: DinnerStatus? = nil,
+        answers: [(name: String, answer: DinnerAnswer)] = [],
         schedules: [(Schedule, [User])] = [],
         isLoading: Bool = false,
         dinnerStatusErrorMessage: String? = nil,
@@ -18,6 +20,7 @@ struct NotificationState {
     ) {
         self.dinnerStatus = dinnerStatus
         self.schedules = schedules
+        self.answers = answers
         self.isLoading = isLoading
         self.dinnerStatusErrorMessage = dinnerStatusErrorMessage
         self.scheduleErrorMessage = scheduleErrorMessage

@@ -20,7 +20,9 @@ struct IrukanaApp: App {
         
         self.container = DIContainer(
             authService: AuthService(repository: authRepository),
-            dinnerService: DinnerStatusService(repository: dinnerRepository),
+            dinnerService: DinnerStatusService(
+                dinnerStatusRepository: dinnerRepository,
+                userRepository: userRepository),
             scheduleService: ScheduleService(
                 scheduleRepository: scheduleRepository,
                 userRepository: userRepository,
@@ -39,7 +41,10 @@ struct IrukanaApp: App {
         
         self.container = DIContainer(
             authService: AuthService(repository: authRepository),
-            dinnerService: DinnerStatusService(repository: dinnerRepository),
+            dinnerService: DinnerStatusService(
+                dinnerStatusRepository: dinnerRepository,
+                userRepository: userRepository
+            ),
             scheduleService: ScheduleService(
                 scheduleRepository: scheduleRepository,
                 userRepository: userRepository,

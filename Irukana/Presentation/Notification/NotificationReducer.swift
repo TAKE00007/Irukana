@@ -32,8 +32,20 @@ struct NotificationReducer {
             state.isLoading = false
             
             switch dinnerResult {
-            case .success(let dinnerStatus):
+            case .success(let dinnerStatusWithUsers):
+                let dinnerStatus = dinnerStatusWithUsers.0
+                let users = dinnerStatusWithUsers.1
+                
                 state.dinnerStatus = dinnerStatus
+                
+                var mappedAnswers: [(name: String, answer: DinnerAnswer)] = []
+                
+                for (userId, answer) in dinnerStatus.answers {
+                    let name = users.first(where: { $0.id == userId })?.name ?? "不明"
+                    mappedAnswers.append((name: name, answer: answer))
+                }
+                mappedAnswers.sort { $0.name < $1.name }
+                state.answers = mappedAnswers
             case .failure(let error):
                 state.dinnerStatusErrorMessage = error.errorDescription
             }
@@ -52,14 +64,14 @@ struct NotificationReducer {
     func run(_ effect: NotificationEffect) async -> NotificationAction {
         switch effect {
         case .loadInitial:
-            async let dinner: Result<DinnerStatus, DinnerStatusError> = {
+            async let dinner: Result<(DinnerStatus, [User]), DinnerStatusError> = {
                 do {
                     guard
-                        let dinnerStatus = try await dinnerStatusService.loadDinnerStatus(groupId: groupId, date: now())
+                        let dinnerStatusWithUsers = try await dinnerStatusService.loadDinnerStatusWithUsers(groupId: groupId, date: now())
                     else
                         { return .failure(DinnerStatusError.faileLoadDinnerStatus) }
                     
-                    return .success(dinnerStatus)
+                    return .success(dinnerStatusWithUsers)
                 } catch {
                     return .failure(DinnerStatusError.faileLoadDinnerStatus)
                 }

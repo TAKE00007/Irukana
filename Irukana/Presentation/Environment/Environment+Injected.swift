@@ -10,7 +10,9 @@ import SwiftUI
 private struct InjectedKey: EnvironmentKey {
     static let defaultValue: DIContainer = .init(
         authService: AuthService(repository: DummyAuthRepository()),
-        dinnerService: DinnerStatusService(repository: DummyDinnerStatusRepository()),
+        dinnerService: DinnerStatusService(
+            dinnerStatusRepository: DummyDinnerStatusRepository(),
+            userRepository: DummyUserRepository()),
         scheduleService: ScheduleService(
             scheduleRepository: DummyScheduleRepository(),
             userRepository: DummyUserRepository(),
