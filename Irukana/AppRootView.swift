@@ -33,8 +33,11 @@ struct AppRootView: View {
         TabView(selection: $selected) {
             NavigationStack {
                 CalendarView(reducer: CalendarReducer(
-                    service: container.dinnerService,
-                    groupId: session.currentGroupId, now: { Date() }
+                    dinnerStatusService: container.dinnerService,
+                    scheduleService: container.scheduleService,
+                    calendarId: session.calendarId,
+                    groupId: session.currentGroupId,
+                    now: { Date() }
                 ))
             }
             .tabItem { Label("予定", systemImage: "calendar")}
