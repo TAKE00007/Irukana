@@ -3,7 +3,7 @@ import FirebaseFirestore
 
 struct FirestoreGroupRepositoryImp: GroupRepository {
     private let db = Firestore.firestore()
-    private var col: CollectionReference { db.collection("schedulesParticipants") }
+    private var col: CollectionReference { db.collection("usersGroups") }
     
     func addGroup(userId: UUID, groupId: UUID) async throws {
         let docId = "\(groupId.uuidString)_\(userId.uuidString)"
