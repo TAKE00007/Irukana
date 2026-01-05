@@ -1,8 +1,17 @@
-//
-//  CalendarError.swift
-//  Irukana
-//
-//  Created by 大竹駿 on 2026/01/05.
-//
-
 import Foundation
+
+enum CalendarError: Error {
+    case calendarNotFound
+    case failCreateCalendar
+}
+
+extension CalendarError {
+    var errorDesctiption: String? {
+        switch self {
+        case .calendarNotFound:
+            return "カレンダーが見つかりません"
+        case .failCreateCalendar:
+            return "カレンダー作成に失敗しました"
+        }
+    }
+}
