@@ -11,10 +11,12 @@ struct RootView: View {
                 ProgressView()
             case .loggedOut:
                 AuthRootView() { user in
-                    state = .loggedIn(user)
+                    state = .createCalendar(user)
                 }
             case .loggedIn(let user):
                 AppRootView(user: user)
+            case .createCalendar(let user):
+                CreateCalendarView(reducer: CreateCalendarReducer(service: container.calendarService, userId: user.id))
             }
         }
         .task {

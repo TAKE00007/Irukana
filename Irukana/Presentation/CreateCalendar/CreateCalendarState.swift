@@ -1,14 +1,10 @@
-//
-//  CreateCalendarState.swift
-//  Irukana
-//
-//  Created by 大竹駿 on 2025/10/16.
-//
-
 import Foundation
 
 struct CreateCalendarState: Equatable {
     var path: [CreateCalendarRoute] = []
+    var calendarName: String = ""
+    var calendarId: String = ""
+    var calendarInfo: CalendarInfo?
 }
 
 enum CreateCalendarRoute: Hashable {

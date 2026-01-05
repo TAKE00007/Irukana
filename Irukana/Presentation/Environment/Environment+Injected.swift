@@ -1,10 +1,3 @@
-//
-//  Environment+Injected.swift
-//  Irukana
-//
-//  Created by 大竹駿 on 2025/11/24.
-//
-
 import SwiftUI
 
 private struct InjectedKey: EnvironmentKey {
@@ -17,7 +10,8 @@ private struct InjectedKey: EnvironmentKey {
             scheduleRepository: DummyScheduleRepository(),
             userRepository: DummyUserRepository(),
             scheduleParticipantRepository: DummyScheduleParticipantRepository()
-        )
+        ),
+        calendarService: CalendarService(calendarRepository: DummyCalendarRepository(), groupRepository: DummyGroupRepository())
     )
 }
 
@@ -98,6 +92,19 @@ struct DummyScheduleParticipantRepository: ScheduleParticipantRepository {
     func fetchByUser(userId: UUID) async throws -> [UUID] {
         return []
     }
+}
+
+struct DummyCalendarRepository: CalendarRepository {
+    func createCalendar(id: UUID, groupId: UUID, name: String) async throws -> CalendarInfo {
+        return CalendarInfo(id: UUID(), groupId: UUID(), name: "")
+    }
     
-    
+    func fetchCalendar(id: UUID) async throws -> CalendarInfo? {
+        return nil
+    }
+}
+
+struct DummyGroupRepository: GroupRepository {
+    func addGroup(userId: UUID, groupId: UUID) async throws {
+    }
 }
