@@ -1,17 +1,10 @@
-//
-//  CreateCalendarView.swift
-//  Irukana
-//
-//  Created by 大竹駿 on 2025/10/15.
-//
-
 import SwiftUI
 
 struct CreateCalendarView: View {
     @State private var state = CreateCalendarState()
     private var reducer: CreateCalendarReducer
     
-    init(reducer: CreateCalendarReducer = .init()) {
+    init(reducer: CreateCalendarReducer) {
         self.reducer = reducer
     }
     
@@ -36,15 +29,75 @@ struct CreateCalendarView: View {
             .navigationDestination(for: CreateCalendarRoute.self) { route in
                 switch route {
                 case .createNew:
-                    Text("新規カレンダー作成画面")
+                    VStack {
+                        Text("カレンダーの名前を入力してください")
+                        TextField(
+                            text: Binding(
+                                get: { state.calendarName },
+                                set: { send(.setCalendarName($0)) }
+                            ),
+                            prompt: Text("タイトル").font(.title2).foregroundStyle(.secondary)) {
+                            EmptyView()
+                        }
+                        .padding(10)
+                        .background(Color(.textField))
+                        .frame(maxWidth: .infinity, minHeight:  20)
+                        .cornerRadius(10)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color(.textField), lineWidth: 1.0)
+                        )
+                        .padding(.bottom, 5)
+                        
+                        CalendarButton(title: "新しいカレンダーを作成する", variant: .primary) {
+                            if let effect = reducer.reduce(state: &state, action: .createCalendar) {
+                                Task {
+                                    let response = await reducer.run(effect)
+                                    _ = reducer.reduce(state: &state, action: response)
+                                }
+                            }
+                        }
+                    }
                 case .join:
-                    Text("共有カレンダー参加画面")
+                    VStack {
+                        Text("IDを入力してください")
+                        TextField(
+                            text: Binding(
+                                get: { state.calendarId },
+                                set: { send(.setCalendarId($0)) }
+                            ),
+                            prompt: Text("ID").font(.title2).foregroundStyle(.secondary)) {
+                            EmptyView()
+                        }
+                        .padding(10)
+                        .background(Color(.textField))
+                        .frame(maxWidth: .infinity, minHeight:  20)
+                        .cornerRadius(10)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color(.textField), lineWidth: 1.0)
+                        )
+                        .padding(.bottom, 5)
+                        
+                        CalendarButton(title: "招待されたカレンダーに参加する", variant: .outline) {
+                            if let effect = reducer.reduce(state: &state, action: .joinCalendar) {
+                                Task {
+                                    let response = await reducer.run(effect)
+                                    _ = reducer.reduce(state: &state, action: response)
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
     }
+    
+    private func send(_ action: CreateCalendarAction) {
+        _ = reducer.reduce(state: &state, action: action)
+    }
 }
 
-#Preview {
-    CreateCalendarView(reducer: .init())
-}
+//#Preview {
+//    CreateCalendarView(reducer: .init(service: <#CalendarService#>, userId: <#UUID#>))
+//}
