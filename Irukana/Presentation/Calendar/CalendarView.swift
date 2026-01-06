@@ -23,6 +23,17 @@ struct CalendarView: View {
                     
                         let monthStart = state.calendar.date(byAdding: .month, value: offset, to: state.baseMonthStart)!
                         
+                        HStack {
+                            Text(monthStart.formatted(.dateTime.month()))
+                                .foregroundStyle(state.calendar.isDate(monthStart, equalTo: state.baseMonthStart, toGranularity: .month) ? .red : .black)
+                                .font(.title2)
+                                .bold()
+                            Spacer()
+                        }
+                        .padding(.horizontal, 12)
+                        
+                        Divider()
+                        
                         MonthGrid(monthStart: monthStart, calendar: state.calendar, dinnerStatusByDay: state.dinnerStatusByDay, scheduleByDay: state.scheduleByDay)
                             .id(monthStart)
                             .overlay {
