@@ -13,10 +13,17 @@ struct RootView: View {
                 AuthRootView() { user in
                     state = .createCalendar(user)
                 }
-            case .loggedIn(let user):
-                AppRootView(user: user)
+            case .loggedIn(let user, let calendarInfo):
+                AppRootView(user: user, calendarInfo: calendarInfo)
             case .createCalendar(let user):
-                CreateCalendarView(reducer: CreateCalendarReducer(service: container.calendarService, userId: user.id))
+                CreateCalendarView(
+                    reducer: CreateCalendarReducer(
+                        service: container.calendarService,
+                        userId: user.id
+                    )
+                ) { calendarInfo in
+                    state = .loggedIn(user, calendarInfo)
+                }
             }
         }
         .task {
