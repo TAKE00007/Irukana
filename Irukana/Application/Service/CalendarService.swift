@@ -17,7 +17,6 @@ struct CalendarService {
     // TODO: アップデートするのも必要
     
     func loadCalendarInfo(id: String) async throws -> CalendarInfo? {
-        guard let uuid = UUID(uuidString: id) else { return nil }
-        return try await calendarRepository.fetchCalendar(id: uuid)
+        return try await calendarRepository.fetchCalendar(id: id)
     }
 }

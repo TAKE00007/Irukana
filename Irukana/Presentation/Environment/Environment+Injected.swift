@@ -99,7 +99,7 @@ struct DummyCalendarRepository: CalendarRepository {
         return CalendarInfo(id: UUID(), groupId: UUID(), name: "")
     }
     
-    func fetchCalendar(id: UUID) async throws -> CalendarInfo? {
+    func fetchCalendar(id: String) async throws -> CalendarInfo? {
         return nil
     }
 }

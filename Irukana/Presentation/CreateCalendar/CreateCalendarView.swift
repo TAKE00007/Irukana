@@ -3,10 +3,14 @@ import SwiftUI
 struct CreateCalendarView: View {
     @State private var state = CreateCalendarState()
     private var reducer: CreateCalendarReducer
+
+    let onCalendarSuccess: (CalendarInfo) -> Void
     
-    init(reducer: CreateCalendarReducer) {
+    init(reducer: CreateCalendarReducer, onCalendarSuccess: @escaping (CalendarInfo) -> Void) {
         self.reducer = reducer
+        self.onCalendarSuccess = onCalendarSuccess
     }
+    
     
     var body: some View {
         NavigationStack(path: $state.path) {
@@ -90,6 +94,13 @@ struct CreateCalendarView: View {
                     }
                 }
             }
+        }
+        .onChange(of: state.calendarInfo) { newValue in
+            guard let calendrInfo = newValue else { return }
+            
+            onCalendarSuccess(calendrInfo)
+            
+            state.calendarInfo = nil
         }
     }
     

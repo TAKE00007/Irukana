@@ -17,9 +17,8 @@ struct FireStoreCalendarRepositoryImp: CalendarRepository {
         return calendarInfo
     }
     
-    func fetchCalendar(id: UUID) async throws -> CalendarInfo? {
-        let uId = id.uuidString
-        let snap = try await col.document(uId).getDocument()
+    func fetchCalendar(id: String) async throws -> CalendarInfo? {
+        let snap = try await col.document(id).getDocument()
         guard snap.exists else { return nil }
         
         let calendarInfo = try snap.data(as: CalendarInfoDoc.self)

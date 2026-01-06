@@ -18,6 +18,7 @@ final class Session: ObservableObject {
 struct AppRootView: View {
     @Environment(\.injected) private var container
     let user: User
+    let calendarInfo: CalendarInfo
     
     @State private var selected: AppTab = .schedule
     @State private var lastTab: AppTab = .schedule
@@ -35,8 +36,8 @@ struct AppRootView: View {
                 CalendarView(reducer: CalendarReducer(
                     dinnerStatusService: container.dinnerService,
                     scheduleService: container.scheduleService,
-                    calendarId: session.calendarId,
-                    groupId: session.currentGroupId,
+                    calendarId: calendarInfo.id,
+                    groupId: calendarInfo.groupId,
                     now: { Date() }
                 ))
             }
@@ -47,8 +48,8 @@ struct AppRootView: View {
                 NotificationView(reducer: NotificationReducer(
                     dinnerStatusService: container.dinnerService,
                     scheduleService: container.scheduleService,
-                    calendarId: session.calendarId,
-                    groupId: session.currentGroupId)
+                    calendarId: calendarInfo.id,
+                    groupId: calendarInfo.groupId)
                 )
             }
             .tabItem { Label("新着", systemImage: "bell") }
@@ -76,9 +77,9 @@ struct AppRootView: View {
             let reducer = AddReducer(
                 service: container.dinnerService,
                 scheduleService: container.scheduleService,
-                groupId: session.currentGroupId,
+                groupId: calendarInfo.groupId,
                 userId: user.id,
-                calendarId: session.calendarId,
+                calendarId: calendarInfo.id,
                 now: { Date() }
             )
             AddView(reducer: reducer) {
@@ -89,6 +90,6 @@ struct AppRootView: View {
     }
 }
 
-#Preview {
-    AppRootView(user: User(id: UUID(), name: "Take", passwordHash: "test"))
-}
+//#Preview {
+//    AppRootView(user: User(id: UUID(), name: "Take", passwordHash: "test"))
+//}
