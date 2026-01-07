@@ -51,7 +51,7 @@ struct CreateCalendarView: View {
                             RoundedRectangle(cornerRadius: 10)
                                 .stroke(Color(.textField), lineWidth: 1.0)
                         )
-                        .padding(.bottom, 5)
+                        .padding(.bottom, 12)
                         
                         CalendarButton(title: "新しいカレンダーを作成する", variant: .primary) {
                             if let effect = reducer.reduce(state: &state, action: .createCalendar) {
@@ -62,6 +62,7 @@ struct CreateCalendarView: View {
                             }
                         }
                     }
+                    .padding()
                 case .join:
                     VStack {
                         Text("IDを入力してください")
@@ -81,7 +82,7 @@ struct CreateCalendarView: View {
                             RoundedRectangle(cornerRadius: 10)
                                 .stroke(Color(.textField), lineWidth: 1.0)
                         )
-                        .padding(.bottom, 5)
+                        .padding(.bottom, 12)
                         
                         CalendarButton(title: "招待されたカレンダーに参加する", variant: .outline) {
                             if let effect = reducer.reduce(state: &state, action: .joinCalendar) {
@@ -92,6 +93,7 @@ struct CreateCalendarView: View {
                             }
                         }
                     }
+                    .padding()
                 }
             }
         }
