@@ -6,6 +6,7 @@ enum CalendarAction {
         dinner: Result<[DinnerStatus], DinnerStatusError>,
         schedule: Result<[Schedule], ScheduleError>
     )
+    case tapCopy
 }
 
 enum CalendarEffect {

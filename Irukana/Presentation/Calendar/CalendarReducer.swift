@@ -15,9 +15,11 @@ struct CalendarReducer {
         self.now = now
     }
     
+    @discardableResult
     func reduce(state: inout CalendarState, action: CalendarAction) -> CalendarEffect? {
         switch action {
         case .onAppear:
+            state.calendarId = calendarId
             state.isLoading = true
             state.visibleMonthStart = state.baseMonthStart
             let monthStart = state.visibleMonthStart ?? Date()
@@ -48,6 +50,9 @@ struct CalendarReducer {
                 state.scheduleErrorMessage = error.errorDescription
             }
             
+            return nil
+        case .tapCopy:
+            state.showCopiedAlert = true
             return nil
         }
     }
