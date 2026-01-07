@@ -28,4 +28,6 @@ struct CalendarState {
     var isLoading: Bool = false
     var errorMessage: String? = nil
     var scheduleErrorMessage: String? = nil
+    var calendarId: UUID? = nil
+    var showCopiedAlert: Bool = false
 }

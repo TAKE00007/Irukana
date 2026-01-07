@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct CalendarView: View {
     private var reducer: CalendarReducer
@@ -9,13 +10,32 @@ struct CalendarView: View {
     }
     
     var body: some View {
-        VStack() {
-            MonthTitle(date: state.visibleMonthStart ?? Date())
-                .padding(.top, 8)
-            
-            WeekdayHeader()
-                .padding(.bottom, 4)
+        HStack(alignment: .top) {
+            VStack {
+                MonthTitle(date: state.visibleMonthStart ?? Date())
+                    .padding(.top, 8)
+                
+                WeekdayHeader()
+                    .padding(.bottom, 4)
+            }
+            Spacer()
+            // TODO: 本当はSwiftUIでやりたい
+            Button {
+                UIPasteboard.general.string = state.calendarId?.uuidString
+                reducer.reduce(state: &state, action: .tapCopy)
+            } label: {
+                Image(systemName: "calendar")
+                    .foregroundStyle(.black)
+            }
+
         }
+        .padding()
+        .alert("コピーしました", isPresented: $state.showCopiedAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(state.calendarId?.uuidString ?? "")
+        }
+        
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(spacing: 12) {
