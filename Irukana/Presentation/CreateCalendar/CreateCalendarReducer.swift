@@ -8,7 +8,8 @@ struct CreateCalendarReducer {
         self.service = service
         self.userId = userId
     }
-    
+
+    @discardableResult
     func reduce(state: inout CreateCalendarState, action: CreateCalendarAction)  -> CreateCalendarEffect? {
         switch action {
         case .tapCreateCalendar:
@@ -32,7 +33,8 @@ struct CreateCalendarReducer {
             case .success(let calendarInfo):
                 state.calendarInfo = calendarInfo
                 return nil
-            case .failure(let failure):
+            case .failure(let error):
+                state.errorMessage = error.errorDesctiption
                 return nil
             }
         case .joinCalendarResponse(let result):
@@ -40,7 +42,8 @@ struct CreateCalendarReducer {
             case .success(let calendarInfo):
                 state.calendarInfo = calendarInfo
                 return nil
-            case .failure(let failure):
+            case .failure(let error):
+                state.errorMessage = error.errorDesctiption
                 return nil
             }
         }

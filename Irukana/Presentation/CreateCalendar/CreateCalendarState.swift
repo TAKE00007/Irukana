@@ -5,6 +5,7 @@ struct CreateCalendarState: Equatable {
     var calendarName: String = ""
     var calendarId: String = ""
     var calendarInfo: CalendarInfo?
+    var errorMessage: String? = nil
 }
 
 enum CreateCalendarRoute: Hashable {
