@@ -95,7 +95,7 @@ struct CreateCalendarView: View {
                 }
             }
         }
-        .onChange(of: state.calendarInfo) { newValue in
+        .onChange(of: state.calendarInfo) { _, newValue in
             guard let calendrInfo = newValue else { return }
             
             onCalendarSuccess(calendrInfo)

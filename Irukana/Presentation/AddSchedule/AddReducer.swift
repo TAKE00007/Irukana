@@ -75,7 +75,7 @@ struct AddReducer {
             )
         case let .saveResponse(result):
             switch result {
-            case .success(let success):
+            case .success(_):
                 return nil
             case .failure(let error):
                 state.alert = AlertState(title: "予定の登録に失敗", message: "\(error)")
@@ -83,7 +83,7 @@ struct AddReducer {
             }
         case let .dinnerStatusResponse(result):
             switch result {
-            case .success(let success):
+            case .success(_):
                 return nil
             case .failure(let error):
                 state.alert = AlertState(title: "ご飯の追加に失敗", message: "\(error)")
