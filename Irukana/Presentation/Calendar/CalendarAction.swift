@@ -4,7 +4,7 @@ enum CalendarAction {
     case onAppear
     case initialResponse(
         dinner: Result<[DinnerStatus], DinnerStatusError>,
-        schedule: Result<[Schedule], ScheduleError>
+        schedule: Result<[(Schedule, [User])], ScheduleError>
     )
     case tapCopy
 }

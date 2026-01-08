@@ -119,7 +119,7 @@ private struct MonthGrid: View {
     let monthStart: Date
     let calendar: Calendar
     let dinnerStatusByDay: [Date : DinnerStatus]
-    let scheduleByDay: [Date : [Schedule]]
+    let scheduleByDay: [Date : [(Schedule, [User])]]
     
     private var columns: [GridItem] { Array(repeating: .init(.flexible()), count: 7) }
     
@@ -159,7 +159,7 @@ private struct MonthGrid: View {
 private struct DayCell: View {
     let day: Int
     let answers: [UUID: DinnerAnswer]
-    let schedules: [Schedule]
+    let schedules: [(Schedule, [User])]
     
     var body: some View {
         VStack(spacing: 5) {
@@ -184,8 +184,10 @@ private struct DayCell: View {
                 .frame(maxWidth: .infinity)
                 .background(statusColor(for: answer))
             }
+            // TODO: 予定を長押しした時にカレンダーの情報が表示されるようにしたい
+            // 名前は取得できるようにした
             if !schedules.isEmpty {
-                ForEach(schedules, id: \.id) { schedule in
+                ForEach(schedules, id: \.0.id) { (schedule, user) in
                     HStack {
                         Text(schedule.title)
                         Spacer()
