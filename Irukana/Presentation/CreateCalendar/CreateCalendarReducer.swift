@@ -60,7 +60,7 @@ struct CreateCalendarReducer {
             }
         case .joinCalendar(let calendarId):
             do {
-                guard let calendarInfo = try await service.loadCalendarInfo(id: calendarId)
+                guard let calendarInfo = try await service.loadCalendarInfo(calendarId: calendarId, userId: userId)
                 else { return .joinCalendarResponse(.failure(CalendarError.calendarNotFound)) }
                 return .joinCalendarResponse(.success(calendarInfo))
             } catch {
