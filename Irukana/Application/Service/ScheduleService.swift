@@ -51,7 +51,39 @@ struct ScheduleService {
         return response
     }
     
-    func loadScheduleMonth(calendarId: UUID, now: Date) async throws -> [Schedule]? {
-        return try await scheduleRepository.fetchMonth(calendarId: calendarId, anyDayInMonth: now)
+    // TODO: 要検討キャッシュするなどしたい
+    func loadScheduleMonth(calendarId: UUID, now: Date) async throws -> [(Schedule, [User])] {
+        let schedules = try await scheduleRepository.fetchMonth(calendarId: calendarId, anyDayInMonth: now)
+        
+        guard !schedules.isEmpty else { return [] }
+        
+        var response: [(Schedule, [User])] = []
+        
+        for schedule in schedules {
+            let userIds =  try await scheduleParticipantRepository.fetchBySchedule(scheduleId: schedule.id)
+            let uniqueUserIds = Array(Set(userIds))
+            
+            let users: [User] = try await withThrowingTaskGroup(of: User.self) { group in
+                for userId in uniqueUserIds {
+                    group.addTask {
+                        guard let user = try await userRepository.fetchUser(id: userId)
+                        else { throw UserError.userNotFound }
+                        return user
+                    }
+                }
+                
+                var fetchedUsers: [User] = []
+                
+                for try await user in group {
+                    fetchedUsers.append(user)
+                }
+                
+                return fetchedUsers
+            }
+            
+            response.append((schedule, users))
+        }
+        
+        return response
     }
 }

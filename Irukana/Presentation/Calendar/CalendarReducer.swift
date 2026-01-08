@@ -41,7 +41,7 @@ struct CalendarReducer {
             case .success(let scheduleList):
                 state.scheduleList = scheduleList
                 let byDay = Dictionary(grouping: scheduleList) { schedule in
-                    Calendar.current.startOfDay(for: schedule.startAt)
+                    Calendar.current.startOfDay(for: schedule.0.startAt)
                 }
                 state.scheduleByDay = byDay
                 state.scheduleErrorMessage = nil
@@ -73,9 +73,10 @@ struct CalendarReducer {
                 }
             }()
             
-            async let scheduleList: Result<[Schedule], ScheduleError> = {
+            async let scheduleList: Result<[(Schedule, [User])], ScheduleError> = {
                 do {
-                    guard let scheduleList = try await scheduleService.loadScheduleMonth(calendarId: calendarId, now: visibleMonthStart)
+                    let scheduleList = try await scheduleService.loadScheduleMonth(calendarId: calendarId, now: visibleMonthStart)
+                    guard !scheduleList.isEmpty
                     else { return .failure(ScheduleError.failLoadSchedule) }
                     
                     return .success(scheduleList)
