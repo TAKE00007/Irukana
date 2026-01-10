@@ -24,7 +24,9 @@ struct IrukanaApp: App {
             authService: AuthService(repository: authRepository),
             dinnerService: DinnerStatusService(
                 dinnerStatusRepository: dinnerRepository,
-                userRepository: userRepository),
+                userRepository: userRepository,
+                groupRepository: groupRepository
+            ),
             scheduleService: ScheduleService(
                 scheduleRepository: scheduleRepository,
                 userRepository: userRepository,
@@ -51,7 +53,8 @@ struct IrukanaApp: App {
             authService: AuthService(repository: authRepository),
             dinnerService: DinnerStatusService(
                 dinnerStatusRepository: dinnerRepository,
-                userRepository: userRepository
+                userRepository: userRepository,
+                groupRepository: groupRepository
             ),
             scheduleService: ScheduleService(
                 scheduleRepository: scheduleRepository,
