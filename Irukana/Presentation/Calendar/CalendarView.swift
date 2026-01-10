@@ -54,7 +54,7 @@ struct CalendarView: View {
                         
                         Divider()
                         
-                        MonthGrid(monthStart: monthStart, calendar: state.calendar, dinnerStatusByDay: state.dinnerStatusByDay, scheduleByDay: state.scheduleByDay)
+                        MonthGrid(monthStart: monthStart, calendar: state.calendar, answerByDay: state.answerByDay, scheduleByDay: state.scheduleByDay)
                             .id(monthStart)
                             .overlay {
                                 MonthVisibleMarker(monthStart: monthStart).frame(height: 0)
@@ -118,7 +118,7 @@ private struct WeekdayHeader: View {
 private struct MonthGrid: View {
     let monthStart: Date
     let calendar: Calendar
-    let dinnerStatusByDay: [Date : DinnerStatus]
+    let answerByDay: [Date : [(name: String, answer: DinnerAnswer)]]
     let scheduleByDay: [Date : [(Schedule, [User])]]
     
     private var columns: [GridItem] { Array(repeating: .init(.flexible()), count: 7) }
@@ -132,12 +132,12 @@ private struct MonthGrid: View {
             ForEach(1...numberOfDays, id: \.self) { day in
                 let date = calendar.date(bySetting: .day, value: day, of: monthStart)!
                 let key = calendar.startOfDay(for: date)
-                let status = dinnerStatusByDay[key]
+                let status = answerByDay[key]
                 let scheduleStatus = scheduleByDay[key]
 
                 DayCell(
                     day: day,
-                    answers: status?.answers ?? [:],
+                    answers: status ?? [],
                     schedules: scheduleStatus ?? []
                 )
             }
@@ -158,16 +158,15 @@ private struct MonthGrid: View {
 
 private struct DayCell: View {
     let day: Int
-    let answers: [UUID: DinnerAnswer]
+    let answers: [(name: String, answer: DinnerAnswer)]
     let schedules: [(Schedule, [User])]
     
     var body: some View {
         VStack(spacing: 5) {
             Text("\(day)")
-            ForEach(answers.keys.sorted(by: { $0.uuidString < $1.uuidString }), id: \.self) { uuid in
-                let answer = answers[uuid] ?? .unknown
+            ForEach(answers, id: \.name) { (name, answer) in
                 HStack {
-                    Text(uuid.uuidString.prefix(1))
+                    Text(name.prefix(1))
                         .padding(2)
                         .background(
                             Circle()
@@ -183,6 +182,7 @@ private struct DayCell: View {
                 .lineLimit(1)
                 .frame(maxWidth: .infinity)
                 .background(statusColor(for: answer))
+
             }
             // TODO: 予定を長押しした時にカレンダーの情報が表示されるようにしたい
             // 名前は取得できるようにした

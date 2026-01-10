@@ -16,7 +16,12 @@ struct CalendarService {
     
     // TODO: アップデートするのも必要
     
-    func loadCalendarInfo(id: String) async throws -> CalendarInfo? {
-        return try await calendarRepository.fetchCalendar(id: id)
+    func loadCalendarInfo(calendarId: String, userId: UUID) async throws -> CalendarInfo? {
+        guard let calendarInfo = try await calendarRepository.fetchCalendar(id: calendarId)
+        else { return nil }
+        
+        try await groupRepository.addGroup(userId: userId, groupId: calendarInfo.groupId)
+        
+        return calendarInfo
     }
 }

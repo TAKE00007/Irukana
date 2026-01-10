@@ -3,6 +3,7 @@ import Foundation
 struct DinnerStatusService {
     let dinnerStatusRepository: DinnerStatusRepository
     let userRepository: UserRepository
+    let groupRepository: GroupRepository
     
     func upsertDinnerStatus(groupId: UUID, date: Date, userId: UUID, isYes: Bool) async throws {
         let answer: DinnerAnswer = isYes ? .need : .noneed
@@ -39,7 +40,29 @@ struct DinnerStatusService {
         return (dinnerStatus, users)
     }
     
-    func loadDinnerStatusMonth(groupId: UUID, date: Date) async throws -> [DinnerStatus]? {
-        return try await dinnerStatusRepository.fetchMonth(groupId: groupId, anyDayInMonth: date)
+    func loadDinnerStatusMonth(groupId: UUID, date: Date) async throws -> ([DinnerStatus], [User]) {
+        let dinnerStatusList = try await dinnerStatusRepository.fetchMonth(groupId: groupId, anyDayInMonth: date)
+
+        let userIds = try await groupRepository.fetchUserIds(groupId: groupId)
+        guard !userIds.isEmpty else { return (dinnerStatusList, []) }
+        
+        let users: [User] = try await withThrowingTaskGroup(of: User.self) { group in
+            for userId in userIds {
+                group.addTask {
+                    guard let user = try await userRepository.fetchUser(id: userId)
+                    else { throw UserError.userNotFound }
+                    return user
+                }
+            }
+
+            var fetchedUsers: [User] = []
+            
+            for try await user in group {
+                fetchedUsers.append(user)
+            }
+
+            return fetchedUsers
+        }
+        return (dinnerStatusList, users)
     }
 }
