@@ -28,9 +28,23 @@ struct CalendarReducer {
             state.isLoading = false
             
             switch dinnerResult {
-            case .success(let dinnerStatusList):
-                state.dinnerStatusList = dinnerStatusList
-                state.dinnerStatusByDay = Dictionary(uniqueKeysWithValues: dinnerStatusList.map { ($0.day, $0) })
+            case .success(let dinnerStatusWithUsers):
+                let (dinnerStatuses, users) = dinnerStatusWithUsers
+                state.dinnerStatusList = dinnerStatuses
+                
+                let userById = Dictionary(uniqueKeysWithValues: users.map { ($0.id, $0) })
+                
+                var answerByDay: [Date: [(name: String, answer: DinnerAnswer)]] = [:]
+                for dinnerStatus in dinnerStatuses {
+                    var mappedAnswers: [(name: String, answer: DinnerAnswer)] = []
+                    for (userId, answer) in dinnerStatus.answers {
+                        let name = userById[userId]?.name ?? "不明"
+                        mappedAnswers.append((name: name, answer: answer))
+                    }
+                    mappedAnswers.sort { $0.name < $1.name }
+                    answerByDay[dinnerStatus.day] = mappedAnswers
+                }
+                state.answerByDay = answerByDay
                 state.errorMessage = nil
             case .failure(let error):
                 state.isLoading = false
@@ -62,11 +76,9 @@ struct CalendarReducer {
         // 別でonChangeでカレンダーの月が変わった時に1ヶ月分ロードするようにする
         switch effect {
         case .load(let visibleMonthStart):
-            async let dinnerStatusList: Result<[DinnerStatus],DinnerStatusError> = {
+            async let dinnerStatusList: Result<([DinnerStatus],[User]),DinnerStatusError> = {
                 do {
-                    guard let  dinnerStatusList = try await dinnerStatusService.loadDinnerStatusMonth(groupId: groupId, date:visibleMonthStart)
-                    else { return .failure(DinnerStatusError.faileLoadDinnerStatus) }
-                    
+                    let  dinnerStatusList = try await dinnerStatusService.loadDinnerStatusMonth(groupId: groupId, date:visibleMonthStart)
                     return .success(dinnerStatusList)
                 } catch {
                     return .failure(DinnerStatusError.faileLoadDinnerStatus)

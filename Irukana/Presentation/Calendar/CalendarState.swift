@@ -21,9 +21,10 @@ struct CalendarState {
     // カレンダーを表示し始める月
     var visibleMonthStart: Date? = nil
     
-    var dinnerStatusList: [DinnerStatus]? = []
+    var dinnerStatusList: [DinnerStatus] = []
     var scheduleList: [(Schedule, [User])] = []
     var dinnerStatusByDay: [Date: DinnerStatus] = [:]
+    var answerByDay: [Date: [(name: String, answer: DinnerAnswer)]] = [:]
     var scheduleByDay: [Date: [(Schedule, [User])]] = [:]
     var isLoading: Bool = false
     var errorMessage: String? = nil
