@@ -1,8 +1,12 @@
 import SwiftUI
 
 struct SettingView: View {
-    @State private var isNotification = false
-    @State private var notificationTime = Date()
+    @State private var state = SettingState(notificationTime: Date())
+    private var reducer: SettingReducer
+    
+    init(reducer: SettingReducer) {
+        self.reducer = reducer
+    }
     var body: some View {
         VStack(spacing: 20) {
             VStack(alignment: .leading) {
@@ -11,7 +15,10 @@ struct SettingView: View {
                     .bold()
                 Divider()
                 HStack {
-                    Toggle(isOn: $isNotification) {
+                    Toggle(isOn: Binding(
+                        get: { state.isNotification },
+                        set: { send(.setIsNotification($0)) }
+                    )) {
                         Text("アプリの通知")
                     }
                 }
@@ -19,7 +26,10 @@ struct SettingView: View {
                 HStack {
                     DatePicker(
                         "通知の時間",
-                        selection: $notificationTime,
+                        selection: Binding(
+                            get: { state.notificationTime },
+                            set: { send(.setNotificationTime($0)) }
+                        ),
                         displayedComponents: [.hourAndMinute]
                     )
                 }
@@ -36,8 +46,12 @@ struct SettingView: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 20)
     }
+    
+    private func send(_ action: SettingAction) {
+        reducer.reduce(state: &state, action: action)
+    }
 }
 
-#Preview {
-    SettingView()
-}
+//#Preview {
+//    SettingView()
+//}

@@ -56,7 +56,7 @@ struct AppRootView: View {
             .tag(AppTab.notification)
             
             NavigationStack {
-                SettingView()
+                SettingView(reducer: SettingReducer())
             }
             .tabItem { Label("設定", systemImage: "gear") }
             .tag(AppTab.setting)
