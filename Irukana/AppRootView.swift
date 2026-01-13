@@ -55,9 +55,11 @@ struct AppRootView: View {
             .tabItem { Label("新着", systemImage: "bell") }
             .tag(AppTab.notification)
             
-            NavigationStack { Text("設定") }
-                .tabItem { Label("設定", systemImage: "gear") }
-                .tag(AppTab.setting)
+            NavigationStack {
+                SettingView(reducer: SettingReducer())
+            }
+            .tabItem { Label("設定", systemImage: "gear") }
+            .tag(AppTab.setting)
             
             Color.clear
                 .tabItem { Label("追加", systemImage: "plus") }
