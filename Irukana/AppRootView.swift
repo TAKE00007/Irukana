@@ -19,6 +19,7 @@ struct AppRootView: View {
     @Environment(\.injected) private var container
     let user: User
     let calendarInfo: CalendarInfo
+    let onLogout: () -> Void
     
     @State private var selected: AppTab = .schedule
     @State private var lastTab: AppTab = .schedule
@@ -56,7 +57,10 @@ struct AppRootView: View {
             .tag(AppTab.notification)
             
             NavigationStack {
-                SettingView(reducer: SettingReducer())
+                SettingView(
+                    reducer: SettingReducer(),
+                    onLogout: onLogout
+                )
             }
             .tabItem { Label("設定", systemImage: "gear") }
             .tag(AppTab.setting)
