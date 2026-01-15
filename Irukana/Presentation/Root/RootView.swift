@@ -14,7 +14,13 @@ struct RootView: View {
                     state = .createCalendar(user)
                 }
             case .loggedIn(let user, let calendarInfo):
-                AppRootView(user: user, calendarInfo: calendarInfo)
+                AppRootView(
+                    user: user,
+                    calendarInfo: calendarInfo,
+                    onLogout: {
+                        state = .loggedOut
+                    }
+                )
             case .createCalendar(let user):
                 CreateCalendarView(
                     reducer: CreateCalendarReducer(

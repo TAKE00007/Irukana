@@ -3,9 +3,11 @@ import SwiftUI
 struct SettingView: View {
     @State private var state = SettingState(notificationTime: Date())
     private var reducer: SettingReducer
+    private let onLogout: () -> Void
     
-    init(reducer: SettingReducer) {
+    init(reducer: SettingReducer, onLogout: @escaping () -> Void) {
         self.reducer = reducer
+        self.onLogout = onLogout
     }
     var body: some View {
         VStack(spacing: 20) {
@@ -40,7 +42,7 @@ struct SettingView: View {
             CalendarButton(
                 title: "ログアウトする",
                 variant: .outline,
-                action: { print("") }
+                action: { onLogout() }
             )
         }
         .padding(.horizontal, 16)
