@@ -19,9 +19,14 @@ struct IrukanaApp: App {
         let schedulePariticpantRepository = FireStoreScheduleParticipantRepositoryImp()
         let calendarRepository = FireStoreCalendarRepositoryImp()
         let groupRepository = FirestoreGroupRepositoryImp()
+        let sessionRepository = SessionRepositoryImp()
         
         self.container = DIContainer(
-            authService: AuthService(repository: authRepository),
+            authService: AuthService(
+                authRepository: authRepository,
+                sessionRepository: sessionRepository,
+                userRepository: userRepository
+            ),
             dinnerService: DinnerStatusService(
                 dinnerStatusRepository: dinnerRepository,
                 userRepository: userRepository,
@@ -48,9 +53,14 @@ struct IrukanaApp: App {
         let schedulePariticpantRepository = FireStoreScheduleParticipantRepositoryImp()
         let calendarRepository = FireStoreCalendarRepositoryImp()
         let groupRepository = FirestoreGroupRepositoryImp()
+        let sessionRepository = SessionRepositoryImp()
         
         self.container = DIContainer(
-            authService: AuthService(repository: authRepository),
+            authService: AuthService(
+                authRepository: authRepository,
+                sessionRepository: sessionRepository,
+                userRepository: userRepository
+            ),
             dinnerService: DinnerStatusService(
                 dinnerStatusRepository: dinnerRepository,
                 userRepository: userRepository,
