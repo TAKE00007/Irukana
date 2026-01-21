@@ -2,7 +2,11 @@ import SwiftUI
 
 private struct InjectedKey: EnvironmentKey {
     static let defaultValue: DIContainer = .init(
-        authService: AuthService(repository: DummyAuthRepository()),
+        authService: AuthService(
+            authRepository: DummyAuthRepository(),
+            sessionRepository: DummySessionRepository(),
+            userRepository: DummyUserRepository()
+        ),
         dinnerService: DinnerStatusService(
             dinnerStatusRepository: DummyDinnerStatusRepository(),
             userRepository: DummyUserRepository(),
@@ -111,5 +115,17 @@ struct DummyGroupRepository: GroupRepository {
     }
     
     func addGroup(userId: UUID, groupId: UUID) async throws {
+    }
+}
+
+struct DummySessionRepository: SessionRepository {
+    func loadUserId() -> String? {
+        nil
+    }
+    
+    func saveUserId(_ userId: String) {
+    }
+    
+    func clearUserId() {
     }
 }
