@@ -3,6 +3,11 @@ import SwiftUI
 struct RootView: View {
     @Environment(\.injected) private var container
     @State private var state: RootState = .loggedOut
+    private var reducer: RootReducer
+    
+    init(reducer: RootReducer) {
+        self.reducer = reducer
+    }
     
     var body: some View {
         VStack {
@@ -35,6 +40,12 @@ struct RootView: View {
         .task {
             print("")
             // TODO: ユーザー情報を取得する処理を記述
+            if let effect = reducer.reduce(state: &state, action: .onAppear) {
+                Task {
+                    let response = await reducer.run(effect)
+                    _ = reducer.reduce(state: &state, action: response)
+                }
+            }
         }
     }
 }

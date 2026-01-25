@@ -80,7 +80,7 @@ struct IrukanaApp: App {
     }
     var body: some Scene {
         WindowGroup {
-            RootView()
+            RootView(reducer: RootReducer(service: container.authService))
                 .environment(\.injected, container)
         }
     }
