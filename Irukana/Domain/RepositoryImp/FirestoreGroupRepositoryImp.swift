@@ -22,4 +22,9 @@ struct FirestoreGroupRepositoryImp: GroupRepository {
         return try response.documents.compactMap { try $0.data(as: UserGroupDoc.self).toDomain()?.userId }
     }
     
+    func fetchGroupIds(userId: UUID) async throws -> [UUID] {
+        let response = try await col.whereField("userId", isEqualTo: userId.uuidString).getDocuments()
+        
+        return try response.documents.compactMap { try $0.data(as: UserGroupDoc.self).toDomain()?.groupId }
+    }
 }
