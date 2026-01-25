@@ -5,7 +5,9 @@ private struct InjectedKey: EnvironmentKey {
         authService: AuthService(
             authRepository: DummyAuthRepository(),
             sessionRepository: DummySessionRepository(),
-            userRepository: DummyUserRepository()
+            userRepository: DummyUserRepository(),
+            groupRepository: DummyGroupRepository(),
+            calendarRepository: DummyCalendarRepository(),
         ),
         dinnerService: DinnerStatusService(
             dinnerStatusRepository: DummyDinnerStatusRepository(),
@@ -100,6 +102,10 @@ struct DummyScheduleParticipantRepository: ScheduleParticipantRepository {
 }
 
 struct DummyCalendarRepository: CalendarRepository {
+    func fetchCalendarByGroupId(groupId: UUID) async throws -> CalendarInfo? {
+        return nil
+    }
+    
     func createCalendar(id: UUID, groupId: UUID, name: String) async throws -> CalendarInfo {
         return CalendarInfo(id: UUID(), groupId: UUID(), name: "")
     }
@@ -110,6 +116,10 @@ struct DummyCalendarRepository: CalendarRepository {
 }
 
 struct DummyGroupRepository: GroupRepository {
+    func fetchGroupIds(userId: UUID) async throws -> [UUID] {
+        []
+    }
+    
     func fetchUserIds(groupId: UUID) async throws -> [UUID] {
         return []
     }

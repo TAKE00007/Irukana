@@ -25,4 +25,13 @@ struct FireStoreCalendarRepositoryImp: CalendarRepository {
         
         return calendarInfo.toDomain()
     }
+    
+    func fetchCalendarByGroupId(groupId: UUID) async throws -> CalendarInfo?  {
+        let snap = try await col.whereField("groupId", isEqualTo: groupId.uuidString).getDocuments()
+        guard let doc = snap.documents.first else { return nil }
+        
+        let calendarInfo = try doc.data(as: CalendarInfoDoc.self)
+        
+        return calendarInfo.toDomain()
+    }
 }

@@ -14,8 +14,8 @@ struct RootReducer {
             return .restoreSession
         case .sessionResponse(let result):
             switch result {
-            case .success(let user):
-                state = .createCalendar(user)
+            case let .success((user, calendarInfo)):
+                state = .loggedIn(user, calendarInfo)
                 return nil
             case .failure(_):
                 state = .loggedOut
@@ -28,10 +28,13 @@ struct RootReducer {
         switch effect {
         case .restoreSession:
             do {
-                guard let user = try await service.restoreSession()
+                guard let (user, calendarInfos) = try await service.autoLogin()
                 else { return .sessionResponse(.failure(AuthError.userIdNotFound)) }
-                // TODO: CalendarInfoも取得できるようにする
-                return .sessionResponse(.success(user))
+
+                guard let calendarInfo = calendarInfos.first
+                else { return .sessionResponse(.failure(AuthError.userNotFound)) }
+                
+                return .sessionResponse(.success((user, calendarInfo) ))
             } catch {
                 return .sessionResponse(.failure(AuthError.userIdNotFound))
             }
