@@ -3,7 +3,7 @@ import Foundation
 enum RootAction {
     case onAppear
     
-    case sessionResponse(Result<User, AuthError>)
+    case sessionResponse(Result<(User, CalendarInfo), AuthError>)
 }
 
 enum RootEffect {

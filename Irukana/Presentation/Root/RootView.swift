@@ -39,7 +39,6 @@ struct RootView: View {
         }
         .task {
             print("")
-            // TODO: ユーザー情報を取得する処理を記述
             if let effect = reducer.reduce(state: &state, action: .onAppear) {
                 Task {
                     let response = await reducer.run(effect)
