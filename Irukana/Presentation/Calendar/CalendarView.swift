@@ -10,30 +10,30 @@ struct CalendarView: View {
     }
     
     var body: some View {
-        HStack(alignment: .top) {
-            VStack {
+        VStack(spacing: 0) {
+            HStack(alignment: .top) {
                 MonthTitle(date: state.visibleMonthStart ?? Date())
-                    .padding(.top, 8)
+                Spacer()
+                // TODO: 本当はSwiftUIでやりたい
+                Button {
+                    UIPasteboard.general.string = state.calendarId?.uuidString
+                    reducer.reduce(state: &state, action: .tapCopy)
+                } label: {
+                    Image(systemName: "calendar")
+                        .foregroundStyle(.black)
+                }
+                .padding(.trailing, 12)
                 
-                WeekdayHeader()
-                    .padding(.bottom, 4)
             }
-            Spacer()
-            // TODO: 本当はSwiftUIでやりたい
-            Button {
-                UIPasteboard.general.string = state.calendarId?.uuidString
-                reducer.reduce(state: &state, action: .tapCopy)
-            } label: {
-                Image(systemName: "calendar")
-                    .foregroundStyle(.black)
+            .padding(.vertical, 8)
+            .alert("コピーしました", isPresented: $state.showCopiedAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(state.calendarId?.uuidString ?? "")
             }
-
-        }
-        .padding()
-        .alert("コピーしました", isPresented: $state.showCopiedAlert) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text(state.calendarId?.uuidString ?? "")
+            
+            WeekdayHeader()
+                .padding(.bottom, 4)
         }
         
         ScrollViewReader { proxy in
