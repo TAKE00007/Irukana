@@ -42,14 +42,23 @@ struct SettingView: View {
             CalendarButton(
                 title: "ログアウトする",
                 variant: .outline,
-                action: { onLogout() }
+                action: { send(.tapLogout) }
             )
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 20)
+        .onChange(of: state.isLogOut) { _, newValue in
+            if newValue {
+                onLogout()
+            }
+        }
     }
     
     private func send(_ action: SettingAction) {
+        let effect = reducer.reduce(state: &state, action: action)
+        
+        guard let effect else { return }
+        let action = reducer.run(effect)
         reducer.reduce(state: &state, action: action)
     }
 }

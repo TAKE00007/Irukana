@@ -31,4 +31,8 @@ struct AuthService {
 
         return (user, calendarInfos)
     }
+    
+    func logout() {
+        sessionRepository.clearUserId()
+    }
 }

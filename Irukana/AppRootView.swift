@@ -58,7 +58,7 @@ struct AppRootView: View {
             
             NavigationStack {
                 SettingView(
-                    reducer: SettingReducer(),
+                    reducer: SettingReducer(service: container.authService),
                     onLogout: onLogout
                 )
             }
