@@ -12,6 +12,8 @@ struct AddState: Equatable {
     var didInitScheduleForm = false
     
     var alert: AlertState? = nil
+    
+    var users: [User] = []
 }
 
 

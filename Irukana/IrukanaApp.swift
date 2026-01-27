@@ -41,7 +41,8 @@ struct IrukanaApp: App {
             ),
             calendarService: CalendarService(
                 calendarRepository: calendarRepository,
-                groupRepository: groupRepository
+                groupRepository: groupRepository,
+                userRepository: userRepository,
             )
         )
         
@@ -77,7 +78,8 @@ struct IrukanaApp: App {
             ),
             calendarService: CalendarService(
                 calendarRepository: calendarRepository,
-                groupRepository: groupRepository
+                groupRepository: groupRepository,
+                userRepository: userRepository,
             )
         )
         #endif

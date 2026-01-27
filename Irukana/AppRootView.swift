@@ -83,6 +83,7 @@ struct AppRootView: View {
             let reducer = AddReducer(
                 service: container.dinnerService,
                 scheduleService: container.scheduleService,
+                calendarService: container.calendarService,
                 groupId: calendarInfo.groupId,
                 userId: user.id,
                 calendarId: calendarInfo.id,
