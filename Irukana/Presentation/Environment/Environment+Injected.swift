@@ -18,7 +18,11 @@ private struct InjectedKey: EnvironmentKey {
             userRepository: DummyUserRepository(),
             scheduleParticipantRepository: DummyScheduleParticipantRepository()
         ),
-        calendarService: CalendarService(calendarRepository: DummyCalendarRepository(), groupRepository: DummyGroupRepository())
+        calendarService: CalendarService(
+            calendarRepository: DummyCalendarRepository(),
+            groupRepository: DummyGroupRepository(),
+            userRepository: DummyUserRepository(),
+        )
     )
 }
 
