@@ -13,6 +13,10 @@ public struct FormatterStore {
         .iso8601.year().month().day().dateSeparator(.dash)
     }
     
+    static var yyyyMMddStyle: Date.FormatStyle {
+        .dateTime.year().month().day()
+    }
+    
     static func startOfDay(_ date: Date) -> Date {
         let cal = Calendar(identifier: .gregorian)
         return cal.startOfDay(for: date)
