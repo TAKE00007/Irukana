@@ -3,6 +3,7 @@ import Foundation
 struct AddReducer {
     let service: DinnerStatusService
     let scheduleService: ScheduleService
+    let calendarService: CalendarService
     let groupId: UUID
     let userId: UUID
     let calendarId: UUID
@@ -11,6 +12,7 @@ struct AddReducer {
     init(
          service: DinnerStatusService,
          scheduleService: ScheduleService,
+         calendarService: CalendarService,
          groupId: UUID,
          userId: UUID,
          calendarId: UUID,
@@ -18,6 +20,7 @@ struct AddReducer {
     ) {
         self.service = service
         self.scheduleService = scheduleService
+        self.calendarService = calendarService
         self.groupId = groupId
         self.userId = userId
         self.calendarId = calendarId
@@ -31,7 +34,7 @@ struct AddReducer {
             state.didInitScheduleForm = true
             state.scheduleForm.startAt = Date()
             state.scheduleForm.endAt = state.calendar.date(byAdding: .hour, value: 1, to: state.scheduleForm.startAt) ?? state.scheduleForm.startAt.addingTimeInterval(3600)
-            return nil
+            return .loadUsers
         case .tapDinnerYes:
             state.isDinner = true
             return .upsert(isYes: true)
@@ -89,6 +92,15 @@ struct AddReducer {
                 state.alert = AlertState(title: "ご飯の追加に失敗", message: "\(error)")
                 return nil
             }
+        case let .usersResponse(result):
+            switch result {
+            case let .success(users):
+                state.users = users
+                return nil
+            case let .failure(error):
+                state.alert = AlertState(title: "ユーザーの取得に失敗", message: "\(error)")
+                return nil
+            }
         }
     }
     
@@ -113,6 +125,14 @@ struct AddReducer {
                 return .saveResponse(.success(schedule))
             } catch {
                 return .saveResponse(.failure(.failAddSchedule))
+            }
+        case .loadUsers:
+            do {
+                let users = try await calendarService.loadUsers(groupId: groupId)
+                guard !users.isEmpty else { return .usersResponse(.failure(.userNotFound))}
+                return .usersResponse(.success(users))
+            } catch {
+                return .usersResponse(.failure(.userNotFound))
             }
         }
     }

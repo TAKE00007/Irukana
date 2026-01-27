@@ -78,7 +78,14 @@ struct AddView: View {
                             }
                         }
                     }
-                    .onAppear { send(.onAppear) }
+                    .onAppear {
+                        if let effect = reducer.reduce(state: &state, action: .onAppear) {
+                            Task {
+                                let response = await reducer.run(effect)
+                                _ = reducer.reduce(state: &state, action: response)
+                            }
+                        }
+                    }
                 case .dinner:
                     DinnerView {
                         if let effect = reducer.reduce(state: &state, action: .tapDinnerYes) {
@@ -234,33 +241,34 @@ private struct ScheduleView: View {
                     Text("参加者:Take")
                         .padding(.top, 12)
                         .padding(.bottom, 28)
-
-                    HStack {
-                        Text("T")
-                            .padding(5)
-                            .background(
-                                Circle()
-                                    .fill(Color(.systemBackground)) //色は仮
-                            )
-                            .overlay(
-                                Circle()
-                                    .stroke(Color.secondary, lineWidth: 1)
-                            )
-                        VStack(alignment: .leading) {
-                            Text("Take")
-                                .font(.title3)
-                                .bold()
-                            Text("2002年7月28日")
-                                .font(.caption)
+                    ForEach(state.users) { user in
+                        HStack {
+                            Text(user.name.prefix(1))
+                                .padding(5)
+                                .background(
+                                    Circle()
+                                        .fill(Color(.systemBackground)) //色は仮
+                                )
+                                .overlay(
+                                    Circle()
+                                        .stroke(Color.secondary, lineWidth: 1)
+                                )
+                            VStack(alignment: .leading) {
+                                Text(user.name)
+                                    .font(.title3)
+                                    .bold()
+                                Text(user.birthday?.formatted(FormatterStore.yyyyMMddStyle) ?? "")
+                                    .font(.caption)
+                            }
+                            
+                            Spacer()
+                            
+                            Image(systemName: "checkmark.square")
+                            
                         }
-                        
-                        Spacer()
-                        
-                        Image(systemName: "checkmark.square")
-                        
+                        .padding()
+                        .background(Color.green.opacity(0.2))
                     }
-                    .padding()
-                    .background(Color.green.opacity(0.2))
                     
                     Spacer()
                 }
