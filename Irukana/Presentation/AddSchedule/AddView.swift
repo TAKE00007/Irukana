@@ -237,42 +237,48 @@ private struct ScheduleView: View {
                 }
             }
             .sheet(isPresented: $isShowParticipant) {
-                VStack {
-                    Text("参加者:Take")
-                        .padding(.top, 12)
-                        .padding(.bottom, 28)
-                    ForEach(state.users) { user in
-                        HStack {
-                            Text(user.name.prefix(1))
-                                .padding(5)
-                                .background(
-                                    Circle()
-                                        .fill(Color(.systemBackground)) //色は仮
-                                )
-                                .overlay(
-                                    Circle()
-                                        .stroke(Color.secondary, lineWidth: 1)
-                                )
-                            VStack(alignment: .leading) {
-                                Text(user.name)
-                                    .font(.title3)
-                                    .bold()
-                                Text(user.birthday?.formatted(FormatterStore.yyyyMMddStyle) ?? "")
-                                    .font(.caption)
+                ScrollView {
+                    VStack {
+                        Text("参加者:Take")
+                            .padding(.top, 12)
+                            .padding(.bottom, 28)
+                        ForEach(state.users) { user in
+                            let isSelected = state.selectedUserIds.contains(user.id)
+                            HStack {
+                                Text(user.name.prefix(1))
+                                    .padding(5)
+                                    .background(
+                                        Circle()
+                                            .fill(Color(.systemBackground)) //色は仮
+                                    )
+                                    .overlay(
+                                        Circle()
+                                            .stroke(Color.secondary, lineWidth: 1)
+                                    )
+                                VStack(alignment: .leading) {
+                                    Text(user.name)
+                                        .font(.title3)
+                                        .bold()
+                                    Text(user.birthday?.formatted(FormatterStore.yyyyMMddStyle) ?? "")
+                                        .font(.caption)
+                                }
+                                
+                                Spacer()
+                                
+                                Image(systemName: isSelected ? "checkmark.square": "square")
+                                
                             }
-                            
-                            Spacer()
-                            
-                            Image(systemName: "checkmark.square")
-                            
+                            .onTapGesture {
+                                send(.toggleUserSelection(user.id))
+                            }
+                            .padding()
+                            .background(isSelected ? Color.green.opacity(0.2) : Color.clear)
                         }
-                        .padding()
-                        .background(Color.green.opacity(0.2))
+                        
+                        Spacer()
                     }
-                    
-                    Spacer()
+                    .presentationDetents([.medium])
                 }
-                .presentationDetents([.medium])
             }
             
             Divider()

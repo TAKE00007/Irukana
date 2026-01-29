@@ -19,6 +19,8 @@ enum AddAction {
     case dinnerStatusResponse(Result<Bool, DinnerStatusError>)
     case saveResponse(Result<Schedule, ScheduleError>)
     case usersResponse(Result<[User], UserError>)
+    
+    case toggleUserSelection(UUID)
 }
 
 enum AddEffect {
