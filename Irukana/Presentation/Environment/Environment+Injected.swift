@@ -8,6 +8,7 @@ private struct InjectedKey: EnvironmentKey {
             userRepository: DummyUserRepository(),
             groupRepository: DummyGroupRepository(),
             calendarRepository: DummyCalendarRepository(),
+            localNotificationRepository: DummyLocalNotificationRepository(),
         ),
         dinnerService: DinnerStatusService(
             dinnerStatusRepository: DummyDinnerStatusRepository(),
@@ -141,5 +142,10 @@ struct DummySessionRepository: SessionRepository {
     }
     
     func clearUserId() {
+    }
+}
+
+struct DummyLocalNotificationRepository: LocalNotificationRepository {
+    func initSetup() async {
     }
 }

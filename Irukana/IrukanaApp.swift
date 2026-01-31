@@ -20,6 +20,7 @@ struct IrukanaApp: App {
         let calendarRepository = FireStoreCalendarRepositoryImp()
         let groupRepository = FirestoreGroupRepositoryImp()
         let sessionRepository = SessionRepositoryImp()
+        let localNotificationRepository = LocalNotificationRepositoryImp()
         
         self.container = DIContainer(
             authService: AuthService(
@@ -27,7 +28,8 @@ struct IrukanaApp: App {
                 sessionRepository: sessionRepository,
                 userRepository: userRepository,
                 groupRepository: groupRepository,
-                calendarRepository: calendarRepository
+                calendarRepository: calendarRepository,
+                localNotificationRepository: localNotificationRepository,
             ),
             dinnerService: DinnerStatusService(
                 dinnerStatusRepository: dinnerRepository,
@@ -57,6 +59,7 @@ struct IrukanaApp: App {
         let calendarRepository = FireStoreCalendarRepositoryImp()
         let groupRepository = FirestoreGroupRepositoryImp()
         let sessionRepository = SessionRepositoryImp()
+        let localNotificationRepository = LocalNotificationRepositoryImp()
         
         self.container = DIContainer(
             authService: AuthService(
@@ -65,6 +68,7 @@ struct IrukanaApp: App {
                 userRepository: userRepository,
                 groupRepository: groupRepository,
                 calendarRepository: calendarRepository,
+                localNotificationRepository: localNotificationRepository,
             ),
             dinnerService: DinnerStatusService(
                 dinnerStatusRepository: dinnerRepository,
