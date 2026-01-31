@@ -6,6 +6,7 @@ struct AuthService {
     let userRepository: UserRepository
     let groupRepository: GroupRepository
     let calendarRepository: CalendarRepository
+    let localNotificationRepository: LocalNotificationRepository
     
     func login(name: String, password: String) async throws -> User {
         let user = try await authRepository.login(name: name, password: password)
@@ -15,6 +16,9 @@ struct AuthService {
     func signUp(name: String, password: String, birthday: Date?) async throws -> User {
         let user = try await authRepository.signUp(name: name, password: password, birthday: birthday)
         sessionRepository.saveUserId(user.id.uuidString)
+
+        // 許可が出たら毎日通知されるようになる
+        await localNotificationRepository.initSetup()
         return user
     }
     
