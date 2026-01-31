@@ -162,7 +162,11 @@ struct SignUpView: View {
                         let responseAction = await reducer.run(effect)
                         _ = reducer.reduce(state: &state, action: responseAction)
                     }
-                    onClose()
+                    
+                    if state.user != nil {
+                        await reducer.setupDailyNotificationIfAllowed()
+                        onClose()
+                    }
                 }
             }
         }
