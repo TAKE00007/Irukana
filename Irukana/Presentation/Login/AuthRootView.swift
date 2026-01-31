@@ -164,7 +164,6 @@ struct SignUpView: View {
                     }
                     
                     if state.user != nil {
-                        await reducer.setupDailyNotificationIfAllowed()
                         onClose()
                     }
                 }
