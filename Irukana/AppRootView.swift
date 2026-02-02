@@ -94,6 +94,13 @@ struct AppRootView: View {
                 selected = .schedule
             }
         }
+        .onReceive(NotificationCenter.default.publisher(for: AppDelegate.didOpenNotification)) { note in
+            guard let route = note.userInfo?["route"] as? String else { return }
+            if route == "dinner" {
+                isPresented = true
+                selected = lastTab
+            }
+        }
     }
 }
 

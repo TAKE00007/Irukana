@@ -4,7 +4,8 @@ import SwiftData
 
 @main
 struct IrukanaApp: App {
-    
+    @UIApplicationDelegateAdaptor(AppDelegate.self)
+    var appDelegate
     let container: DIContainer
     
     init() {
