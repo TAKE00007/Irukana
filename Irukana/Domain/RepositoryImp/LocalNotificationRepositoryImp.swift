@@ -28,6 +28,10 @@ struct LocalNotificationRepositoryImp: LocalNotificationRepository {
         content.body = "今日のご飯、どうしますか？"
         content.sound = .default
         
+        content.userInfo = [
+            "route": "dinner"
+        ]
+        
         let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
         
         let request = UNNotificationRequest(
