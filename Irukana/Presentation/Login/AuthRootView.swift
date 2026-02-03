@@ -64,7 +64,7 @@ struct LoginView: View {
             TextField("必須", text: $state.name)
                 .padding(10)
                 .background(Color(.textField))
-                .frame(maxWidth: .infinity, minHeight:  20)
+                .frame(maxWidth: .infinity, minHeight:  40)
                 .cornerRadius(10)
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
@@ -76,7 +76,7 @@ struct LoginView: View {
             SecureField("必須", text: $state.password)
                 .padding(10)
                 .background(Color(.textField))
-                .frame(maxWidth: .infinity, minHeight:  20)
+                .frame(maxWidth: .infinity, minHeight:  40)
                 .cornerRadius(10)
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
@@ -125,7 +125,7 @@ struct SignUpView: View {
             TextField("必須", text: $state.name)
                 .padding(10)
                 .background(Color(.textField))
-                .frame(maxWidth: .infinity, minHeight:  20)
+                .frame(maxWidth: .infinity, minHeight: 40)
                 .cornerRadius(10)
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
@@ -146,7 +146,7 @@ struct SignUpView: View {
             SecureField("必須", text: $state.password)
                 .padding(10)
                 .background(Color(.textField))
-                .frame(maxWidth: .infinity, minHeight:  20)
+                .frame(maxWidth: .infinity, minHeight: 40)
                 .cornerRadius(10)
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
