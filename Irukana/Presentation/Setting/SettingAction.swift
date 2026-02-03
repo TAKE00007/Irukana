@@ -6,8 +6,10 @@ enum SettingAction {
     
     case setNotificationTime(Date)
     case setIsNotification(Bool)
+    case setNotificationCompleted
 }
 
 enum SettingEffect {
     case logout
+    case setNotification(Date)
 }
