@@ -2,9 +2,11 @@ import Foundation
 
 struct SettingReducer {
     let service: AuthService
+    let localNotificaitonService: LocalNotificationService
     
-    init(service: AuthService) {
+    init(service: AuthService, localNotificationService: LocalNotificationService) {
         self.service = service
+        self.localNotificaitonService = localNotificationService
     }
     
     @discardableResult
@@ -20,15 +22,22 @@ struct SettingReducer {
             return nil
         case .setIsNotification(let isNotification):
             state.isNotification = isNotification
+            localNotificaitonService.updateIsNotification(isNotification: isNotification)
+            return nil
+        case .setNotificationCompleted:
+            // TODO: 何か処理する
             return nil
         }
     }
     
-    func run(_ effect: SettingEffect) -> SettingAction {
+    func run(_ effect: SettingEffect) async -> SettingAction {
         switch effect {
         case .logout:
             service.logout()
             return .logoutCompleted
+        case .setNotification(let date):
+            await localNotificaitonService.setDinnerNotification(notificationAt: date)
+            return .setNotificationCompleted
         }
     }
 }

@@ -23,7 +23,10 @@ private struct InjectedKey: EnvironmentKey {
             calendarRepository: DummyCalendarRepository(),
             groupRepository: DummyGroupRepository(),
             userRepository: DummyUserRepository(),
-        )
+        ),
+        localNotificationService: LocalNotificationService(
+            localNotificationRepository: DummyLocalNotificationRepository(),
+            sessionRepository: DummySessionRepository())
     )
 }
 
@@ -134,6 +137,14 @@ struct DummyGroupRepository: GroupRepository {
 }
 
 struct DummySessionRepository: SessionRepository {
+    func loadIsNotification() -> Bool? {
+        return nil
+    }
+    
+    func saveIsNotification(_ isNotification: Bool) {
+
+    }
+    
     func loadUserId() -> String? {
         nil
     }
@@ -146,6 +157,12 @@ struct DummySessionRepository: SessionRepository {
 }
 
 struct DummyLocalNotificationRepository: LocalNotificationRepository {
+    func setDinnerNotification(notificationAt: Date) async {
+    }
+    
+    func removeDinnerNotification() {
+    }
+    
     func initSetup() async {
     }
 }

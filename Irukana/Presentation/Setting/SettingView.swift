@@ -58,8 +58,10 @@ struct SettingView: View {
         let effect = reducer.reduce(state: &state, action: action)
         
         guard let effect else { return }
-        let action = reducer.run(effect)
-        reducer.reduce(state: &state, action: action)
+        Task {
+            let action = await reducer.run(effect)
+            reducer.reduce(state: &state, action: action)
+        }
     }
 }
 
