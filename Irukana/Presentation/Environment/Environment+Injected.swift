@@ -157,6 +157,9 @@ struct DummySessionRepository: SessionRepository {
 }
 
 struct DummyLocalNotificationRepository: LocalNotificationRepository {
+    func setReminder(scheduleId: UUID, title: String, notificationAt: Date) async {
+    }
+    
     func setDinnerNotification(notificationAt: Date) async {
     }
     
