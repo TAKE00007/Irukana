@@ -19,4 +19,8 @@ struct LocalNotificationService {
     func setDinnerNotification(notificationAt: Date) async {
         await localNotificationRepository.setDinnerNotification(notificationAt: notificationAt)
     }
+    
+    func setReminder(scheduleId: UUID, title: String, notificationAt: Date) async {
+        await localNotificationRepository.setReminder(scheduleId: scheduleId, title: title, notificationAt: notificationAt)
+    }
 }

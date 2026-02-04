@@ -97,6 +97,51 @@ struct LocalNotificationRepositoryImp: LocalNotificationRepository {
             withIdentifiers: ["dinner.reminder.daily"]
         )
     }
+
+    func setReminder(scheduleId: UUID, title: String, notificationAt: Date) async {
+        let center = UNUserNotificationCenter.current()
+        let status = await checkAuthorizationStatus(center: center)
+        
+        switch status {
+        case .notDetermined:
+            do {
+                let granted = try await center.requestAuthorization(options: [.alert, .sound, .badge])
+                guard granted else { return }
+            } catch {
+                return
+            }
+        default:
+            return
+        }
+        
+        guard notificationAt > Date() else { return }
+
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: notificationAt)
+        
+        let content = UNMutableNotificationContent()
+        content.title = title
+        content.body = ""
+        content.sound = .default
+        
+        content.userInfo = [
+            "route": "calendar"
+        ]
+        
+        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
+        
+        let request = UNNotificationRequest(
+            identifier: "schedule.reminder.\(scheduleId.uuidString)",
+            content: content,
+            trigger: trigger
+        )
+        
+        do {
+            try await center.add(request)
+        } catch {
+            print("通知データを作れなかった")
+        }
+    }
     
     private func checkAuthorizationStatus(center: UNUserNotificationCenter) async -> UNAuthorizationStatus {
         let setting = await center.notificationSettings()
