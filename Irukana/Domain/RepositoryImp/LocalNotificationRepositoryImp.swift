@@ -60,7 +60,12 @@ struct LocalNotificationRepositoryImp: LocalNotificationRepository {
             } catch {
                 return
             }
-        default:
+        case .authorized, .provisional, .ephemeral:
+            break
+        case .denied:
+            print("通知が拒否されています")
+            return
+        @unknown default:
             return
         }
         
@@ -111,7 +116,7 @@ struct LocalNotificationRepositoryImp: LocalNotificationRepository {
                 return
             }
         default:
-            return
+            break
         }
         
         guard notificationAt > Date() else { return }

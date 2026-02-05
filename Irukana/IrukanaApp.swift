@@ -40,7 +40,8 @@ struct IrukanaApp: App {
             scheduleService: ScheduleService(
                 scheduleRepository: scheduleRepository,
                 userRepository: userRepository,
-                scheduleParticipantRepository: schedulePariticpantRepository
+                scheduleParticipantRepository: schedulePariticpantRepository,
+                localNotificationRepository: localNotificationRepository,
             ),
             calendarService: CalendarService(
                 calendarRepository: calendarRepository,
@@ -83,7 +84,8 @@ struct IrukanaApp: App {
             scheduleService: ScheduleService(
                 scheduleRepository: scheduleRepository,
                 userRepository: userRepository,
-                scheduleParticipantRepository: schedulePariticpantRepository
+                scheduleParticipantRepository: schedulePariticpantRepository,
+                localNotificationRepository: localNotificationRepository,
             ),
             calendarService: CalendarService(
                 calendarRepository: calendarRepository,

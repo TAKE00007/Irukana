@@ -101,6 +101,9 @@ struct AppRootView: View {
             if route == "dinner" {
                 isPresented = true
                 selected = lastTab
+            } else if route == "calendar" {
+                isPresented = false
+                selected = .schedule
             }
         }
     }
