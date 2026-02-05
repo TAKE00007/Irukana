@@ -17,7 +17,8 @@ private struct InjectedKey: EnvironmentKey {
         scheduleService: ScheduleService(
             scheduleRepository: DummyScheduleRepository(),
             userRepository: DummyUserRepository(),
-            scheduleParticipantRepository: DummyScheduleParticipantRepository()
+            scheduleParticipantRepository: DummyScheduleParticipantRepository(),
+            localNotificationRepository: DummyLocalNotificationRepository(),
         ),
         calendarService: CalendarService(
             calendarRepository: DummyCalendarRepository(),

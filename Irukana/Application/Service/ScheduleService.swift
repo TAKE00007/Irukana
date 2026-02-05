@@ -4,6 +4,7 @@ struct ScheduleService {
     let scheduleRepository: ScheduleRepository
     let userRepository: UserRepository
     let scheduleParticipantRepository: ScheduleParticipantRepository
+    let localNotificationRepository: LocalNotificationRepository
     
     func addSchedule(calendarId: UUID, title: String, startAt: Date, endAt: Date, notifyAt: ScheduleReminder?, color: ScheduleColor, isAllDay: Bool, userIds: [UUID]) async throws -> Schedule {
         
@@ -12,6 +13,10 @@ struct ScheduleService {
         let schedule = try await scheduleRepository.addSchedule(calendarId: calendarId, title: title, startAt: startAt, endAt: endAt, notifyAt: reminderDate, color: color, isAllDay: isAllDay)
         
         try await scheduleParticipantRepository.addScheduleParticipant(scheduleId: schedule.id, userIds: userIds)
+        
+        if let notificationAt = schedule.notifyAt {
+            await localNotificationRepository.setReminder(scheduleId: schedule.id, title: schedule.title, notificationAt: notificationAt)            
+        }
         
         return schedule
     }
