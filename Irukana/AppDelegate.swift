@@ -22,4 +22,12 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
         NotificationCenter.default.post(name: Self.didOpenNotification, object: nil, userInfo: userInfo)
         completionHandler()
     }
+
+    func userNotificationCenter(
+            _ center: UNUserNotificationCenter,
+            willPresent notification: UNNotification
+        ) async -> UNNotificationPresentationOptions {
+            [.banner, .sound]
+        }
+
 }
