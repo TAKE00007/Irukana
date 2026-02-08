@@ -28,6 +28,8 @@ struct ScheduleService {
 
         if let notificationAt = schedule.notifyAt {
             await localNotificationRepository.setReminder(scheduleId: schedule.id, title: schedule.title, notificationAt: notificationAt)
+        } else {
+            localNotificationRepository.removeReminder(scheduleId: schedule.id)
         }
         
         return schedule

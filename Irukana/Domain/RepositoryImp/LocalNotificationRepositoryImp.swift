@@ -93,6 +93,14 @@ struct LocalNotificationRepositoryImp: LocalNotificationRepository {
             trigger: trigger
         )
     }
+
+    func removeReminder(scheduleId: UUID) {
+        let center = UNUserNotificationCenter.current()
+        center.removePendingNotificationRequests(
+            withIdentifiers: ["\(NotificationConfig.scheduleIdentifierPrefix)\(scheduleId.uuidString)"]
+        )
+    }
+    
     
     private func canScheduleNotification(
         with policy: AuthorizationPolicy,
