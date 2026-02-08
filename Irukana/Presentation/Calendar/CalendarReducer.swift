@@ -3,13 +3,15 @@ import Foundation
 struct CalendarReducer {
     let dinnerStatusService: DinnerStatusService
     let scheduleService: ScheduleService
+    let user: User
     let calendarId: UUID
     let groupId: UUID
     var now: () -> Date = { Date() }
     
-    init(dinnerStatusService: DinnerStatusService, scheduleService: ScheduleService, calendarId: UUID, groupId: UUID, now: @escaping () -> Date) {
+    init(dinnerStatusService: DinnerStatusService, scheduleService: ScheduleService, user: User, calendarId: UUID, groupId: UUID, now: @escaping () -> Date) {
         self.dinnerStatusService = dinnerStatusService
         self.scheduleService = scheduleService
+        self.user = user
         self.calendarId = calendarId
         self.groupId = groupId
         self.now = now
