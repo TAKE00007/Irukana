@@ -98,6 +98,9 @@ struct DummyUserRepository: UserRepository {
 }
 
 struct DummyScheduleParticipantRepository: ScheduleParticipantRepository {
+    func updateScheduleParticipant(scheduleId: UUID, userIds: [UUID]) async throws {
+    }
+    
     func addScheduleParticipant(scheduleId: UUID, userIds: [UUID]) async throws {
     }
 
@@ -158,6 +161,9 @@ struct DummySessionRepository: SessionRepository {
 }
 
 struct DummyLocalNotificationRepository: LocalNotificationRepository {
+    func removeReminder(scheduleId: UUID) {
+    }
+    
     func setReminder(scheduleId: UUID, title: String, notificationAt: Date) async {
     }
     
