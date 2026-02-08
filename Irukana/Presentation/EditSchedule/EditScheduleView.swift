@@ -1,12 +1,24 @@
 import SwiftUI
 
 struct EditScheduleView: View {
-    let state: EditScheduleState
+    @State private var state: EditScheduleState
+    private var reducer: EditScheduleReducer
+
     @State private var isShowColor = false
     @State private var isShowParticipant = false
     @State private var isShowAlarm = false
-    let send: (EditScheduleAction) -> Void
-    let action: () -> Void
+    
+    let onFinish: () -> Void
+    
+    init(
+        reducer: EditScheduleReducer,
+        state: EditScheduleState,
+        onFinish: @escaping () -> Void
+    ) {
+        self.reducer = reducer
+        self.state = state
+        self.onFinish = onFinish
+    }
 
     var body: some View {
         VStack(spacing: 10) {
@@ -219,10 +231,23 @@ struct EditScheduleView: View {
             CalendarButton(
                 title: "保存",
                 variant: .primary,
-                action: action
-            )
+            ) {
+                if let effect = reducer.reduce(state: &state, action: .tapSave) {
+                    Task {
+                        let response = await reducer.run(effect)
+                        _ = reducer.reduce(state: &state, action: response)
+                    }
+                }
+                onFinish()
+            }
             .padding()
+            
+            Spacer()
         }
         .padding(.horizontal, 16)
+    }
+    
+    private func send( _ action: EditScheduleAction) {
+        _ = reducer.reduce(state: &state, action: action)
     }
 }

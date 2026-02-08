@@ -15,4 +15,27 @@ struct EditScheduleState: Equatable {
     
     var users: [User]
     var selectedUserIds: Set<UUID> = []
+    
+    var isEdited = false
+    
+    init(
+        calendar: Calendar,
+        title: String,
+        isAllDay: Bool,
+        startAt: Date,
+        endAt: Date,
+        notifyAt: ScheduleReminder? = nil,
+        color: ScheduleColor,
+        users: [User],
+    ) {
+        self.calendar = calendar
+        self.title = title
+        self.isAllDay = isAllDay
+        self.startAt = startAt
+        self.endAt = endAt
+        self.notifyAt = notifyAt
+        self.color = color
+        self.users = users
+        self.selectedUserIds = Set(users.map(\.id))
+    }
 }
