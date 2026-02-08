@@ -7,9 +7,33 @@ final class FireStoreScheduleParticipantRepositoryImp: ScheduleParticipantReposi
     
     func addScheduleParticipant(scheduleId: UUID, userIds: [UUID]) async throws {
         let uniqueUserIds = Array(Set(userIds))
-        guard !userIds.isEmpty else { return }
+        guard !uniqueUserIds.isEmpty else { return }
         
         let batch = db.batch()
+        
+        for userId in uniqueUserIds {
+            let scheduleParticipant = ScheduleParticipant(scheduleId: scheduleId, userId: userId)
+            let scheduleParticipantDoc = scheduleParticipant.toDoc()
+            let docId = "\(scheduleId.uuidString)_\(userId.uuidString)"
+            let ref = col.document(docId)
+            try batch.setData(from: scheduleParticipantDoc, forDocument: ref)
+        }
+        
+        try await batch.commit()
+    }
+    
+    func updateScheduleParticipant(scheduleId: UUID, userIds: [UUID]) async throws {
+        let uniqueUserIds = Array(Set(userIds))
+        
+        let snap = try await col
+            .whereField("scheduleId", isEqualTo: scheduleId.uuidString)
+            .getDocuments()
+        
+        let batch = db.batch()
+        
+        for doc in snap.documents {
+            batch.deleteDocument(doc.reference)
+        }
         
         for userId in uniqueUserIds {
             let scheduleParticipant = ScheduleParticipant(scheduleId: scheduleId, userId: userId)
