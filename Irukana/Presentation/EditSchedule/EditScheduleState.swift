@@ -1,6 +1,6 @@
 import Foundation
 
-struct EditScheduleStatus: Equatable {
+struct EditScheduleState: Equatable {
     var calendar: Calendar = {
         var cal = Calendar(identifier: .gregorian)
         return cal
@@ -15,8 +15,4 @@ struct EditScheduleStatus: Equatable {
     
     var users: [User]
     var selectedUserIds: Set<UUID> = []
-    
-    var isShowColor = false
-    var isShowParticipant = false
-    var isShowAlarm = false
 }
