@@ -21,6 +21,18 @@ struct ScheduleService {
         return schedule
     }
     
+    func updateSchedule(id: UUID, calendarId: UUID, title: String, startAt: Date, endAt: Date, notifyAt: Date?, color: ScheduleColor, isAllDay: Bool, userIds: [UUID]) async throws -> Schedule {
+        let schedule = try await scheduleRepository.updateSchedule(id: id, calendarId: calendarId, title: title, startAt: startAt, endAt: endAt, notifyAt: notifyAt, color: color, isAllDay: isAllDay)
+        
+        try await scheduleParticipantRepository.updateScheduleParticipant(scheduleId: schedule.id, userIds: userIds)
+
+        if let notificationAt = schedule.notifyAt {
+            await localNotificationRepository.setReminder(scheduleId: schedule.id, title: schedule.title, notificationAt: notificationAt)
+        }
+        
+        return schedule
+    }
+    
     func loadScheduleCreatedInLast24Hours(calendarId: UUID, now: Date) async throws -> [(Schedule, [User])] {
         
         guard let schedules = try await scheduleRepository.fetchRecentlyCreated(calendarId: calendarId, createdAt: now)
