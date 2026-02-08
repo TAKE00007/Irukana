@@ -24,7 +24,6 @@ final class FireStoreScheduleParticipantRepositoryImp: ScheduleParticipantReposi
     
     func updateScheduleParticipant(scheduleId: UUID, userIds: [UUID]) async throws {
         let uniqueUserIds = Array(Set(userIds))
-        guard !uniqueUserIds.isEmpty else { return }
         
         let snap = try await col
             .whereField("scheduleId", isEqualTo: scheduleId.uuidString)
