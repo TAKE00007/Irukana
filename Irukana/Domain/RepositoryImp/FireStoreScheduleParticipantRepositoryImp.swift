@@ -68,5 +68,19 @@ final class FireStoreScheduleParticipantRepositoryImp: ScheduleParticipantReposi
         }
     }
     
-    
+    func deleteScheduleParticipants(scheduleId: UUID) async throws {
+        let snap = try await col
+            .whereField("scheduleId", isEqualTo: scheduleId.uuidString)
+            .getDocuments()
+        
+        guard !snap.documents.isEmpty else { return }
+        
+        let batch = db.batch()
+        
+        for doc in snap.documents {
+            batch.deleteDocument(doc.reference)
+        }
+        
+        try await batch.commit()
+    }
 }

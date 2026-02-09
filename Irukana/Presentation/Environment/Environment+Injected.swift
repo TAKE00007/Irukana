@@ -98,6 +98,9 @@ struct DummyUserRepository: UserRepository {
 }
 
 struct DummyScheduleParticipantRepository: ScheduleParticipantRepository {
+    func deleteScheduleParticipants(scheduleId: UUID) async throws {
+    }
+    
     func updateScheduleParticipant(scheduleId: UUID, userIds: [UUID]) async throws {
     }
     
