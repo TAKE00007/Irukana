@@ -245,6 +245,14 @@ struct EditScheduleView: View {
             Spacer()
         }
         .padding(.horizontal, 16)
+        .onAppear {
+            if let effect = reducer.reduce(state: &state, action: .onAppear) {
+                Task {
+                    let response = await reducer.run(effect)
+                    _ = reducer.reduce(state: &state, action: response)
+                }
+            }
+        }
     }
     
     private func send( _ action: EditScheduleAction) {
