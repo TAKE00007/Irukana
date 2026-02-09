@@ -110,9 +110,10 @@ struct ScheduleService {
     }
     
     func deleteSchedule(scheduleId: UUID) async throws {
-        defer { localNotificationRepository.removeReminder(scheduleId: scheduleId) }
-
         try await scheduleRepository.deleteSchedule(id: scheduleId)
         try await scheduleParticipantRepository.deleteScheduleParticipants(scheduleId: scheduleId)
+        
+        // TODO: 上記の処理が失敗した場合呼び出されないので修正が必要
+        localNotificationRepository.removeReminder(scheduleId: scheduleId)
     }
 }
