@@ -5,8 +5,13 @@ struct CalendarView: View {
     private var reducer: CalendarReducer
     @State private var state = CalendarState()
     
-    init(reducer: CalendarReducer) {
+    let user: User
+    let groupId: UUID
+    
+    init(reducer: CalendarReducer, user: User, groupId: UUID) {
         self.reducer = reducer
+        self.user = user
+        self.groupId = groupId
     }
     
     var body: some View {
@@ -54,7 +59,14 @@ struct CalendarView: View {
                         
                         Divider()
                         
-                        MonthGrid(monthStart: monthStart, calendar: state.calendar, answerByDay: state.answerByDay, scheduleByDay: state.scheduleByDay)
+                        MonthGrid(
+                            user: user,
+                            monthStart: monthStart,
+                            calendar: state.calendar,
+                            answerByDay: state.answerByDay,
+                            scheduleByDay: state.scheduleByDay,
+                            groupId: groupId
+                        )
                             .id(monthStart)
                             .overlay {
                                 MonthVisibleMarker(monthStart: monthStart).frame(height: 0)
@@ -116,10 +128,12 @@ private struct WeekdayHeader: View {
 }
 
 private struct MonthGrid: View {
+    let user: User
     let monthStart: Date
     let calendar: Calendar
     let answerByDay: [Date : [(name: String, answer: DinnerAnswer)]]
     let scheduleByDay: [Date : [(Schedule, [User])]]
+    let groupId: UUID
     
     private var columns: [GridItem] { Array(repeating: .init(.flexible()), count: 7) }
     
@@ -136,9 +150,12 @@ private struct MonthGrid: View {
                 let scheduleStatus = scheduleByDay[key]
 
                 DayCell(
+                    user: user,
                     day: day,
                     answers: status ?? [],
-                    schedules: scheduleStatus ?? []
+                    schedules: scheduleStatus ?? [],
+                    calendar: calendar,
+                    groupId: groupId
                 )
             }
         }
@@ -157,9 +174,13 @@ private struct MonthGrid: View {
 }
 
 private struct DayCell: View {
+    @Environment(\.injected) private var container
+    let user: User
     let day: Int
     let answers: [(name: String, answer: DinnerAnswer)]
     let schedules: [(Schedule, [User])]
+    let calendar: Calendar
+    let groupId: UUID
     
     var body: some View {
         VStack(spacing: 5) {
@@ -187,15 +208,39 @@ private struct DayCell: View {
             // TODO: 予定を長押しした時にカレンダーの情報が表示されるようにしたい
             // 名前は取得できるようにした
             if !schedules.isEmpty {
-                ForEach(schedules, id: \.0.id) { (schedule, user) in
-                    HStack {
-                        Text(schedule.title)
-                        Spacer()
+                ForEach(schedules, id: \.0.id) { (schedule, users) in
+                    NavigationLink {
+                        EditScheduleView(
+                            reducer: EditScheduleReducer(
+                                scheduleService: container.scheduleService,
+                                calendarService: container.calendarService,
+                                groupId: groupId,
+                                scheduleId: schedule.id,
+                                userId: user.id,
+                                calendarId: schedule.calendarId,
+                                now: { Date() }
+                            ),
+                            state: EditScheduleState(
+                                calendar: calendar,
+                                title: schedule.title,
+                                isAllDay: schedule.isAllDay,
+                                startAt: schedule.startAt,
+                                endAt: schedule.endAt,
+                                color: schedule.color,
+                                users: users
+                            )
+                        )
+                    } label: {
+                        HStack {
+                            Text(schedule.title)
+                            Spacer()
+                        }
+                        .font(.caption)
+                        .lineLimit(1)
+                        .foregroundStyle(Color.black)
+                        .frame(maxWidth: .infinity)
+                        .background(schedule.color.color.opacity(0.2))
                     }
-                    .font(.caption)
-                    .lineLimit(1)
-                    .frame(maxWidth: .infinity)
-                    .background(schedule.color.color.opacity(0.2))
                 }
             }
             

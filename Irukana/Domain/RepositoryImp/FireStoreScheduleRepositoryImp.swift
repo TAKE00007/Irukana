@@ -37,8 +37,8 @@ final class FireStoreScheduleRepositoryImp: ScheduleRepository {
         let docSchedule = schedule.toDoc()
         
         // 指定した予定があるかどうか
-        let snap = try await col.whereField("id", isEqualTo: id).getDocuments()
-        guard !snap.documents.isEmpty else {
+        let doc = try await ref.getDocument()
+        guard doc.exists else {
             throw ScheduleError.scheduleNotFound
         }
         
