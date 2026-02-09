@@ -110,8 +110,9 @@ struct ScheduleService {
     }
     
     func deleteSchedule(scheduleId: UUID) async throws {
+        defer { localNotificationRepository.removeReminder(scheduleId: scheduleId) }
+
         try await scheduleRepository.deleteSchedule(id: scheduleId)
         try await scheduleParticipantRepository.deleteScheduleParticipants(scheduleId: scheduleId)
-        localNotificationRepository.removeReminder(scheduleId: scheduleId)
     }
 }
