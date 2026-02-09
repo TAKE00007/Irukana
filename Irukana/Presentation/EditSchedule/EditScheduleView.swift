@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct EditScheduleView: View {
+    @Environment(\.dismiss) private var dismiss
     @State private var state: EditScheduleState
     private var reducer: EditScheduleReducer
 
@@ -8,16 +9,12 @@ struct EditScheduleView: View {
     @State private var isShowParticipant = false
     @State private var isShowAlarm = false
     
-    let onFinish: () -> Void
-    
     init(
         reducer: EditScheduleReducer,
         state: EditScheduleState,
-        onFinish: @escaping () -> Void
     ) {
         self.reducer = reducer
         self.state = state
-        self.onFinish = onFinish
     }
 
     var body: some View {
@@ -236,9 +233,9 @@ struct EditScheduleView: View {
                     Task {
                         let response = await reducer.run(effect)
                         _ = reducer.reduce(state: &state, action: response)
+                        dismiss()
                     }
                 }
-                onFinish()
             }
             .padding()
             

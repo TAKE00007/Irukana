@@ -175,7 +175,6 @@ private struct MonthGrid: View {
 
 private struct DayCell: View {
     @Environment(\.injected) private var container
-    @Environment(\.dismiss) private var dismiss
     let user: User
     let day: Int
     let answers: [(name: String, answer: DinnerAnswer)]
@@ -230,9 +229,7 @@ private struct DayCell: View {
                                 color: schedule.color,
                                 users: users
                             )
-                        ) {
-                            dismiss()
-                        }
+                        )
                     } label: {
                         HStack {
                             Text(schedule.title)
