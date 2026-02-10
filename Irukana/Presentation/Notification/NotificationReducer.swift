@@ -47,7 +47,12 @@ struct NotificationReducer {
                 mappedAnswers.sort { $0.name < $1.name }
                 state.answers = mappedAnswers
             case .failure(let error):
-                state.dinnerStatusErrorMessage = error.errorDescription
+                switch error {
+                case .notFoundDinnerStatus:
+                    state.dinnerStatusErrorMessage = nil
+                default:
+                    state.dinnerStatusErrorMessage = error.errorDescription
+                }
             }
             
             switch scheduleResult {
@@ -69,7 +74,7 @@ struct NotificationReducer {
                     guard
                         let dinnerStatusWithUsers = try await dinnerStatusService.loadDinnerStatusWithUsers(groupId: groupId, date: now())
                     else
-                        { return .failure(DinnerStatusError.faileLoadDinnerStatus) }
+                    { return .failure(DinnerStatusError.notFoundDinnerStatus) }
                     
                     return .success(dinnerStatusWithUsers)
                 } catch {
