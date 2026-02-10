@@ -239,6 +239,20 @@ struct EditScheduleView: View {
             }
             .padding()
             
+            CalendarButton(
+                title: "削除",
+                variant: .outline,
+            ) {
+                if let effect = reducer.reduce(state: &state, action: .tapDelete) {
+                    Task {
+                        let response = await reducer.run(effect)
+                        _ = reducer.reduce(state: &state, action: response)
+                        dismiss()
+                    }
+                }
+            }
+            .padding()
+            
             Spacer()
         }
         .padding(.horizontal, 16)

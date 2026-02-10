@@ -91,6 +91,10 @@ struct EditScheduleReducer {
                 // TODO: 後でエラー処理を書く
                 return nil
             }
+        case .tapDelete:
+            return .deleteSchedule
+        case .deleteResponse(_):
+            return nil
         }
     }
     
@@ -113,6 +117,13 @@ struct EditScheduleReducer {
                 return .usersResponse(.success(users))
             } catch {
                 return .usersResponse(.failure(.userNotFound))
+            }
+        case .deleteSchedule:
+            do {
+                try await scheduleService.deleteSchedule(scheduleId: scheduleId)
+                return .deleteResponse(nil)
+            } catch {
+                return .deleteResponse(.failAddSchedule)
             }
         }
     }
