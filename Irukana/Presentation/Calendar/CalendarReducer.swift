@@ -70,6 +70,24 @@ struct CalendarReducer {
         case .tapCopy:
             state.showCopiedAlert = true
             return nil
+        case .updateSchedule(let schedule):
+            var foundUsers: [User]? = nil
+            for (key, list) in state.scheduleByDay {
+                if let index = list.firstIndex(where: { $0.0.id == schedule.id }) {
+                    foundUsers = list[index].1
+                    state.scheduleByDay[key]?.remove(at: index)
+                    break
+                }
+            }
+            
+            let newKey = state.calendar.startOfDay(for: schedule.startAt)
+            
+            // TODO: userも編集時に返す必要がありそう
+            let users = foundUsers ?? []
+            
+            state.scheduleByDay[newKey, default: []].append((schedule, users))
+            
+            return nil
         }
     }
         
