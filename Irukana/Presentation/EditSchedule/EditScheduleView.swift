@@ -126,11 +126,16 @@ struct EditScheduleView: View {
             .sheet(isPresented: $isShowParticipant) {
                 ScrollView {
                     VStack {
-                        Text("参加者:Take")
-                            .padding(.top, 12)
-                            .padding(.bottom, 28)
+                        HStack {
+                            Text("参加者:")
+                            ForEach(Array(state.selectedUsers)) { user in
+                                Text(user.name )
+                            }
+                        }
+                        .padding(.top, 12)
+                        .padding(.bottom, 28)
                         ForEach(state.users) { user in
-                            let isSelected = state.selectedUserIds.contains(user.id)
+                            let isSelected = state.selectedUsers.contains(user)
                             HStack {
                                 Text(user.name.prefix(1))
                                     .padding(5)
@@ -156,7 +161,7 @@ struct EditScheduleView: View {
                                 
                             }
                             .onTapGesture {
-                                send(.toggleUserSelection(user.id))
+                                send(.toggleUserSelection(user))
                             }
                             .padding()
                             .background(isSelected ? Color.green.opacity(0.2) : Color.clear)
