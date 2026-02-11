@@ -205,8 +205,6 @@ private struct DayCell: View {
                 .background(statusColor(for: answer))
 
             }
-            // TODO: 予定を長押しした時にカレンダーの情報が表示されるようにしたい
-            // 名前は取得できるようにした
             if !schedules.isEmpty {
                 ForEach(schedules, id: \.0.id) { (schedule, users) in
                     NavigationLink {
