@@ -226,6 +226,7 @@ private struct DayCell: View {
                                 isAllDay: schedule.isAllDay,
                                 startAt: schedule.startAt,
                                 endAt: schedule.endAt,
+                                notifyAt: ScheduleReminder.from(startAt: schedule.startAt, notifyAt: schedule.notifyAt),
                                 color: schedule.color,
                                 users: users
                             )
@@ -294,6 +295,21 @@ private struct MonthVisibleMarker: View {
                     value: [MonthY(monthStart: monthStart,
                                    minY: proxy.frame(in: .named("scroll")).minY)]
                 )
+        }
+    }
+}
+
+extension ScheduleReminder {
+    static func from(startAt: Date, notifyAt: Date?, calendar: Calendar = .current) -> ScheduleReminder? {
+        guard let notifyAt = notifyAt else { return nil }
+
+        let diff = calendar.dateComponents([.minute], from: notifyAt, to: startAt).minute
+        
+        switch diff {
+        case 0: return .start
+        case 10: return .beforeTenMinute
+        case 60: return .beforeHour
+        default: return nil
         }
     }
 }
