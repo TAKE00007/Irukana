@@ -14,7 +14,7 @@ struct EditScheduleState: Equatable {
     var color: ScheduleColor
     
     var users: [User]
-    var selectedUsers: Set<User> = []
+    var selectedUserIds: Set<UUID> = []
     
     var isEdited = false
     
@@ -36,6 +36,6 @@ struct EditScheduleState: Equatable {
         self.notifyAt = notifyAt
         self.color = color
         self.users = users
-        self.selectedUsers = Set(users)
+        self.selectedUserIds = Set(users.map(\.id))
     }
 }

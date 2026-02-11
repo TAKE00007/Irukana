@@ -57,10 +57,10 @@ struct EditScheduleReducer {
             state.color = scheduleColor
             return nil
         case .toggleUserSelection(let user):
-            if state.selectedUsers.contains(user) {
-                state.selectedUsers.remove(user)
+            if state.selectedUserIds.contains(user.id) {
+                state.selectedUserIds.remove(user.id)
             } else {
-                state.selectedUsers.insert(user)
+                state.selectedUserIds.insert(user.id)
             }
             return nil
         case .tapSave:
@@ -72,7 +72,7 @@ struct EditScheduleReducer {
                 notifyAt: state.notifyAt,
                 color: state.color,
                 isAllDay: state.isAllDay,
-                userIds: Array(state.selectedUsers.map { $0.id })
+                userIds: Array(state.selectedUserIds)
             )
         case .saveResponse(let result):
             switch result {

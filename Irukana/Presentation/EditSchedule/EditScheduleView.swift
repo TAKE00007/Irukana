@@ -128,14 +128,17 @@ struct EditScheduleView: View {
                     VStack {
                         HStack {
                             Text("参加者:")
-                            ForEach(Array(state.selectedUsers)) { user in
-                                Text(user.name )
+                            ForEach(Array(state.users
+                                .filter { state.selectedUserIds.contains($0.id) }
+                            ))
+                            { user in
+                                Text(user.name)
                             }
                         }
                         .padding(.top, 12)
                         .padding(.bottom, 28)
                         ForEach(state.users) { user in
-                            let isSelected = state.selectedUsers.contains(user)
+                            let isSelected = state.selectedUserIds.contains(user.id)
                             HStack {
                                 Text(user.name.prefix(1))
                                     .padding(5)
