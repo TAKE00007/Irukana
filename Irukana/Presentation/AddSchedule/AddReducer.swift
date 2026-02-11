@@ -74,7 +74,7 @@ struct AddReducer {
                 notifyAt: state.scheduleForm.notifyAt,
                 color: state.scheduleForm.color,
                 isAllDay: state.scheduleForm.isAllDay,
-                userIds: [userId] // TODO: 参加者のuserIdを入れるようにする
+                userIds: state.selectedUsers.map { $0.id }
             )
         case let .saveResponse(result):
             switch result {
