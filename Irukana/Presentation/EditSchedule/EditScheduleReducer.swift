@@ -56,11 +56,11 @@ struct EditScheduleReducer {
         case .setColor(let scheduleColor):
             state.color = scheduleColor
             return nil
-        case .toggleUserSelection(let uuid):
-            if state.selectedUserIds.contains(uuid) {
-                state.selectedUserIds.remove(uuid)
+        case .toggleUserSelection(let user):
+            if state.selectedUserIds.contains(user.id) {
+                state.selectedUserIds.remove(user.id)
             } else {
-                state.selectedUserIds.insert(uuid)
+                state.selectedUserIds.insert(user.id)
             }
             return nil
         case .tapSave:

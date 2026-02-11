@@ -9,7 +9,7 @@ enum EditScheduleAction {
     case setEndAt(Date)
     case setNotifyAt(ScheduleReminder)
     case setColor(ScheduleColor)
-    case toggleUserSelection(UUID)
+    case toggleUserSelection(User)
     
     case tapSave
     case tapDelete

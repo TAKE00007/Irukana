@@ -34,6 +34,7 @@ struct AddReducer {
             state.didInitScheduleForm = true
             state.scheduleForm.startAt = Date()
             state.scheduleForm.endAt = state.calendar.date(byAdding: .hour, value: 1, to: state.scheduleForm.startAt) ?? state.scheduleForm.startAt.addingTimeInterval(3600)
+            state.selectedUserIds.insert(userId)
             return .loadUsers
         case .tapDinnerYes:
             state.isDinner = true
@@ -74,7 +75,7 @@ struct AddReducer {
                 notifyAt: state.scheduleForm.notifyAt,
                 color: state.scheduleForm.color,
                 isAllDay: state.scheduleForm.isAllDay,
-                userIds: [userId] // TODO: 参加者のuserIdを入れるようにする
+                userIds: Array(state.selectedUserIds)
             )
         case let .saveResponse(result):
             switch result {
@@ -101,11 +102,11 @@ struct AddReducer {
                 state.alert = AlertState(title: "ユーザーの取得に失敗", message: "\(error)")
                 return nil
             }
-        case .toggleUserSelection(let uuid):
-            if state.selectedUserIds.contains(uuid) {
-                state.selectedUserIds.remove(uuid)
+        case .toggleUserSelection(let user):
+            if state.selectedUserIds.contains(user.id) {
+                state.selectedUserIds.remove(user.id)
             } else {
-                state.selectedUserIds.insert(uuid)
+                state.selectedUserIds.insert(user.id)
             }
             
             return nil
