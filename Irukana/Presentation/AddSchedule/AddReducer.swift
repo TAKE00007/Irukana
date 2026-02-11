@@ -74,7 +74,7 @@ struct AddReducer {
                 notifyAt: state.scheduleForm.notifyAt,
                 color: state.scheduleForm.color,
                 isAllDay: state.scheduleForm.isAllDay,
-                userIds: state.selectedUsers.map { $0.id }
+                userIds: Array(state.selectedUserIds)
             )
         case let .saveResponse(result):
             switch result {
@@ -102,10 +102,10 @@ struct AddReducer {
                 return nil
             }
         case .toggleUserSelection(let user):
-            if state.selectedUsers.contains(user) {
-                state.selectedUsers.remove(user)
+            if state.selectedUserIds.contains(user.id) {
+                state.selectedUserIds.remove(user.id)
             } else {
-                state.selectedUsers.insert(user)
+                state.selectedUserIds.insert(user.id)
             }
             
             return nil
