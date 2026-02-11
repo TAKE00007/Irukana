@@ -86,7 +86,7 @@ struct CalendarReducer {
             let users = foundUsers ?? []
             
             state.scheduleByDay[newKey, default: []].append((schedule, users))
-            
+            state.scheduleByDay[newKey]?.sort { $0.0.startAt < $1.0.startAt }
             return nil
         }
     }
