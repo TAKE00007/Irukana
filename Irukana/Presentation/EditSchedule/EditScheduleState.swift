@@ -24,7 +24,7 @@ struct EditScheduleState: Equatable {
         isAllDay: Bool,
         startAt: Date,
         endAt: Date,
-        notifyAt: ScheduleReminder? = nil,
+        notifyAt: ScheduleReminder?,
         color: ScheduleColor,
         users: [User],
     ) {
