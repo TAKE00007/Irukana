@@ -65,7 +65,8 @@ struct CalendarView: View {
                             calendar: state.calendar,
                             answerByDay: state.answerByDay,
                             scheduleByDay: state.scheduleByDay,
-                            groupId: groupId
+                            groupId: groupId,
+                            send: send
                         )
                             .id(monthStart)
                             .overlay {
@@ -89,6 +90,10 @@ struct CalendarView: View {
                 }
             }
         }
+    }
+    
+    private func send(_ action: CalendarAction) {
+        _ = reducer.reduce(state: &state, action: action)
     }
 }
 
@@ -134,6 +139,7 @@ private struct MonthGrid: View {
     let answerByDay: [Date : [(name: String, answer: DinnerAnswer)]]
     let scheduleByDay: [Date : [(Schedule, [User])]]
     let groupId: UUID
+    let send: (CalendarAction) -> Void
     
     private var columns: [GridItem] { Array(repeating: .init(.flexible()), count: 7) }
     
@@ -155,7 +161,8 @@ private struct MonthGrid: View {
                     answers: status ?? [],
                     schedules: scheduleStatus ?? [],
                     calendar: calendar,
-                    groupId: groupId
+                    groupId: groupId,
+                    send: send
                 )
             }
         }
@@ -181,6 +188,7 @@ private struct DayCell: View {
     let schedules: [(Schedule, [User])]
     let calendar: Calendar
     let groupId: UUID
+    let send: (CalendarAction) -> Void
     
     var body: some View {
         VStack(spacing: 5) {
@@ -205,8 +213,6 @@ private struct DayCell: View {
                 .background(statusColor(for: answer))
 
             }
-            // TODO: 予定を長押しした時にカレンダーの情報が表示されるようにしたい
-            // 名前は取得できるようにした
             if !schedules.isEmpty {
                 ForEach(schedules, id: \.0.id) { (schedule, users) in
                     NavigationLink {
@@ -229,7 +235,10 @@ private struct DayCell: View {
                                 notifyAt: ScheduleReminder.from(startAt: schedule.startAt, notifyAt: schedule.notifyAt),
                                 color: schedule.color,
                                 users: users
-                            )
+                            ),
+                            onSaved: { updatedSchedule in
+                                send(.updateSchedule(updatedSchedule))
+                            }
                         )
                     } label: {
                         HStack {

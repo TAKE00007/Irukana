@@ -9,12 +9,16 @@ struct EditScheduleView: View {
     @State private var isShowParticipant = false
     @State private var isShowAlarm = false
     
+    private let onSaved: (Schedule) -> Void
+    
     init(
         reducer: EditScheduleReducer,
         state: EditScheduleState,
+        onSaved: @escaping (Schedule) -> Void = { _ in }
     ) {
         self.reducer = reducer
         self.state = state
+        self.onSaved = onSaved
     }
 
     var body: some View {
@@ -241,11 +245,14 @@ struct EditScheduleView: View {
                     Task {
                         let response = await reducer.run(effect)
                         _ = reducer.reduce(state: &state, action: response)
+                        if case let .saveResponse(.success(schedule)) = response {
+                            onSaved(schedule)
+                        }
                         dismiss()
                     }
                 }
             }
-            .padding()
+            .padding(.top, 16)
             
             CalendarButton(
                 title: "削除",
@@ -259,7 +266,7 @@ struct EditScheduleView: View {
                     }
                 }
             }
-            .padding()
+            .padding(.vertical, 16)
             
             Spacer()
         }

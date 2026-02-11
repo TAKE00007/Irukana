@@ -7,6 +7,7 @@ enum CalendarAction {
         schedule: Result<[(Schedule, [User])], ScheduleError>
     )
     case tapCopy
+    case updateSchedule(Schedule)
 }
 
 enum CalendarEffect {
