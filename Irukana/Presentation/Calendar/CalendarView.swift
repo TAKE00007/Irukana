@@ -298,6 +298,21 @@ private struct MonthVisibleMarker: View {
     }
 }
 
+extension ScheduleReminder {
+    static func from(startAt: Date, notifyAt: Date?, calendar: Calendar = .current) -> ScheduleReminder? {
+        guard let notifyAt = notifyAt else { return nil }
+
+        let diff = calendar.dateComponents([.minute], from: notifyAt, to: startAt).minute
+        
+        switch diff {
+        case 0: return .start
+        case 10: return .beforeTenMinute
+        case 60: return .beforeHour
+        default: return nil
+        }
+    }
+}
+
 //#Preview {
 //    CalendarView()
 //}
