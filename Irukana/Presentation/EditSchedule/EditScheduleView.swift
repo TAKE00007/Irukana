@@ -252,7 +252,7 @@ struct EditScheduleView: View {
                     }
                 }
             }
-            .padding()
+            .padding(.top, 16)
             
             CalendarButton(
                 title: "削除",
@@ -266,7 +266,7 @@ struct EditScheduleView: View {
                     }
                 }
             }
-            .padding()
+            .padding(.vertical, 16)
             
             Spacer()
         }
