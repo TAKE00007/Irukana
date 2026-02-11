@@ -34,6 +34,7 @@ struct AddReducer {
             state.didInitScheduleForm = true
             state.scheduleForm.startAt = Date()
             state.scheduleForm.endAt = state.calendar.date(byAdding: .hour, value: 1, to: state.scheduleForm.startAt) ?? state.scheduleForm.startAt.addingTimeInterval(3600)
+            state.selectedUserIds.insert(userId)
             return .loadUsers
         case .tapDinnerYes:
             state.isDinner = true
