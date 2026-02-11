@@ -243,7 +243,7 @@ private struct ScheduleView: View {
                             .padding(.top, 12)
                             .padding(.bottom, 28)
                         ForEach(state.users) { user in
-                            let isSelected = state.selectedUserIds.contains(user.id)
+                            let isSelected = state.selectedUsers.contains(user)
                             HStack {
                                 Text(user.name.prefix(1))
                                     .padding(5)
@@ -269,7 +269,7 @@ private struct ScheduleView: View {
                                 
                             }
                             .onTapGesture {
-                                send(.toggleUserSelection(user.id))
+                                send(.toggleUserSelection(user))
                             }
                             .padding()
                             .background(isSelected ? Color.green.opacity(0.2) : Color.clear)

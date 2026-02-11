@@ -101,11 +101,11 @@ struct AddReducer {
                 state.alert = AlertState(title: "ユーザーの取得に失敗", message: "\(error)")
                 return nil
             }
-        case .toggleUserSelection(let uuid):
-            if state.selectedUserIds.contains(uuid) {
-                state.selectedUserIds.remove(uuid)
+        case .toggleUserSelection(let user):
+            if state.selectedUsers.contains(user) {
+                state.selectedUsers.remove(user)
             } else {
-                state.selectedUserIds.insert(uuid)
+                state.selectedUsers.insert(user)
             }
             
             return nil

@@ -14,7 +14,7 @@ struct AddState: Equatable {
     var alert: AlertState? = nil
     
     var users: [User] = []
-    var selectedUserIds: Set<UUID>  = []
+    var selectedUsers: Set<User>  = []
 }
 
 

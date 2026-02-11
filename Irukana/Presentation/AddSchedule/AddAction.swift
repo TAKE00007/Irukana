@@ -20,7 +20,7 @@ enum AddAction {
     case saveResponse(Result<Schedule, ScheduleError>)
     case usersResponse(Result<[User], UserError>)
     
-    case toggleUserSelection(UUID)
+    case toggleUserSelection(User)
 }
 
 enum AddEffect {
