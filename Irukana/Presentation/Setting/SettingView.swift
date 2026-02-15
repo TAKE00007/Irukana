@@ -43,7 +43,10 @@ struct SettingView: View {
                     .bold()
                 Divider()
                 NavigationLink {
-                    MemberSettingView(users: [User(id: UUID(), name: "Take", passwordHash: ""), User(id: UUID(), name: "Aoi", passwordHash: "")])
+                    MemberSettingView(
+                        users: [User(id: UUID(), name: "Take", passwordHash: ""), User(id: UUID(), name: "Aoi", passwordHash: "")]) { user in
+                            send(.deleteUser(user))
+                        }
                 } label: {
                     HStack {
                         Text("T")
@@ -103,6 +106,7 @@ struct SettingView: View {
 
 struct MemberSettingView: View {
     let users: [User]
+    let delete: (User) -> Void
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -128,7 +132,7 @@ struct MemberSettingView: View {
                 }
                 .swipeActions(edge: .trailing) {
                     Button(role: .destructive) {
-                        print("delete")
+                        delete(user)
                     } label: {
                         Image(systemName: "trash")
                     }
