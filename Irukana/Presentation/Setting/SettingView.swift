@@ -37,6 +37,43 @@ struct SettingView: View {
                 }
             }
             
+            VStack(alignment: .leading) {
+                Text("メンバー設定")
+                    .font(.title2)
+                    .bold()
+                Divider()
+                Button {
+                    print("")
+                } label: {
+                    HStack {
+                        Text("T")
+                            .padding(3)
+                            .background(
+                                Circle()
+                                    .fill(Color(.systemBackground))
+                            )
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.orange, lineWidth: 1)
+                            )
+                        Text("H")
+                            .padding(3)
+                            .background(
+                                Circle()
+                                    .fill(Color(.systemBackground))
+                            )
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.orange, lineWidth: 1)
+                            )
+                        Spacer()
+                        Image(systemName: "chevron.forward")
+                    }
+                    .foregroundStyle(.gray)
+                }
+
+            }
+            
             Spacer()
             
             CalendarButton(
