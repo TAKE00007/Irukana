@@ -7,10 +7,12 @@ struct SettingReducer {
     let groupService: GroupService
     
     init(
+        groupId: UUID,
         service: AuthService,
         localNotificationService: LocalNotificationService,
         groupService: GroupService
     ) {
+        self.groupId = groupId
         self.service = service
         self.localNotificaitonService = localNotificationService
         self.groupService = groupService
@@ -19,6 +21,8 @@ struct SettingReducer {
     @discardableResult
     func reduce(state: inout SettingState, action: SettingAction) -> SettingEffect? {
         switch action {
+        case .onAppear:
+            return .loadUsers
         case .tapLogout:
             return .logout
         case .logoutCompleted:
@@ -37,7 +41,15 @@ struct SettingReducer {
         case .deleteUser(let user):
             return .deleteUser(user)
         case .deleteCompleted:
-            return nil
+            return .loadUsers
+        case .userResponse(let result):
+            switch result {
+            case .success(let users):
+                state.users = users
+                return nil
+            case .failure(_):
+                return nil
+            }
         }
     }
     
@@ -56,6 +68,14 @@ struct SettingReducer {
             }  catch {
                 print(error.localizedDescription)
                 return .deleteCompleted //TODO: エラー時の処理はいつか考える
+            }
+        case .loadUsers:
+            do {
+                let users = try await groupService.feetchUsers(groupId: groupId)
+                guard !users.isEmpty else { return .userResponse(.failure(UserError.userNotFound))}
+                return .userResponse(.success(users))
+            } catch {
+                return .userResponse(.failure(UserError.userNotFound))
             }
         }
     }

@@ -43,10 +43,10 @@ struct SettingView: View {
                     .bold()
                 Divider()
                 NavigationLink {
-                    MemberSettingView(
-                        users: [User(id: UUID(), name: "Take", passwordHash: ""), User(id: UUID(), name: "Aoi", passwordHash: "")]) { user in
-                            send(.deleteUser(user))
-                        }
+                    MemberSettingView(users: state.users)
+                    { user in
+                        send(.deleteUser(user))
+                    }
                 } label: {
                     HStack {
                         Text("T")
@@ -90,6 +90,9 @@ struct SettingView: View {
             if newValue {
                 onLogout()
             }
+        }
+        .onAppear {
+            send(.onAppear)
         }
     }
     
