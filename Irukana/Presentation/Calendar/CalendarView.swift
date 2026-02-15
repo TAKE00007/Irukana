@@ -22,7 +22,7 @@ struct CalendarView: View {
                 // TODO: 本当はSwiftUIでやりたい
                 Button {
                     UIPasteboard.general.string = state.calendarId?.uuidString
-                    reducer.reduce(state: &state, action: .tapCopy)
+                    send(.tapCopy)
                 } label: {
                     Image(systemName: "calendar")
                         .foregroundStyle(.black)
@@ -76,24 +76,36 @@ struct CalendarView: View {
                 }
                 .onPreferenceChange(MonthYPreference.self) { values in
                     guard let nearest = values.min(by: { abs($0.minY) < abs($1.minY) }) else { return }
-                    if state.visibleMonthStart != nearest.monthStart {
-                        state.visibleMonthStart = nearest.monthStart
-                    }
+                    
+                    guard state.visibleMonthStart != nearest.monthStart else { return }
+                    state.visibleMonthStart = nearest.monthStart
+                    send(.onChange)
                 }
             }
             .coordinateSpace(name: "scroll")
             .task {
                 proxy.scrollTo(state.baseMonthStart, anchor: .top)
-                if let effect = reducer.reduce(state: &state, action: .onAppear) {
-                    let response = await reducer.run(effect)
-                    _ = reducer.reduce(state: &state, action: response)
-                }
+                send(.onAppear)
             }
         }
     }
     
     private func send(_ action: CalendarAction) {
-        _ = reducer.reduce(state: &state, action: action)
+        Task {
+            var nextAction: CalendarAction? = action
+            
+            while let currentAction = nextAction {
+                let effect =  reducer.reduce(state: &state, action: currentAction)
+                
+                guard let effect else {
+                    nextAction = nil
+                    continue
+                }
+                
+                let producedAction = await reducer.run(effect)
+                nextAction = producedAction
+            }
+        }
     }
 }
 

@@ -1,10 +1,3 @@
-//
-//  FormatterStore.swift
-//  Irukana
-//
-//  Created by 大竹駿 on 2025/10/29.
-//
-
 import Foundation
 
 public struct FormatterStore {
@@ -24,8 +17,14 @@ public struct FormatterStore {
     
     static func monthRange(for date: Date) -> (start: Date, end: Date) {
         let cal = Calendar(identifier: .gregorian)
-        let start = cal.date(from: cal.dateComponents([.year, .month], from: date))!
-        let end = cal.date(byAdding: DateComponents(month: 1), to: start)!
+        
+        let baseMonthStart = cal.date(from: cal.dateComponents([.year, .month], from: date))!
+        
+        let start = cal.date(byAdding: .month, value: -6, to: baseMonthStart)!
+        
+        let plus6MonthStart = cal.date(byAdding: .month, value: 6, to: baseMonthStart)!
+        let end = cal.date(byAdding: .month, value: 1, to: plus6MonthStart)!
+        
         return (start, end)
     }
     
