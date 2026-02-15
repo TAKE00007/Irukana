@@ -27,7 +27,11 @@ private struct InjectedKey: EnvironmentKey {
         ),
         localNotificationService: LocalNotificationService(
             localNotificationRepository: DummyLocalNotificationRepository(),
-            sessionRepository: DummySessionRepository())
+            sessionRepository: DummySessionRepository()),
+        groupService: GroupService(
+            userRepository: DummyUserRepository(),
+            groupRepository: DummyGroupRepository(),
+        )
     )
 }
 
@@ -131,6 +135,9 @@ struct DummyCalendarRepository: CalendarRepository {
 }
 
 struct DummyGroupRepository: GroupRepository {
+    func deleteeUserId(userId: UUID, groupId: UUID) async throws {
+    }
+    
     func fetchGroupIds(userId: UUID) async throws -> [UUID] {
         []
     }

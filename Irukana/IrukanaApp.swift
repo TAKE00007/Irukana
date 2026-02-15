@@ -51,6 +51,10 @@ struct IrukanaApp: App {
             localNotificationService: LocalNotificationService(
                 localNotificationRepository: localNotificationRepository,
                 sessionRepository: sessionRepository,
+            ),
+            groupService: GroupService(
+                userRepository: userRepository,
+                groupRepository: groupRepository
             )
         )
         
@@ -95,6 +99,10 @@ struct IrukanaApp: App {
             localNotificationService: LocalNotificationService(
                 localNotificationRepository: localNotificationRepository,
                 sessionRepository: sessionRepository,
+            ),
+            groupService: GroupService(
+                userRepository: userRepository,
+                groupRepository: groupRepository
             )
         )
         #endif

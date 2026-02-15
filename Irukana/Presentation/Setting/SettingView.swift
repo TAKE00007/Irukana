@@ -37,6 +37,45 @@ struct SettingView: View {
                 }
             }
             
+            VStack(alignment: .leading) {
+                Text("メンバー設定")
+                    .font(.title2)
+                    .bold()
+                Divider()
+                NavigationLink {
+                    MemberSettingView(users: state.users)
+                    { user in
+                        send(.deleteUser(user))
+                    }
+                } label: {
+                    HStack {
+                        Text("T")
+                            .padding(3)
+                            .background(
+                                Circle()
+                                    .fill(Color(.systemBackground))
+                            )
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.orange, lineWidth: 1)
+                            )
+                        Text("H")
+                            .padding(3)
+                            .background(
+                                Circle()
+                                    .fill(Color(.systemBackground))
+                            )
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.orange, lineWidth: 1)
+                            )
+                        Spacer()
+                        Image(systemName: "chevron.forward")
+                    }
+                    .foregroundStyle(.gray)
+                }
+            }
+            
             Spacer()
             
             CalendarButton(
@@ -52,16 +91,70 @@ struct SettingView: View {
                 onLogout()
             }
         }
+        .onAppear {
+            send(.onAppear)
+        }
     }
     
     private func send(_ action: SettingAction) {
-        let effect = reducer.reduce(state: &state, action: action)
-        
-        guard let effect else { return }
         Task {
-            let action = await reducer.run(effect)
-            reducer.reduce(state: &state, action: action)
+            var nextAction: SettingAction? = action
+            
+            while let currentAction = nextAction {
+                let effect =  reducer.reduce(state: &state, action: currentAction)
+                
+                guard let effect else {
+                    nextAction = nil
+                    continue
+                }
+                
+                let producedAction = await reducer.run(effect)
+                nextAction = producedAction
+            }
         }
+    }
+}
+
+struct MemberSettingView: View {
+    let users: [User]
+    let delete: (User) -> Void
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            List(users) { user in
+                Button {
+                    print("")
+                } label: {
+                    HStack(spacing: 12) {
+                        Text(user.name.prefix(1))
+                            .padding(3)
+                            .background(
+                                Circle()
+                                    .fill(Color(.systemBackground))
+                            )
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.orange, lineWidth: 1)
+                            )
+                        Text(user.name)
+                            .bold()
+                    }
+                    .foregroundStyle(Color.black)
+                }
+                .swipeActions(edge: .trailing) {
+                    Button(role: .destructive) {
+                        delete(user)
+                    } label: {
+                        Image(systemName: "trash")
+                    }
+                }
+            }
+            .listStyle(.insetGrouped)
+            
+            Spacer()
+        }
+        .navigationTitle("メンバーリスト")
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 }
 
