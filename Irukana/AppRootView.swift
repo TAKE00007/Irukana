@@ -64,8 +64,11 @@ struct AppRootView: View {
             NavigationStack {
                 SettingView(
                     reducer: SettingReducer(
+                        groupId: calendarInfo.groupId,
                         service: container.authService,
-                        localNotificationService: container.localNotificationService),
+                        localNotificationService: container.localNotificationService,
+                        groupService: container.groupService
+                    ),
                     onLogout: onLogout
                 )
             }
