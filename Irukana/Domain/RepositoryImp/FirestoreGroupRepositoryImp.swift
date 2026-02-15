@@ -27,4 +27,11 @@ struct FirestoreGroupRepositoryImp: GroupRepository {
         
         return try response.documents.compactMap { try $0.data(as: UserGroupDoc.self).toDomain()?.groupId }
     }
+    
+    func deleteeUserId(userId: UUID, groupId: UUID) async throws {
+        let docId = "\(groupId.uuidString)_\(userId.uuidString)"
+        let ref = col.document(docId)
+        
+        try await ref.delete()
+    }
 }
