@@ -18,7 +18,9 @@ enum SettingAction {
 
 enum SettingEffect {
     case logout
+
     case setNotification(Date)
+    case deleteNotification
     
     case loadUsers
     case deleteUser(User)
