@@ -23,4 +23,8 @@ struct LocalNotificationService {
     func setReminder(scheduleId: UUID, title: String, notificationAt: Date) async {
         await localNotificationRepository.setReminder(scheduleId: scheduleId, title: title, notificationAt: notificationAt)
     }
+    
+    func removeDinnerNotification() {
+        localNotificationRepository.removeDinnerNotification()
+    }
 }
