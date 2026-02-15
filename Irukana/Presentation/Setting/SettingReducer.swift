@@ -30,11 +30,12 @@ struct SettingReducer {
             return nil
         case .setNotificationTime(let notifyAt):
             state.notificationTime = notifyAt
-            return nil
+            guard state.isNotification else { return nil }
+            return .setNotification(state.notificationTime)
         case .setIsNotification(let isNotification):
             state.isNotification = isNotification
             localNotificaitonService.updateIsNotification(isNotification: isNotification)
-            return nil
+            return .setNotification(state.notificationTime)
         case .setNotificationCompleted:
             // TODO: 何か処理する
             return nil
@@ -78,6 +79,9 @@ struct SettingReducer {
             } catch {
                 return .userResponse(.failure(UserError.userNotFound))
             }
+        case .deleteNotification:
+            localNotificaitonService.removeDinnerNotification()
+            return .deleteCompleted // TODO: 後で直す
         }
     }
 }
