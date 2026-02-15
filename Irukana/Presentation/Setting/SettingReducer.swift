@@ -48,6 +48,7 @@ struct SettingReducer {
                 state.users = users
                 return nil
             case .failure(_):
+                state.users = []
                 return nil
             }
         }
