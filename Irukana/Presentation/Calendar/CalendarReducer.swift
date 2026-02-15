@@ -26,6 +26,11 @@ struct CalendarReducer {
             state.visibleMonthStart = state.baseMonthStart
             let monthStart = state.visibleMonthStart ?? Date()
             return .load(visibleMonthStart: monthStart)
+        case .onChange:
+            state.isLoading = true
+            state.visibleMonthStart = state.baseMonthStart
+            let monthStart = state.visibleMonthStart ?? Date()
+            return .load(visibleMonthStart: monthStart)
         case let .initialResponse(dinner: dinnerResult, schedule: scheduleResult):
             state.isLoading = false
             

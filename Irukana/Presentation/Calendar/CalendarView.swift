@@ -79,6 +79,7 @@ struct CalendarView: View {
                     if state.visibleMonthStart != nearest.monthStart {
                         state.visibleMonthStart = nearest.monthStart
                     }
+                    send(.onChange)
                 }
             }
             .coordinateSpace(name: "scroll")
