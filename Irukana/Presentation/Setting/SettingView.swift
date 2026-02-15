@@ -97,12 +97,20 @@ struct SettingView: View {
     }
     
     private func send(_ action: SettingAction) {
-        let effect = reducer.reduce(state: &state, action: action)
-        
-        guard let effect else { return }
         Task {
-            let action = await reducer.run(effect)
-            reducer.reduce(state: &state, action: action)
+            var nextAction: SettingAction? = action
+            
+            while let currentAction = nextAction {
+                let effect =  reducer.reduce(state: &state, action: currentAction)
+                
+                guard let effect else {
+                    nextAction = nil
+                    continue
+                }
+                
+                let producedAction = await reducer.run(effect)
+                nextAction = producedAction
+            }
         }
     }
 }
