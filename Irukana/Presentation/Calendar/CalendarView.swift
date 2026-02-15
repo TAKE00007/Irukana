@@ -78,6 +78,7 @@ struct CalendarView: View {
                     guard let nearest = values.min(by: { abs($0.minY) < abs($1.minY) }) else { return }
                     
                     guard state.visibleMonthStart != nearest.monthStart else { return }
+                    state.visibleMonthStart = nearest.monthStart
                     send(.onChange)
                 }
             }
