@@ -42,8 +42,8 @@ struct SettingView: View {
                     .font(.title2)
                     .bold()
                 Divider()
-                Button {
-                    print("")
+                NavigationLink {
+                    MemberSettingView(users: [User(id: UUID(), name: "Take", passwordHash: ""), User(id: UUID(), name: "Aoi", passwordHash: "")])
                 } label: {
                     HStack {
                         Text("T")
@@ -71,7 +71,6 @@ struct SettingView: View {
                     }
                     .foregroundStyle(.gray)
                 }
-
             }
             
             Spacer()
@@ -99,6 +98,48 @@ struct SettingView: View {
             let action = await reducer.run(effect)
             reducer.reduce(state: &state, action: action)
         }
+    }
+}
+
+struct MemberSettingView: View {
+    let users: [User]
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            List(users) { user in
+                Button {
+                    print("")
+                } label: {
+                    HStack(spacing: 12) {
+                        Text(user.name.prefix(1))
+                            .padding(3)
+                            .background(
+                                Circle()
+                                    .fill(Color(.systemBackground))
+                            )
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.orange, lineWidth: 1)
+                            )
+                        Text(user.name)
+                            .bold()
+                    }
+                    .foregroundStyle(Color.black)
+                }
+                .swipeActions(edge: .trailing) {
+                    Button(role: .destructive) {
+                        print("delete")
+                    } label: {
+                        Image(systemName: "trash")
+                    }
+                }
+            }
+            .listStyle(.insetGrouped)
+            
+            Spacer()
+        }
+        .navigationTitle("メンバーリスト")
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 }
 
