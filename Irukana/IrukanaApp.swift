@@ -63,10 +63,10 @@ struct IrukanaApp: App {
         
         let authRepository = FirestoreAuthRepositoryImp()
         let dinnerRepository = FirestoreDinnerStatusRepositoryImp()
-        let scheduleRepository = FireStoreScheduleRepositoryImp()
+        let scheduleRepository = FirestoreScheduleRepositoryImp()
         let userRepository = FirestoreUserRepositoryImp()
-        let schedulePariticpantRepository = FireStoreScheduleParticipantRepositoryImp()
-        let calendarRepository = FireStoreCalendarRepositoryImp()
+        let schedulePariticpantRepository = FirestoreScheduleParticipantRepositoryImp()
+        let calendarRepository = FirestoreCalendarRepositoryImp()
         let groupRepository = FirestoreGroupRepositoryImp()
         let sessionRepository = SessionRepositoryImp()
         let localNotificationRepository = LocalNotificationRepositoryImp()
