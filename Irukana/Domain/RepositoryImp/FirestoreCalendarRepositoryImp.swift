@@ -1,7 +1,7 @@
 import Foundation
 import FirebaseFirestore
 
-struct FireStoreCalendarRepositoryImp: CalendarRepository {
+struct FirestoreCalendarRepositoryImp: CalendarRepository {
     private let db = Firestore.firestore()
     private var col: CollectionReference { db.collection("calendarInfos") }
     

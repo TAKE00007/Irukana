@@ -1,7 +1,7 @@
 import Foundation
 import FirebaseFirestore
 
-final class FireStoreScheduleParticipantRepositoryImp: ScheduleParticipantRepository {
+final class FirestoreScheduleParticipantRepositoryImp: ScheduleParticipantRepository {
     private let db = Firestore.firestore()
     private var col: CollectionReference { db.collection("scheduleParticipants") }
     
