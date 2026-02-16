@@ -49,29 +49,23 @@ struct SettingView: View {
                     }
                 } label: {
                     HStack {
-                        Text("T")
-                            .padding(3)
-                            .background(
+                        ForEach(state.users) { user in
+                            ZStack {
                                 Circle()
                                     .fill(Color(.systemBackground))
-                            )
+                                    .frame(width: 32, height: 32)
+                                Text(user.name.prefix(1))
+                            }
                             .overlay(
                                 Circle()
                                     .stroke(Color.orange, lineWidth: 1)
+                                    .frame(width: 32, height: 32)
                             )
-                        Text("H")
-                            .padding(3)
-                            .background(
-                                Circle()
-                                    .fill(Color(.systemBackground))
-                            )
-                            .overlay(
-                                Circle()
-                                    .stroke(Color.orange, lineWidth: 1)
-                            )
+                        }
                         Spacer()
                         Image(systemName: "chevron.forward")
                     }
+                    .padding(.top, 12)
                     .foregroundStyle(.gray)
                 }
             }
@@ -126,16 +120,18 @@ struct MemberSettingView: View {
                     print("")
                 } label: {
                     HStack(spacing: 12) {
-                        Text(user.name.prefix(1))
-                            .padding(3)
-                            .background(
-                                Circle()
-                                    .fill(Color(.systemBackground))
-                            )
-                            .overlay(
-                                Circle()
-                                    .stroke(Color.orange, lineWidth: 1)
-                            )
+                        ZStack {
+                            Circle()
+                                .fill(Color(.systemBackground))
+                                .frame(width: 32, height: 32)
+                            Text(user.name.prefix(1))
+                        }
+                        .overlay(
+                            Circle()
+                                .stroke(Color.orange, lineWidth: 1)
+                                .frame(width: 32, height: 32)
+                        )
+                        
                         Text(user.name)
                             .bold()
                     }
