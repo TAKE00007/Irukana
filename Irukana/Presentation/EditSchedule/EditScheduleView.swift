@@ -97,11 +97,7 @@ struct EditScheduleView: View {
                                 send(.setColor(color))
                                 isShowColor = false
                             } label: {
-                                if isSelected {
-                                    Image(systemName: "dot.circle")
-                                } else {
-                                    Image(systemName: "circle")
-                                }
+                                Image(systemName: isSelected ? "dot.circle" : "circle")
                             }
                             .foregroundStyle(Color.black)
 
@@ -218,11 +214,7 @@ struct EditScheduleView: View {
                                 send(.setNotifyAt(reminder))
                                 isShowAlarm = false
                             } label: {
-                                if isSelected {
-                                    Image(systemName: "checkmark.square")
-                                } else {
-                                    Image(systemName: "square")
-                                }
+                                Image(systemName: isSelected ? "dot.circle" : "circle")
                             }
                         }
                         .padding(.vertical, 12)
