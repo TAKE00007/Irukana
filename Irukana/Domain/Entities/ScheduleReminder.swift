@@ -1,6 +1,6 @@
 import Foundation
 
-enum ScheduleReminder: String, CaseIterable, Identifiable {
+enum ScheduleReminder: String, CaseIterable, Identifiable, Codable {
     case start
     case beforeTenMinute
     case beforeHour
