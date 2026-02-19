@@ -5,12 +5,22 @@ final class FirestoreScheduleRepositoryImp: ScheduleRepository {
     private let db = Firestore.firestore()
     private var col: CollectionReference { db.collection("schedules") }
     
-    func addSchedule(calendarId: UUID, title: String, startAt: Date, endAt: Date, notifyAt: Date?, color: ScheduleColor, isAllDay: Bool) async throws -> Schedule {
+    func addSchedule(calendarId: UUID, title: String, startAt: Date, endAt: Date, notifyAt: ScheduleReminder?, color: ScheduleColor, isAllDay: Bool) async throws -> Schedule {
         let id = UUID()
         
         let ref = col.document(id.uuidString)
         
-        let schedule = Schedule(id: id, calendarId: calendarId, title: title, startAt: startAt, endAt: endAt, notifyAt: notifyAt, color: color, isAllDay: isAllDay, createdAt: Date())
+        let schedule = Schedule(
+            id: id,
+            calendarId: calendarId,
+            title: title,
+            startAt: startAt,
+            endAt: endAt,
+            notifyAt: notifyAt,
+            color: color,
+            isAllDay: isAllDay,
+            createdAt: Date()
+        )
         
         let docSchedule = schedule.toDoc()
         
@@ -19,7 +29,7 @@ final class FirestoreScheduleRepositoryImp: ScheduleRepository {
         return schedule
     }
     
-    func updateSchedule(id: UUID, calendarId: UUID, title: String, startAt: Date, endAt: Date, notifyAt: Date?, color: ScheduleColor, isAllDay: Bool) async throws -> Schedule {
+    func updateSchedule(id: UUID, calendarId: UUID, title: String, startAt: Date, endAt: Date, notifyAt: ScheduleReminder?, color: ScheduleColor, isAllDay: Bool) async throws -> Schedule {
         let ref = col.document(id.uuidString)
         
         let schedule = Schedule(
@@ -80,9 +90,11 @@ final class FirestoreScheduleRepositoryImp: ScheduleRepository {
             .order(by: "startAt", descending: false)
             .getDocuments()
         
-        return try response.documents.compactMap {
+        let temp = try response.documents.compactMap {
             try $0.data(as: ScheduleDoc.self).toDomain()
         }
+        
+        return temp
     }
     
     func deleteSchedule(id: UUID) async throws {
