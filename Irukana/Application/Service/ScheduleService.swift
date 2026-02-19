@@ -8,14 +8,12 @@ struct ScheduleService {
     
     func addSchedule(calendarId: UUID, title: String, startAt: Date, endAt: Date, notifyAt: ScheduleReminder?, color: ScheduleColor, isAllDay: Bool, userIds: [UUID]) async throws -> Schedule {
         
-        let reminderDate = notifyAt?.reminderDate(startAt: startAt)
-        
-        let schedule = try await scheduleRepository.addSchedule(calendarId: calendarId, title: title, startAt: startAt, endAt: endAt, notifyAt: reminderDate, color: color, isAllDay: isAllDay)
+        let schedule = try await scheduleRepository.addSchedule(calendarId: calendarId, title: title, startAt: startAt, endAt: endAt, notifyAt: notifyAt, color: color, isAllDay: isAllDay)
         
         try await scheduleParticipantRepository.addScheduleParticipant(scheduleId: schedule.id, userIds: userIds)
         
-        if let notificationAt = schedule.notifyAt {
-            await localNotificationRepository.setReminder(scheduleId: schedule.id, title: schedule.title, notificationAt: notificationAt)            
+        if let notificationAt = schedule.notifyAt?.reminderDate(startAt: schedule.startAt) {
+            await localNotificationRepository.setReminder(scheduleId: schedule.id, title: schedule.title, notificationAt: notificationAt)
         }
         
         return schedule
@@ -25,11 +23,11 @@ struct ScheduleService {
         
         let reminderDate = notifyAt?.reminderDate(startAt: startAt)
 
-        let schedule = try await scheduleRepository.updateSchedule(id: id, calendarId: calendarId, title: title, startAt: startAt, endAt: endAt, notifyAt: reminderDate, color: color, isAllDay: isAllDay)
+        let schedule = try await scheduleRepository.updateSchedule(id: id, calendarId: calendarId, title: title, startAt: startAt, endAt: endAt, notifyAt: notifyAt, color: color, isAllDay: isAllDay)
         
         try await scheduleParticipantRepository.updateScheduleParticipant(scheduleId: schedule.id, userIds: userIds)
 
-        if let notificationAt = schedule.notifyAt {
+        if let notificationAt = schedule.notifyAt?.reminderDate(startAt: schedule.startAt) {
             await localNotificationRepository.setReminder(scheduleId: schedule.id, title: schedule.title, notificationAt: notificationAt)
         } else {
             localNotificationRepository.removeReminder(scheduleId: schedule.id)

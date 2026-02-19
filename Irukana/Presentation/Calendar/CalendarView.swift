@@ -244,7 +244,7 @@ private struct DayCell: View {
                                 isAllDay: schedule.isAllDay,
                                 startAt: schedule.startAt,
                                 endAt: schedule.endAt,
-                                notifyAt: ScheduleReminder.from(startAt: schedule.startAt, notifyAt: schedule.notifyAt),
+                                notifyAt: schedule.notifyAt,
                                 color: schedule.color,
                                 users: users
                             ),

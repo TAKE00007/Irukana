@@ -6,7 +6,7 @@ struct ScheduleDoc: Codable {
     let title: String
     let startAt: Timestamp
     let endAt: Timestamp
-    let notifyAt: Timestamp?
+    let notifyAt: String?
     let color: String
     let isAllDay: Bool
     let createdAt: Timestamp
@@ -20,13 +20,15 @@ extension ScheduleDoc {
         
         let scheduleColor: ScheduleColor = ScheduleColor(rawValue: color) ?? .green
         
+        let reminder: ScheduleReminder? = notifyAt.flatMap(ScheduleReminder.init(rawValue: ))
+        
         return Schedule(
             id: uid,
             calendarId: calId,
             title: title,
             startAt: startAt.dateValue(),
             endAt: endAt.dateValue(),
-            notifyAt: notifyAt?.dateValue(),
+            notifyAt: reminder,
             color: scheduleColor,
             isAllDay: isAllDay,
             createdAt: createdAt.dateValue()
@@ -39,15 +41,13 @@ extension Schedule {
         let uid = id.uuidString
         let calId = calendarId.uuidString
         
-        let notifyAtTimeStamp = notifyAt.map { Timestamp(date: $0) }
-        
         return ScheduleDoc(
             id: uid,
             calendarId: calId,
             title: title,
             startAt: Timestamp(date: startAt),
             endAt: Timestamp(date: endAt),
-            notifyAt: notifyAtTimeStamp,
+            notifyAt: notifyAt?.rawValue,
             color: color.rawValue,
             isAllDay: isAllDay,
             createdAt: Timestamp(date: createdAt)
