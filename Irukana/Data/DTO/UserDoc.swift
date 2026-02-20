@@ -1,10 +1,3 @@
-//
-//  UserDoc.swift
-//  Irukana
-//
-//  Created by 大竹駿 on 2025/11/23.
-//
-
 import FirebaseFirestore
 
 struct UserDoc: Codable {
@@ -21,14 +14,13 @@ extension UserDoc {
         return User(
             id: uid,
             name: name,
-            passwordHash: passwordHash,
             birthday: birthday?.dateValue()
         )
     }
 }
 
 extension User {
-    func toDoc(id: UUID) -> UserDoc {
+    func toDoc(passwordHash: String) -> UserDoc {
         let uid = id.uuidString
         
         let birthdayTimeStamp = birthday.map { Timestamp(date: $0) }
