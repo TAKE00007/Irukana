@@ -44,11 +44,11 @@ extension EnvironmentValues {
 
 struct DummyAuthRepository: AuthRepository {
     func login(name: String, password: String) async throws -> User {
-        return User(id: UUID(), name: name, passwordHash: "dummy", birthday: nil)
+        return User(id: UUID(), name: name, birthday: nil)
     }
     
     func signUp(name: String, password: String, birthday: Date?) async throws -> User {
-        return User(id: UUID(), name: name, passwordHash: "dummy", birthday: nil)
+        return User(id: UUID(), name: name, birthday: nil)
     }
 }
 
