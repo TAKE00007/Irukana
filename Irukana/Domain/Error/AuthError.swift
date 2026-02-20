@@ -1,10 +1,3 @@
-//
-//  AuthError.swift
-//  Irukana
-//
-//  Created by 大竹駿 on 2025/11/24.
-//
-
 import Foundation
 
 enum AuthError: Error {
@@ -13,6 +6,7 @@ enum AuthError: Error {
     case invalidUserData
     case nameAlreadyExist
     case userIdNotFound
+    case failLogin
 }
 
 extension AuthError {
@@ -28,6 +22,8 @@ extension AuthError {
             return "同じ名前のユーザーが存在しています"
         case .userIdNotFound:
             return "userIdがuserDefaultに保存されていません"
+        case .failLogin:
+            return "ユーザー名かパスワードが間違っています"
         }
     }
 }
