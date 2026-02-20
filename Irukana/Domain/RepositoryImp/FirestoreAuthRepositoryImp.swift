@@ -1,10 +1,3 @@
-//
-//  FirestoreAuthRepositoryImp.swift
-//  Irukana
-//
-//  Created by 大竹駿 on 2025/11/23.
-//
-
 import Foundation
 import FirebaseFirestore
 
@@ -15,20 +8,18 @@ final class FirestoreAuthRepositoryImp: AuthRepository {
     func login(name: String, password: String) async throws -> User {
         // パスワードをハッシュ化
         let hash = hashPassword(password)
-        
-        // ユーザーネームが等しいものが見つかれば返す
-        let snap = try await col.whereField("name", isEqualTo: name).getDocuments()
+    
+        let snap = try await col
+            .whereField("name", isEqualTo: name)
+            .whereField("passwordHash", isEqualTo: hash)
+            .getDocuments()
         
         guard let doc = snap.documents.first else {
-            throw AuthError.userNotFound
+            throw AuthError.failLogin
         }
         
         let userDoc = try doc.data(as: UserDoc.self)
-        
-        guard userDoc.passwordHash == hash else {
-            throw AuthError.invalidPassword
-        }
-        
+
         guard let user = userDoc.toDomain() else {
             throw AuthError.invalidUserData
         }
@@ -48,8 +39,8 @@ final class FirestoreAuthRepositoryImp: AuthRepository {
             throw AuthError.nameAlreadyExist
         }
                 
-        let user = User(id: id, name: name, passwordHash: hash, birthday: birthday)
-        let userDoc = user.toDoc(id: id)
+        let user = User(id: id, name: name, birthday: birthday)
+        let userDoc = user.toDoc(passwordHash: hash)
         try ref.setData(from: userDoc)
         
         return user
