@@ -20,8 +20,6 @@ struct ScheduleService {
     }
     
     func updateSchedule(id: UUID, calendarId: UUID, title: String, startAt: Date, endAt: Date, notifyAt: ScheduleReminder?, color: ScheduleColor, isAllDay: Bool, userIds: [UUID]) async throws -> Schedule {
-        
-        let reminderDate = notifyAt?.reminderDate(startAt: startAt)
 
         let schedule = try await scheduleRepository.updateSchedule(id: id, calendarId: calendarId, title: title, startAt: startAt, endAt: endAt, notifyAt: notifyAt, color: color, isAllDay: isAllDay)
         
