@@ -180,5 +180,20 @@ struct SignUpView: View {
         .padding(.horizontal, 16)
         .navigationTitle("プロフィール編集")
         .padding()
+        .alert(
+            state.alertContent?.title ?? "",
+            isPresented: Binding(
+                get: { state.alertContent != nil },
+                set: { isPresented in
+                    if !isPresented { state.alertContent = nil }
+                }
+            )
+        ) {
+            Button("OK", role: .close) {
+                state.alertContent = nil
+            }
+        } message: {
+            Text(state.alertContent?.message ?? "")
+        }
     }
 }
