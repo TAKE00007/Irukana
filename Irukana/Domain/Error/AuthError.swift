@@ -7,10 +7,11 @@ enum AuthError: Error {
     case nameAlreadyExist
     case userIdNotFound
     case failLogin
+    case failSignUp
 }
 
 extension AuthError {
-    var errorDesctiption: String? {
+    var errorDesctiption: String {
         switch self {
         case .userNotFound:
             return "ユーザーが存在しません"
@@ -24,6 +25,8 @@ extension AuthError {
             return "userIdがuserDefaultに保存されていません"
         case .failLogin:
             return "ユーザー名かパスワードが間違っています"
+        case .failSignUp:
+            return "ユーザーの作成に失敗しました"
         }
     }
 }
