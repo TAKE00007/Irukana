@@ -23,7 +23,7 @@ struct AuthRootReducer {
             return nil
         case let .signUpResponse(.failure(error)):
             state.isLoading = false
-            state.errorMessage = error.localizedDescription
+            state.alertContent = AlertContent(title: "エラー", message: error.errorDesctiption)
             return nil
         case let .loginResponse(.success(user)):
             state.isLoading = false
@@ -32,7 +32,7 @@ struct AuthRootReducer {
             return nil
         case let .loginResponse(.failure(error)):
             state.isLoading = false
-            state.errorMessage = error.localizedDescription
+            state.alertContent = AlertContent(title: "エラー", message: error.errorDesctiption)
             state.loginSucceeded = false
             return nil
         case .tapSignUpButton:
@@ -57,14 +57,14 @@ struct AuthRootReducer {
                 let user = try await service.signUp(name: name, password: password, birthday: birthday)
                 return .signUpResponse(.success(user))
             } catch {
-                return .signUpResponse(.failure(error))
+                return .signUpResponse(.failure(AuthError.failSignUp))
             }
         case let .login(name, password):
             do {
                 let user = try await service.login(name: name, password: password)
                 return .loginResponse(.success(user))
             } catch {
-                return .loginResponse(.failure(error))
+                return .loginResponse(.failure(AuthError.failLogin))
             }
         }
     }

@@ -1,10 +1,3 @@
-//
-//  LoginAction.swift
-//  Irukana
-//
-//  Created by 大竹駿 on 2025/11/24.
-//
-
 import Foundation
 
 enum AuthRootAction {
@@ -15,8 +8,8 @@ enum AuthRootAction {
     
     case tapSignUp
     case tapLogin
-    case signUpResponse(Result<User, Error>)
-    case loginResponse(Result<User, Error>)
+    case signUpResponse(Result<User, AuthError>)
+    case loginResponse(Result<User, AuthError>)
 }
 
 enum AuthRootEffect {

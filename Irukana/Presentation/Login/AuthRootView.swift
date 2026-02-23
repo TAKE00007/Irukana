@@ -1,10 +1,3 @@
-//
-//  LoginView.swift
-//  Irukana
-//
-//  Created by 大竹駿 on 2025/11/24.
-//
-
 import SwiftUI
 
 
@@ -100,6 +93,21 @@ struct LoginView: View {
         }
         .padding()
         .navigationTitle("ログイン")
+        .alert(
+            state.alertContent?.title ?? "",
+            isPresented: Binding(
+                get: { state.alertContent != nil },
+                set: { isPresented in
+                    if !isPresented { state.alertContent = nil }
+                }
+            )
+        ) {
+            Button("OK", role: .close) {
+                state.alertContent = nil
+            }
+        } message: {
+            Text(state.alertContent?.message ?? "")
+        }
     }
 }
 
