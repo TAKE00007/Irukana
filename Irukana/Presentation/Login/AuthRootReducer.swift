@@ -56,8 +56,10 @@ struct AuthRootReducer {
             do {
                 let user = try await service.signUp(name: name, password: password, birthday: birthday)
                 return .signUpResponse(.success(user))
+            } catch AuthError.nameAlreadyExist {
+                return .signUpResponse(.failure(.nameAlreadyExist))
             } catch {
-                return .signUpResponse(.failure(AuthError.failSignUp))
+                return .signUpResponse(.failure(.failSignUp))
             }
         case let .login(name, password):
             do {
